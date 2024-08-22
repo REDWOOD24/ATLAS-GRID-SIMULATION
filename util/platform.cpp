@@ -1,0 +1,66 @@
+#include "platform.h"
+
+sg4::NetZone* Platform::create_platform(const std::string& platform_name)
+{
+return sg4::create_full_zone(platform_name);
+}
+
+sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& site_name, const std::map<std::string, int>& cpuInfo)
+{
+  //Create the Site
+  auto* site = sg4::create_star_zone(site_name);
+  site->set_parent(platform);
+
+  //Create CPUS and Cores
+  for (const auto& cpu: cpuInfo) {
+    const std::string cpuname    = cpu.first;
+    int               cores      = cpu.second; 
+    sg4::Host*  host             = site->create_host(cpuname, 1e9);
+    constexpr double  BW_CPU     = 1e12;
+    constexpr double  LAT_CPU    = 0;
+    const auto&       linkname   = "link_" + cpuname;
+    const sg4::Link*  link       = site->create_split_duplex_link(linkname, BW_CPU)->set_latency(LAT_CPU)->seal();
+    host->set_core_count(cores);
+    site->add_route(host->get_netpoint(), nullptr, nullptr, nullptr,{{link, sg4::LinkInRoute::Direction::UP}}, true);
+    if(cpuname== std::string(site_name + "_cpu-0")){site->set_gateway(host->get_netpoint());} // Use the first host as a router
+  }
+  return site;
+}
+
+std::map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform, const std::map<std::string, std::map<std::string,int>> siteNameCPUInfo)
+{
+   std::map<std::string, sg4::NetZone*> sites;
+   
+for (const auto& sitePair : siteNameCPUInfo) {
+   const std::string& site_name = sitePair.first;
+   const std::map<std::string, int>& cpuInfo = sitePair.second;
+   sites[site_name] =  this->create_site(platform, site_name, cpuInfo);}
+   return sites;
+}
+
+
+void Platform::initialize_site_connections(sg4::NetZone* platform, std::map<std::string, std::pair<double, double>>& siteConnInfo, std::map<std::string, sg4::NetZone*>& sites)
+{
+
+  //Creating Sites and the Connections between them
+  for (const auto& siteConn : siteConnInfo) {
+    const auto& conn           = siteConn.first;
+    const auto& src_name       = conn.substr(0, conn.find(':'));
+    const auto& dst_name       = conn.substr(conn.find(':')+1);
+    const auto& linkname       = "link_" + conn;
+    double      latency        = siteConn.second.first;
+    double      bandwidth      = siteConn.second.second;
+
+    //Source
+    const sg4::NetZone* src    = sites.at(src_name);
+
+    //Destination
+    const sg4::NetZone* dst    = sites.at(dst_name);;
+
+    //Create Link
+    const sg4::Link* interzonal_link = platform->create_link(linkname, bandwidth)->set_latency(latency)->seal();
+
+    //Add to Platform
+    platform->add_route(src,  dst, {sg4::LinkInRoute(interzonal_link)});
+  }
+}
