@@ -1,7 +1,7 @@
 # Redwood Project
 
 ## Overview
-This repository aims to streamline the process of configuring and testing grid computing environments.
+This repository aims to streamline the process of configuring and testing ATLAS grid computing environment.
 
 ## Prerequisites
 Before you begin, ensure you have the following packages installed:
