@@ -5,7 +5,7 @@ sg4::NetZone* Platform::create_platform(const std::string& platform_name)
 return sg4::create_full_zone(platform_name);
 }
 
-sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& site_name, const std::map<std::string, int>& cpuInfo)
+sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& site_name, const std::map<std::string, CPUInfo> cpuInfo)
 {
   //Create the Site
   auto* site = sg4::create_star_zone(site_name);
@@ -14,26 +14,30 @@ sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& s
   //Create CPUS and Cores
   for (const auto& cpu: cpuInfo) {
     const std::string cpuname    = cpu.first;
-    int               cores      = cpu.second; 
-    sg4::Host*  host             = site->create_host(cpuname, 1e9);
-    constexpr double  BW_CPU     = 1e12;
-    constexpr double  LAT_CPU    = 0;
+    int               cores      = cpu.second.cores; 
+    sg4::Host*        host       = site->create_host(cpuname, cpu.second.speed);
+    const double      BW_CPU     = cpu.second.BW_CPU;
+    const double      LAT_CPU    = cpu.second.LAT_CPU;
     const auto&       linkname   = "link_" + cpuname;
     const sg4::Link*  link       = site->create_split_duplex_link(linkname, BW_CPU)->set_latency(LAT_CPU)->seal();
     host->set_core_count(cores);
+    host->set_property("ram",cpu.second.ram);
     site->add_route(host->get_netpoint(), nullptr, nullptr, nullptr,{{link, sg4::LinkInRoute::Direction::UP}}, true);
     if(cpuname== std::string(site_name + "_cpu-0")){site->set_gateway(host->get_netpoint());} // Use the first host as a router
-  }
+    for(const auto& d: cpu.second.disk_info){
+      host->create_disk(d.name,d.read_bw,d.write_bw)->set_property("size",d.size)->set_property("mount",d.mount)->seal();}
+    host->seal();
+    }
   return site;
 }
 
-std::map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform, const std::map<std::string, std::map<std::string,int>> siteNameCPUInfo)
+std::map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform, const std::map<std::string, std::map<std::string, CPUInfo>> siteNameCPUInfo)
 {
    std::map<std::string, sg4::NetZone*> sites;
    
 for (const auto& sitePair : siteNameCPUInfo) {
    const std::string& site_name = sitePair.first;
-   const std::map<std::string, int>& cpuInfo = sitePair.second;
+   const std::map<std::string, CPUInfo>& cpuInfo = sitePair.second;
    sites[site_name] =  this->create_site(platform, site_name, cpuInfo);}
    return sites;
 }

@@ -11,6 +11,17 @@ int genRandNum(int lower, int upper) {
 
 Parser::Parser(const std::string& _inputFile){inputFile = _inputFile;}
 
+DiskInfo Parser::getDiskInfo(const std::string disk_name)
+{
+  DiskInfo disk;
+  disk.name        = disk_name;
+  disk.read_bw     = 200;
+  disk.write_bw    = 80;
+  disk.size        = "500GiB";
+  disk.mount       = "/scratch";
+
+  return disk;
+}
 
 std::set<std::string> Parser::getSiteNames()
 {
@@ -26,15 +37,26 @@ std::set<std::string> Parser::getSiteNames()
     return site_names;
 }
 
-std::map<std::string, std::map<std::string,int>> Parser::getSiteNameCPUInfo()
+std::map<std::string, std::map<std::string, CPUInfo>> Parser::getSiteNameCPUInfo()
 {
   std::set<std::string> site_names = this->getSiteNames();
-  std::map<std::string, std::map<std::string,int>> siteNameCPUInfo;
+  std::map<std::string, std::map<std::string, CPUInfo>> siteNameCPUInfo;
   
   for(const auto& site: site_names){
-    for(int cpu = 0; cpu < genRandNum(5,15); cpu++){
-        for(int core = 0; core < genRandNum(20,100); core++){
-            siteNameCPUInfo[site][site+"_cpu-"+std::to_string(cpu)] = core;}}}
+    for(int cpu_num = 0; cpu_num < genRandNum(5,15); cpu_num++){
+      CPUInfo cpu;
+      cpu.cores    = genRandNum(20,100);
+      cpu.speed    = 1e9;
+      cpu.BW_CPU   = 1e12;
+      cpu.LAT_CPU  = 0;
+      cpu.ram      = "8GiB";
+      cpu.disk_info.push_back(this->getDiskInfo("CALIBDISK"));
+      cpu.disk_info.push_back(this->getDiskInfo("DATADISK"));
+      cpu.disk_info.push_back(this->getDiskInfo("LOCALGROUPDISK"));
+      cpu.disk_info.push_back(this->getDiskInfo("SCRATCHDISK"));
+      siteNameCPUInfo[site][site+"_cpu-"+std::to_string(cpu_num)] = cpu;
+    }
+  }
   return siteNameCPUInfo;
 }
 

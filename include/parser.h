@@ -17,6 +17,27 @@
 #include <math.h>
 #include "nlohmann/json.hpp"
 
+
+//Information needed to a specify a Disk                                                      
+struct DiskInfo {
+  std::string   name{};
+  double        read_bw{};
+  double        write_bw{};
+  std::string   size{};
+  std::string   mount{};  
+};
+
+//Information needed to a specify a host (CPU)
+struct CPUInfo {
+  int                    cores{};
+  double                 speed{};
+  double                 BW_CPU{};
+  double                 LAT_CPU{};
+  std::string            ram{};
+  std::vector<DiskInfo>  disk_info{};
+};
+
+
 using namespace nlohmann;
 
 class Parser
@@ -28,9 +49,9 @@ public:
   ~Parser(){};
 
  std::map<std::string, std::pair<double, double>> getSiteConnInfo();
- std::map<std::string, std::map<std::string,int>> getSiteNameCPUInfo();
+ std::map<std::string, std::map<std::string,CPUInfo>> getSiteNameCPUInfo();
  std::set<std::string> getSiteNames();
-
+ DiskInfo getDiskInfo(const std::string site_cpu_name);
  private:
     std::string inputFile;
 };
