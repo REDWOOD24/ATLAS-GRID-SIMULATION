@@ -16,6 +16,7 @@
 #include <string>
 #include <math.h>
 #include <simgrid/s4u.hpp>
+#include "parser.h"
 namespace sg4 = simgrid::s4u;
 
 class Platform
@@ -34,13 +35,13 @@ static sg4::NetZone* create_platform(const std::string& platform_name);
  *
  * This function creates one site made of nb_cpu CPUs.
  */
-static sg4::NetZone* create_site(sg4::NetZone* platform, const std::string& site_name, const std::map<std::string, int>& cpuInfo);
+static sg4::NetZone* create_site(sg4::NetZone* platform, const std::string& site_name, const std::map<std::string, CPUInfo> cpuInfo);
 
 /**
  *
  * This function creates a number of sites.
  */
-std::map<std::string, sg4::NetZone*>  create_sites(sg4::NetZone* platform, const std::map<std::string, std::map<std::string,int>> siteNameCPUInfo);
+  std::map<std::string, sg4::NetZone*>  create_sites(sg4::NetZone* platform, const std::map<std::string, std::map<std::string, CPUInfo>> siteNameCPUInfo);;
 
 /**
  *

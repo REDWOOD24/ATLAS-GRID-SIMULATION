@@ -58,7 +58,7 @@ int main(int argc, char** argv)
    //    actors->send_data("BEIJING-LCG2_cpu-6","ifae_cpu-0",5,100);
     actors->send_data("ifae_cpu-2","ifae_cpu-0",5,100);
 
-    // actors->get_disk_info("BEIJING-LCG2_cpu-6");
+    actors->get_disk_info("BEIJING-LCG2_cpu-3");
    //Run Simulation
    e.run();
    
