@@ -8,26 +8,26 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 
 
-# Find  SimGrid
-#find_package(WRENCH REQUIRED)
+# Find SimGrid
 find_package(SimGrid REQUIRED)
 find_package(Boost REQUIRED)
+
+# Add json subdir
 add_subdirectory(json)
 list( APPEND BUILT_PACKAGES "json")
 
 # include directories
 include_directories(${SimGrid_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
 include_directories(include/)
+include_directories(plugins/include/)
 
 # source files
-set(SOURCE_FILES
-        src/main.cpp
-	util/parser.cpp
-	util/platform.cpp
-	util/actors.cpp
-	util/data.cpp
-	util/storage.cpp
-        )
+file(GLOB_RECURSE SOURCE_FILES
+    "src/*.cpp"
+    "util/*.cpp"
+    "plugins/src/*.cpp"
+)
+
 
 # generating the executable
 add_executable(atlas-grid-simulator ${SOURCE_FILES})

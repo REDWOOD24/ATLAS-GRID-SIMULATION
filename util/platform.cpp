@@ -25,9 +25,8 @@ sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& s
     site->add_route(host->get_netpoint(), nullptr, nullptr, nullptr,{{link, sg4::LinkInRoute::Direction::UP}}, true);
     if(cpuname== std::string(site_name + "_cpu-0")){site->set_gateway(host->get_netpoint());} // Use the first host as a router
     for(const auto& d: cpu.second.disk_info){
-      host->create_disk(d.name,d.read_bw,d.write_bw)->set_property("size",d.size)->set_property("mount",d.mount)->seal();}
-    host->seal();
-    }
+      host->create_disk(d.name,d.read_bw,d.write_bw)->set_property("size",d.size)->set_property("mount",d.mount)->set_property("content","")->seal();}
+      host->seal();}
   return site;
 }
 
@@ -35,10 +34,10 @@ std::map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platf
 {
    std::map<std::string, sg4::NetZone*> sites;
    
-for (const auto& sitePair : siteNameCPUInfo) {
-   const std::string& site_name = sitePair.first;
-   const std::map<std::string, CPUInfo>& cpuInfo = sitePair.second;
-   sites[site_name] =  this->create_site(platform, site_name, cpuInfo);}
+   for (const auto& sitePair : siteNameCPUInfo) {
+     const std::string& site_name = sitePair.first;
+     const std::map<std::string, CPUInfo>& cpuInfo = sitePair.second;
+     sites[site_name] =  this->create_site(platform, site_name, cpuInfo);}
    return sites;
 }
 
@@ -68,3 +67,11 @@ void Platform::initialize_site_connections(sg4::NetZone* platform, std::map<std:
     platform->add_route(src,  dst, {sg4::LinkInRoute(interzonal_link)});
   }
 }
+
+void Platform::initialize_plugins()
+{
+  sg_storage_file_system_init();
+}
+
+
+  

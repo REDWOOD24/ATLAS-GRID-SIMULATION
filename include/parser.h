@@ -1,4 +1,4 @@
-// ==============================================                                                                                
+// ==============================================                                                                               
 // Author: Raees Khan                                                                                                            
 // Email: rak177@pitt.edu                                                                                                        
 // Created Date: 2024-08-15                                                                                                      
@@ -16,6 +16,7 @@
 #include <string>
 #include <math.h>
 #include "nlohmann/json.hpp"
+#include <random>
 
 
 //Information needed to a specify a Disk                                                      
@@ -46,13 +47,18 @@ class Parser
 
 public:
   Parser(const std::string& _inputFile);
-  ~Parser(){};
+  Parser(){}
+ ~Parser(){};
 
  std::map<std::string, std::pair<double, double>> getSiteConnInfo();
  std::map<std::string, std::map<std::string,CPUInfo>> getSiteNameCPUInfo();
  std::set<std::string> getSiteNames();
  DiskInfo getDiskInfo(const std::string site_cpu_name);
- private:
+
+ int genRandNum(int lower, int upper);
+ double GaussianDistribution(double mean, double stddev);
+
+private:
     std::string inputFile;
 };
 
