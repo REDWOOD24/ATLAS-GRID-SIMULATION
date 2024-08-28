@@ -1,25 +1,35 @@
 #include "parser.h"
-#include <random>
+#include <iostream>
 
-//I don't have information about CPUs and cores at various sites, so assign randomly.
-int genRandNum(int lower, int upper) {
+Parser::Parser(const std::string& _inputFile){inputFile = _inputFile;}
+
+
+//I don't have information about CPUs and cores at various sites, so assign randomly.                                                         
+int Parser::genRandNum(int lower, int upper) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distrib(lower, upper);
     return distrib(gen);
 }
 
-Parser::Parser(const std::string& _inputFile){inputFile = _inputFile;}
+double Parser::GaussianDistribution(double mean, double stddev) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<> d(mean, stddev);
+    return d(gen);
+}
+
 
 DiskInfo Parser::getDiskInfo(const std::string disk_name)
 {
   DiskInfo disk;
   disk.name        = disk_name;
-  disk.read_bw     = 200;
-  disk.write_bw    = 80;
-  disk.size        = "500GiB";
-  disk.mount       = "/scratch";
-
+  disk.read_bw     = this->genRandNum(150,250);
+  disk.write_bw    = this->genRandNum(40,120);
+  disk.size        = std::to_string(this->genRandNum(40,120))+"GiB";
+  if(disk_name.find("SCRATCH") != std::string::npos) disk.mount = "/scratch";
+  else if(disk_name.find("LOCAL") != std::string::npos) disk.mount = "/local";
+  else {std::cout << "Mount point not specified ... Exiting now ..." << std::endl; exit(-1);}
   return disk;
 }
 
@@ -43,17 +53,17 @@ std::map<std::string, std::map<std::string, CPUInfo>> Parser::getSiteNameCPUInfo
   std::map<std::string, std::map<std::string, CPUInfo>> siteNameCPUInfo;
   
   for(const auto& site: site_names){
-    for(int cpu_num = 0; cpu_num < genRandNum(5,15); cpu_num++){
+    for(int cpu_num = 0; cpu_num < this->genRandNum(50,150); cpu_num++){
       CPUInfo cpu;
-      cpu.cores    = genRandNum(20,100);
-      cpu.speed    = 1e9;
-      cpu.BW_CPU   = 1e12;
+      cpu.cores    = this->genRandNum(20,100);
+      cpu.speed    = this->genRandNum(10,20)*1e8;
+      cpu.BW_CPU   = this->genRandNum(10,20)*1e11;
       cpu.LAT_CPU  = 0;
-      cpu.ram      = "8GiB";
-      cpu.disk_info.push_back(this->getDiskInfo("CALIBDISK"));
-      cpu.disk_info.push_back(this->getDiskInfo("DATADISK"));
-      cpu.disk_info.push_back(this->getDiskInfo("LOCALGROUPDISK"));
+      cpu.ram      = std::to_string(this->genRandNum(8,16))+"GiB";
+      // cpu.disk_info.push_back(this->getDiskInfo("CALIBDISK"));
+      // cpu.disk_info.push_back(this->getDiskInfo("DATADISK"));
       cpu.disk_info.push_back(this->getDiskInfo("SCRATCHDISK"));
+      cpu.disk_info.push_back(this->getDiskInfo("LOCALGROUPDISK"));
       siteNameCPUInfo[site][site+"_cpu-"+std::to_string(cpu_num)] = cpu;
     }
   }

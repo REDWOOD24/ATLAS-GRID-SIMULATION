@@ -21,7 +21,8 @@
 #include <simgrid/s4u.hpp>
 #include "parser.h"
 #include "platform.h"
-#include "actors.h"
+#include "job_manager.h"
+#include "panda_dispatcher.h"
 
 
 int main(int argc, char** argv)
@@ -36,30 +37,34 @@ int main(int argc, char** argv)
    auto                      siteNameCPUInfo  = parser->getSiteNameCPUInfo();
    auto                      siteConnInfo     = parser->getSiteConnInfo();
 
+
+
    //Initialize Simulation Engine
    sg4::Engine e(&argc, argv);
-   
+
    //Create the SimGrid platform
    std::unique_ptr<Platform> pf = std::make_unique<Platform>();
    auto* platform = pf->create_platform("ATLAS-GRID");
+
+   //Initialize the Plugins used
+   pf->initialize_plugins();
    
    //Create the Sites
    auto sites = pf->create_sites(platform, siteNameCPUInfo);
 
    //Setup Connections between sites
    pf->initialize_site_connections(platform,siteConnInfo,sites);
-   platform->seal();
    
-   //Setup Actor
-   std::unique_ptr<Actors> actors = std::make_unique<Actors>(&e);
-   
-   //Submit Jobs
-   //for(const auto& site: site_names){actors->create_storage(site+"_cpu-0","Disk1");}
-   //    actors->send_data("BEIJING-LCG2_cpu-6","ifae_cpu-0",5,100);
-    actors->send_data("ifae_cpu-2","ifae_cpu-0",5,100);
+   //Create Jobs
+   std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
+   auto jobs = jm->create_jobs(2);
 
-    actors->get_disk_info("BEIJING-LCG2_cpu-3");
+   //Pass to Dispatcher
+   std::unique_ptr<PANDA_DISPATCHER> dispatcher = std::make_unique<PANDA_DISPATCHER>(&e);
+   dispatcher->dispatch_jobs(jobs,platform);
+   
    //Run Simulation
+   platform->seal();
    e.run();
    
 
