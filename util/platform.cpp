@@ -22,6 +22,8 @@ sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& s
     const sg4::Link*  link       = site->create_split_duplex_link(linkname, BW_CPU)->set_latency(LAT_CPU)->seal();
     host->set_core_count(cores);
     host->set_property("ram",cpu.second.ram);
+    host->set_property("wattage_per_state",std::to_string(2*cores)+":"+std::to_string(cores)+":"+std::to_string(10*cores));
+    host->set_property("wattage_off",std::to_string(0.1*cores));
     site->add_route(host->get_netpoint(), nullptr, nullptr, nullptr,{{link, sg4::LinkInRoute::Direction::UP}}, true);
     if(cpuname== std::string(site_name + "_cpu-0")){site->set_gateway(host->get_netpoint());} // Use the first host as a router
     for(const auto& d: cpu.second.disk_info){
@@ -71,6 +73,7 @@ void Platform::initialize_site_connections(sg4::NetZone* platform, std::map<std:
 void Platform::initialize_plugins()
 {
   sg_storage_file_system_init();
+  sg_host_energy_plugin_init();
 }
 
 
