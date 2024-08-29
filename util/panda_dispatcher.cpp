@@ -82,13 +82,13 @@ void PANDA_DISPATCHER::execute_subjob(const subJob s)
 
   //Execute FLOPS
   actions->exec_task_multi_thread(flops,cores,comp_host);
-  // XBT_INFO("Finished reading file '%s' of size '%s' on host '%s'", "hi","hi","hi");
+
   //Write out files
   for(const auto& outputfile: output_files)
     {
   actions->write(write_mount+outputfile.first, outputfile.second, e->host_by_name(s.write_host));
     }
-  
+
 }
 
 

@@ -17,6 +17,7 @@
 #include <math.h>
 #include <simgrid/s4u.hpp>
 #include "ATLAS_FileSystem.h"
+#include "simgrid/plugins/energy.h"
 #include "parser.h"
 namespace sg4 = simgrid::s4u;
 
