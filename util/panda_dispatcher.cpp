@@ -304,10 +304,14 @@ void PANDA_DISPATCHER::printJobInfo(subJob& subjob)
       std::cout << "FLOPs to be executed: "    <<  subjob.flops  << std::endl;
       std::cout << "Files to be read: "    <<  std::endl;
       for(const auto& file: subjob.input_files){
-      std::cout << "File: " << file.first  << "\t Size: " <<  file.second <<  std::endl;}
+      std::cout << "File: " << std::setw(40) << std::left << file.first
+      << " Size: " << std::setw(10) << std::right << file.second
+      << std::endl;}
       std::cout << "Files to be written: " <<  std::endl;
       for(const auto& file: subjob.output_files){
-      std::cout << "File: " << file.first   << "\t Size: " <<  file.second <<  std::endl;}
+      std::cout << "File: " << std::setw(40) << std::left << file.first
+      << " Size: " << std::setw(10) << std::right << file.second
+      << std::endl;}
       std::cout << "Cores Used: " << subjob.cores <<  std::endl;
       std::cout << "Disks Used: " << subjob.disk <<  std::endl;
       std::cout << "Read Host : " << subjob.read_host <<  std::endl;
