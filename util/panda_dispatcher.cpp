@@ -133,8 +133,9 @@ double PANDA_DISPATCHER::calculateWeightedScore(Host& cpu, subJob& sj, const std
 {
     double score = cpu.speed/1e8 * weights.at("speed") + cpu.cores * weights.at("cores");
     double best_disk_score = std::numeric_limits<double>::lowest();
+    size_t total_required_storage = (this->getTotalSize(sj.input_files) + this->getTotalSize(sj.output_files));
+
     for (const auto& d : cpu.disks) {
-        size_t total_required_storage = (this->getTotalSize(sj.input_files) + this->getTotalSize(sj.output_files));
         if (d.storage >= total_required_storage) {
 	  double disk_score = (d.read_bw/10) * weights.at("disk_read_bw") + (d.write_bw/10) * weights.at("disk_write_bw") + (d.storage/1e10) * weights.at("disk_storage");
             if (disk_score > best_disk_score) {
@@ -144,6 +145,11 @@ double PANDA_DISPATCHER::calculateWeightedScore(Host& cpu, subJob& sj, const std
         }
     }
     score += best_disk_score * weights.at("disk");
+
+    //If job is computation or storage intensive, this should impact the score
+    if(sj.flops > 10*max_flops_per_subjob)                  score  += cpu.speed/1e8;
+    if(total_required_storage > 50*max_storage_per_subjob)  score  += total_required_storage/1e10;
+
     return score;
 }
 
