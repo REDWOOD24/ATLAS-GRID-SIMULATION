@@ -1,5 +1,15 @@
 
 cmake_minimum_required(VERSION 3.2)
+
+# lxplus option (OFF by default)
+option(lxplus "Enable lxplus-specific configuration" OFF)
+
+# If lxplus is enabled, skip the rest of the script
+if(lxplus)
+    include(lxplus.cmake)
+    return()
+endif()
+
 message(STATUS "Cmake version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
 project(atlas-grid-simulator)
 # Disable annoying warnings

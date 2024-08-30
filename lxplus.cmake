@@ -5,7 +5,6 @@ project(atlas-grid-simulator)
 # Disable annoying warnings
 add_definitions("-DBOOST_ALLOW_DEPRECATED_HEADERS")
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 
 
 # Find Boost
