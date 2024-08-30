@@ -23,16 +23,40 @@ Follow these steps to build the project:
 ## Run Instructions
 
    ```bash
-   ./atlas-grid-simulator -J ../data/data.json
+  ./atlas-grid-simulator ../data/site_conn_info.json ../data/site_info.json
    ```
 
-# Job Submission Report (Sample Output)
+## Initializing Sites (Sample)
+
+## Site Details
+
+### AGLT2
+
+**CPUs:** 1775
+
+**Disk Information:**
+
+- **CALIBDISK:** 152.00 GiB
+- **DATADISK:** 6332.00 GiB
+- **LOCALGROUPDISK:** 197.00 GiB
+- **SCRATCHDISK:** 96.00 GiB
+
+---
+
+### Notes
+
+- Information obtained from site data dumps.
+
+
+
+
+## Job Submission Report (Sample Job)
 
 ## Job Details
 - **Job ID:** Job-2-subJob-5
 - **FLOPs to be Executed:** 454,128
 
-## Files to be Read
+### Files to be Read
 | File Path                            | Size (Bytes) |
 |--------------------------------------|--------------|
 | /input/user.input.00000182.root      | 9,989,963    |
@@ -41,7 +65,7 @@ Follow these steps to build the project:
 | /input/user.input.00000212.root      | 9,989,740    |
 | /input/user.input.0000022.root       | 10,007,622   |
 
-## Files to be Written
+### Files to be Written
 | File Path                            | Size (Bytes) |
 |--------------------------------------|--------------|
 | /output/user.output.00000242.root    | 9,994,251    |
@@ -49,16 +73,16 @@ Follow these steps to build the project:
 | /output/user.output.00000262.root    | 9,998,317    |
 | /output/user.output.00000272.root    | 9,999,734    |
 
-## Resource Usage
+### Resource Usage
 - **Cores Used:** 99
 - **Disks Used:** LOCALGROUPDISK
 
-## Hosts
+### Hosts
 - **Read Host:** GR-12-TEIKAV_cpu-42
 - **Write Host:** GR-12-TEIKAV_cpu-42
 - **Compute Host:** GR-12-TEIKAV_cpu-42
 
-# SimGrid Job Output
+## SimGrid Job Output
 
 [GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 45616.281987] [ATLAS_SIMULATION/INFO] Finished reading file '/local/input/user.input.00000182.root' of size '9989963' on host 'GR-12-TEIKAV_cpu-42'
 [GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 91200.922929] [ATLAS_SIMULATION/INFO] Finished reading file '/local/input/user.input.00000192.root' of size '9983035' on host 'GR-12-TEIKAV_cpu-42'

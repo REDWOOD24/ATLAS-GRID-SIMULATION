@@ -1,4 +1,5 @@
 #include "platform.h"
+#include <iostream>
 
 sg4::NetZone* Platform::create_platform(const std::string& platform_name)
 {
@@ -35,11 +36,13 @@ sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& s
 std::map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform, const std::map<std::string, std::map<std::string, CPUInfo>> siteNameCPUInfo)
 {
    std::map<std::string, sg4::NetZone*> sites;
-   
+   std::cout << "Inititalizing SimGrid Platform with all Sites .......";   
    for (const auto& sitePair : siteNameCPUInfo) {
      const std::string& site_name = sitePair.first;
      const std::map<std::string, CPUInfo>& cpuInfo = sitePair.second;
-     sites[site_name] =  this->create_site(platform, site_name, cpuInfo);}
+     sites[site_name] =  this->create_site(platform, site_name, cpuInfo);
+     std::cout << ".";}
+   std::cout << std::endl;
    return sites;
 }
 
