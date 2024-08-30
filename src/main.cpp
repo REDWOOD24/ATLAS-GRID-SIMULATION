@@ -28,14 +28,15 @@
 int main(int argc, char** argv)
 {
    //Usage 
-   std::string usage = std::string("usage: ") + argv[0] + " -J data.json";
-   if(argc < 3 || std::string(argv[1])!=std::string("-J")){std::cout << usage << std::endl; exit(-1);}
+   std::string usage = std::string("usage: ") + argv[0] + " ../data/site_conn_info.json ../data/site_info.json";
+   if(argc != 3){std::cout << usage << std::endl; exit(-1);}
 
    //Parse json with information about ATLAS sites
-   const std::string         inputFile        = std::string(argv[2]);
-   std::unique_ptr<Parser>   parser           = std::make_unique<Parser>(inputFile);
-   auto                      siteNameCPUInfo  = parser->getSiteNameCPUInfo();
-   auto                      siteConnInfo     = parser->getSiteConnInfo();
+   const std::string         siteConnInfoFile  = std::string(argv[1]);
+   const std::string         siteInfoFile  = std::string(argv[2]);
+   std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile);
+   auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
+   auto                      siteConnInfo      = parser->getSiteConnInfo();
 
 
 

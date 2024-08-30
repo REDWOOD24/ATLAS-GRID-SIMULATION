@@ -13,8 +13,8 @@ std::vector<Job> JOB_MANAGER::create_jobs(int num_of_jobs)
     job.output_storage = 0;
     
     //Random number of input files with size pulled from a Gaussian Distribution.
-    std::string prefix = "/input/user.input.00000";
-    std::string suffix = std::to_string(i)+".root";
+    std::string prefix = "/input/user.input."+std::to_string(i)+".00000";
+    std::string suffix = ".root";
     int input_files = p->genRandNum(100,200);
     for(int file = 0; file < input_files; file++){
       std::string name = prefix + std::to_string(file)+suffix;
@@ -25,8 +25,8 @@ std::vector<Job> JOB_MANAGER::create_jobs(int num_of_jobs)
     
 
     //Random number of output files with size pulled from a Gaussian Distribution.
-    prefix = "/output/user.output.00000";
-    suffix = std::to_string(i)+".root";
+    prefix = "/output/user.output."+std::to_string(i)+".00000";
+    suffix = ".root";
     int	output_files = p->genRandNum(100,200);
     for(int file = 0; file < output_files; file++){
       std::string name = prefix + std::to_string(file)+suffix;
