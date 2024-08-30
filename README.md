@@ -27,7 +27,7 @@ Follow these steps to build the project on lxplus:
    ```bash
    git clone https://github.com/REDWOOD24/ATLAS-GRID-SIMULATION.git
    cd ATLAS-GRID-SIMULATION
-   source lxplus/setup.sh
+   source lxplus_setup.sh
    git clone https://github.com/simgrid/simgrid.git
    cd simgrid
    git fetch --all --tags --prune
@@ -39,7 +39,7 @@ Follow these steps to build the project on lxplus:
    cd ../../
    mkdir build
    cd build
-   cmake ../lxplus/
+   cmake -Dlxplus=ON ..
    make -j
    ```
 
