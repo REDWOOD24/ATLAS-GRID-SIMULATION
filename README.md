@@ -11,12 +11,35 @@ Before you begin, ensure you have the following packages installed:
 
 These packages are essential for building and running the simulation.
 
-## Build Instructions
-Follow these steps to build the project:
+## Local Build Instructions
+Follow these steps to build the project locally:
    ```bash
+   git clone https://github.com/REDWOOD24/ATLAS-GRID-SIMULATION.git
+   cd ATLAS-GRID-SIMULATION
    mkdir build
    cd build
    cmake ..
+   make -j
+   ```
+
+## LXPLUS Build Instructions
+Follow these steps to build the project on lxplus:
+   ```bash
+   git clone https://github.com/REDWOOD24/ATLAS-GRID-SIMULATION.git
+   cd ATLAS-GRID-SIMULATION
+   source lxplus/setup.sh
+   git clone https://github.com/simgrid/simgrid.git
+   cd simgrid
+   git fetch --all --tags --prune
+   git checkout tags/v3.35 -b test
+   mkdir build
+   cd build
+   cmake ..
+   make -j
+   cd ../../
+   mkdir build
+   cd build
+   cmake ../lxplus/
    make -j
    ```
 

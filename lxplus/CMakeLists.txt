@@ -8,8 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 
 
-# Find SimGrid and Boost
-find_package(SimGrid REQUIRED)
+# Find Boost
 find_package(Boost REQUIRED)
 
 # Add json subdir
@@ -17,10 +16,10 @@ add_subdirectory(json)
 list( APPEND BUILT_PACKAGES "json")
 
 # include directories
-include_directories(${SimGrid_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
+include_directories(${Boost_INCLUDE_DIR})
 include_directories(include/)
 include_directories(plugins/include/)
-
+include_directories(simgrid/include/ simgrid/build/include/)
 # source files
 file(GLOB_RECURSE SOURCE_FILES
     "src/*.cpp"
@@ -33,7 +32,7 @@ file(GLOB_RECURSE SOURCE_FILES
 add_executable(atlas-grid-simulator ${SOURCE_FILES})
 
 target_link_libraries(atlas-grid-simulator
-            ${SimGrid_LIBRARY}
+  "${CMAKE_SOURCE_DIR}/simgrid/build/lib/libsimgrid.so"
 	    ${Boost_LIBRARIES}
             )
 
