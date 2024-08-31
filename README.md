@@ -49,71 +49,142 @@ Follow these steps to build the project on lxplus:
   ./atlas-grid-simulator ../data/site_conn_info.json ../data/site_info.json
    ```
 
-## Initializing Sites (Sample)
+## Platform
+
+Basic Layout of the ATLAS Grid implemented in the simulation.
+
+```bash
+  +---------+                      +---------+                    +---------+
+  | AGLT2   |                      | BNL-    |                    | OTHER   |
+  |         |                      | ATLAS   |                    | SITES   |
+  +---------+                      +---------+                    +---------+
+    |  |  |                        |  |   |                       | |  |
+    |  |  | [Link: To CPU Nodes]   |  |   | [Link: To CPU Nodes]  | |  | [Link: To CPU Nodes]
+    |  |_ |_ _ _                   |  |   |_ _               _ _ _| |  |_ _
+    v    v      v                  v  v       v             v       v      v
+  +----+ +----+ +----+         +----+ +----+ +----+       +----+ +----+ +----+
+  |CPU1| |CPU2| |... |         |CPU1| |CPU2| |... |       |CPU1| |CPU2| |... |
+  +----+ +----+ +----+         +----+ +----+ +----+       +----+ +----+ +----+
+    ^                            ^                            ^
+    | [Link: To Other Sites]     | [Link: To Other Sites]     | [Link: To Other Sites]
+    |                            |                            |
+    |                            |                            |
+    |                            |                            |
+    |                            |                            |
+ [Link: AGLT2 <--> BNL]       [Link: BNL <--> OTHER]       [Link: OTHER <--> AGLT2]
+    |                            |                            |
+    v                            v                            v
+  +---------+                   +---------+                  +---------+
+  | BNL-    |                   | OTHER   |                  | AGLT2   |
+  | ATLAS   |                   | SITES   |                  |         |
+  +---------+                   +---------+                  +---------+
+    |                            |                            |
+    | [CPU1 Gateway]             | [CPU1 Gateway]             | [CPU1 Gateway]
+    |                            |                            |
+    v                            v                            v
+  +----+ +----+ +----+         +----+ +----+ +----+       +----+ +----+ +----+
+  |CPU1| |CPU2| |... |         |CPU1| |CPU2| |... |       |CPU1| |CPU2| |... |
+  +----+ +----+ +----+         +----+ +----+ +----+       +----+ +----+ +----+
+```
+
+
+
+
+## Initializing Sites (Sample Site)
 
 ## Site Details
 
 ### AGLT2
 
-**CPUs:** 1775
+**CPUs:**  37 ±(3) 
+
+**Cores:** 32
 
 **Disk Information:**
 
-- **CALIBDISK:** 152.00 GiB
-- **DATADISK:** 6332.00 GiB
-- **LOCALGROUPDISK:** 197.00 GiB
-- **SCRATCHDISK:** 96.00 GiB
+- **CERN-PROD_DATADISK:**        625703 GiB
+- **INFN-ROMA3_DATADISK:**       54 GiB
+- **INFN-ROMA3_LOCALGROUPDISK:** 973 GiB
+- **INFN-ROMA3_SCRATCHDISK:**    86 GiB
 
 ---
 
 ### Notes
 
 - Information obtained from site data dumps.
+- CPUS based off GFLOPS obtained from data dumps from site, estimating 500 GFLOPS per core per cpu.
+- Other estimates such as latency for connections, disk read and write bandwidths, cpu speed based on estimates.
+
+## Job Manager
+
+ - Job has 3 parts -> (Read, Compute, Write).
+ - Set sizes of files to be read and written from a gaussian distribution (mean and stddev estimated).
+ - Estimate GFLOPS for job.
 
 
+## PANDA Dispatcher 
 
+    +-------------------+ 
+    | Job Manager       |
+    +-------------------+
+                        \ Jobs
+                         \
+                          +------------+     +---------------------------------+       +---------+ 
+                          | Algorithm  | --> | Sub-Jobs allocated to Resources |  -->  | Output  |
+                          +------------+     +---------------------------------+       +---------+ 
+                         /
+                        / Resources
+    +-------------------+ 
+    | Platform          |
+    +-------------------+ 
+    
+    
+## Sample Sub-Job
 
-## Job Submission Report (Sample Job)
-
-## Job Details
-- **Job ID:** Job-2-subJob-5
-- **FLOPs to be Executed:** 454,128
+## Sub-Job Details
+- **Sub-Job ID:** Job-2-subJob-3
+- **FLOPs to be Executed:** 312,646
 
 ### Files to be Read
 | File Path                            | Size (Bytes) |
 |--------------------------------------|--------------|
-| /input/user.input.00000182.root      | 9,989,963    |
-| /input/user.input.00000192.root      | 9,983,035    |
-| /input/user.input.00000202.root      | 10,000,405   |
-| /input/user.input.00000212.root      | 9,989,740    |
-| /input/user.input.0000022.root       | 10,007,622   |
+| /input/user.input.2.00000109.root    | 10,005,685   |
+| /input/user.input.2.0000011.root     | 10,001,028   |
+| /input/user.input.2.00000110.root    | 9,989,540    |
+| /input/user.input.2.00000111.root    | 9,994,482    |
 
 ### Files to be Written
 | File Path                            | Size (Bytes) |
 |--------------------------------------|--------------|
-| /output/user.output.00000242.root    | 9,994,251    |
-| /output/user.output.00000252.root    | 10,002,685   |
-| /output/user.output.00000262.root    | 9,998,317    |
-| /output/user.output.00000272.root    | 9,999,734    |
+| /output/user.output.2.00000111.root  | 9,996,252    |
+| /output/user.output.2.00000112.root  | 9,995,969    |
+| /output/user.output.2.00000113.root  | 10,008,864   |
+| /output/user.output.2.00000114.root  | 9,998,290    |
+| /output/user.output.2.00000115.root  | 10,000,298   |
+
 
 ### Resource Usage
-- **Cores Used:** 99
-- **Disks Used:** LOCALGROUPDISK
+- **Cores Used:** 32
+- **Disks Used:** CERN-PROD_DATADISK
 
 ### Hosts
-- **Read Host:** GR-12-TEIKAV_cpu-42
-- **Write Host:** GR-12-TEIKAV_cpu-42
-- **Compute Host:** GR-12-TEIKAV_cpu-42
+- **Read Host:**    INFN-ROMA3_cpu-12
+- **Write Host:**   INFN-ROMA3_cpu-12
+- **Compute Host:** INFN-ROMA3_cpu-12
 
-## SimGrid Job Output
 
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 45616.281987] [ATLAS_SIMULATION/INFO] Finished reading file '/local/input/user.input.00000182.root' of size '9989963' on host 'GR-12-TEIKAV_cpu-42'
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 91200.922929] [ATLAS_SIMULATION/INFO] Finished reading file '/local/input/user.input.00000192.root' of size '9983035' on host 'GR-12-TEIKAV_cpu-42'
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 136864.872146] [ATLAS_SIMULATION/INFO] Finished reading file '/local/input/user.input.00000202.root' of size '10000405' on host 'GR-12-TEIKAV_cpu-42'
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 182480.137557] [ATLAS_SIMULATION/INFO] Finished reading file '/local/input/user.input.00000212.root' of size '9989740' on host 'GR-12-TEIKAV_cpu-42'
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 228177.041616] [ATLAS_SIMULATION/INFO] Finished reading file '/local/input/user.input.0000022.root' of size '10007622' on host 'GR-12-TEIKAV_cpu-42'
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 228177.041965] [ATLAS_SIMULATION/INFO] Finished executing '454128.000000' flops' on host 'GR-12-TEIKAV_cpu-42'
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 315083.586959] [ATLAS_SIMULATION/INFO] Finished writing file '/local/output/user.output.00000242.root' of size '9994251' on host 'GR-12-TEIKAV_cpu-42'
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 402063.473064] [ATLAS_SIMULATION/INFO] Finished writing file '/local/output/user.output.00000252.root' of size '10002685' on host 'GR-12-TEIKAV_cpu-42'
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 489005.344459] [ATLAS_SIMULATION/INFO] Finished writing file '/local/output/user.output.00000262.root' of size '9998317' on host 'GR-12-TEIKAV_cpu-42'
-[GR-12-TEIKAV_cpu-42:Job-2-subJob-5:(29) 575959.544538] [ATLAS_SIMULATION/INFO] Finished writing file '/local/output/user.output.00000272.root' of size '9999734' on host 'GR-12-TEIKAV_cpu-42'
+
+## SimGrid Output for Sub-Job
+
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 50279.824121] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.00000109.root' of size '10005685' on host 'INFN-ROMA3_cpu-12'
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 100536.249206] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.0000011.root' of size '10001028' on host 'INFN-ROMA3_cpu-12'
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 150734.937680] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.00000110.root' of size '9989540' on host 'INFN-ROMA3_cpu-12'
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 200958.467982] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.00000111.root' of size '9994482' on host 'INFN-ROMA3_cpu-12'
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 200958.468178] [ATLAS_SIMULATION/INFO] Finished executing '312646.000000' flops' on host 'INFN-ROMA3_cpu-12'
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 310807.396399] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000111.root' of size '9996252' on host 'INFN-ROMA3_cpu-12'
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 420653.248286] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000112.root' of size '9995969' on host 'INFN-ROMA3_cpu-12'
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 530640.754354] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000113.root' of size '10008864' on host 'INFN-ROMA3_cpu-12'
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 640512.065964] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000114.root' of size '9998290' on host 'INFN-ROMA3_cpu-12'
+[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 750405.459849] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000115.root' of size '10000298' on host 'INFN-ROMA3_cpu-12'
+[790672.163145] [host_energy/INFO] Energy consumption of host INFN-ROMA3_cpu-12: 50603018.491319 Joules
+

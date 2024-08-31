@@ -89,7 +89,7 @@ std::map<std::string, std::map<std::string, CPUInfo>> Parser::getSiteNameCPUInfo
   
   for(const auto& site: site_names){
 
-    int                   num_of_cpus = siteCPUCount[site];
+    int                   num_of_cpus = siteCPUCount[site] + this->genRandNum(-3,3); //Little random offset added.
     std::vector<DiskInfo> disks       = this->getDisksInfo(site,num_of_cpus);
 
     //Info Printout
@@ -104,7 +104,7 @@ std::map<std::string, std::map<std::string, CPUInfo>> Parser::getSiteNameCPUInfo
     
     for(int cpu_num = 0; cpu_num < num_of_cpus; cpu_num++){
       CPUInfo cpu;
-      cpu.cores      = 32 + this->genRandNum(-3,3);                  //Assumption of 32 cores in calculating cpus. Little random offset added.
+      cpu.cores      = 32;                  //Assumption of 32 cores in calculating cpus. 
       cpu.speed      = this->genRandNum(10,20)*1e8;                  // Assumption
       cpu.BW_CPU     = this->genRandNum(10,20)*1e11;                 // Assumption 
       cpu.LAT_CPU    = 0;                                            // Assumption 
