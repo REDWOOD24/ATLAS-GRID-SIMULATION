@@ -3,7 +3,7 @@
 
 PANDA_DISPATCHER::PANDA_DISPATCHER(sg4::Engine* _e){e = _e;}
 
-void PANDA_DISPATCHER::dispatch_jobs(std::vector<Job>& jobs, sg4::NetZone* platform)
+void PANDA_DISPATCHER::dispatch_jobs(JobQueue& jobs, sg4::NetZone* platform)
 {
   std::vector<Host> cpus;
   std::vector<subJob> subjobs;
@@ -191,9 +191,9 @@ std::vector<subJob> PANDA_DISPATCHER::splitJobIntoSubjobs(Job& job, size_t max_f
     // Start with creating subjobs
     std::vector<subJob> subjobs;
 
-    size_t total_read_size = job.input_storage;
+    size_t total_read_size  = job.input_storage;
     size_t total_write_size = job.output_storage;
-    size_t total_flops = job.flops;
+    size_t total_flops      = job.flops;
 
     // Calculate the total number of subjobs needed based on FLOPs and storage requirements
     size_t num_subjobs = std::max(
@@ -205,17 +205,15 @@ std::vector<subJob> PANDA_DISPATCHER::splitJobIntoSubjobs(Job& job, size_t max_f
     );
 
     // Calculate FLOPs and storage per subjob
-    size_t flops_per_subjob = total_flops / num_subjobs;
-    size_t leftover_flops = total_flops % num_subjobs;
-
-    size_t read_storage_per_subjob = (total_read_size) / num_subjobs;
-    size_t read_leftover_storage = (total_read_size) % num_subjobs;
-
+    size_t flops_per_subjob         = total_flops / num_subjobs;
+    size_t leftover_flops           = total_flops % num_subjobs;
+    size_t read_storage_per_subjob  = (total_read_size) / num_subjobs;
+    size_t read_leftover_storage    = (total_read_size) % num_subjobs;
     size_t write_storage_per_subjob = (total_write_size) / num_subjobs;
-    size_t write_leftover_storage = (total_write_size) % num_subjobs;
+    size_t write_leftover_storage   = (total_write_size) % num_subjobs;
 
       
-    std::map<std::string, size_t> read_files = job.input_files;
+    std::map<std::string, size_t> read_files  = job.input_files;
     std::map<std::string, size_t> write_files = job.output_files;
 
     for (size_t i = 0; i < num_subjobs; ++i) {
@@ -268,12 +266,13 @@ std::vector<subJob> PANDA_DISPATCHER::splitJobIntoSubjobs(Job& job, size_t max_f
 }
 
 
-void PANDA_DISPATCHER::allocateResourcesToSubjobs(std::vector<Host>& cpus, std::vector<Job>& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob, size_t max_storage_per_subjob, std::vector<subJob>& all_subjobs) {
+void PANDA_DISPATCHER::allocateResourcesToSubjobs(std::vector<Host>& cpus, JobQueue& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob, size_t max_storage_per_subjob, std::vector<subJob>& all_subjobs) {
 
   
-    for (auto& job : jobs) {
+    while (!jobs.empty()) {
+        Job job = jobs.top();
         auto subjobs = splitJobIntoSubjobs(job, max_flops_per_subjob, max_storage_per_subjob);
-
+	jobs.pop();
         for (auto& subjob : subjobs) {
             Host* best_cpu = findBestAvailableCPU(cpus, subjob, weights);
 

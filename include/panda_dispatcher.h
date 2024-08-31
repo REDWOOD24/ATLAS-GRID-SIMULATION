@@ -63,7 +63,7 @@ public:
 
   static void execute_subjob(const subJob s);
   void create_actors(const std::vector<subJob>& subjobs);
-  void dispatch_jobs(std::vector<Job>& jobs, sg4::NetZone* platform);
+  void dispatch_jobs(JobQueue& jobs, sg4::NetZone* platform);
   void update_all_disks_content(std::vector<subJob>& subjobs);
   void update_disk_content(sg4::Disk* d, const std::string content);
   std::string get_disk_content(const std::map<std::string, size_t>& inputMap);
@@ -74,7 +74,7 @@ public:
   double getTotalSize(const std::map<std::string, size_t>& files);
   Host* findBestAvailableCPU(std::vector<Host>& cpus, subJob& sj, const std::map<std::string, double>& weights);
   std::vector<subJob> splitJobIntoSubjobs(Job& job, size_t max_flops_per_subjob, size_t max_storage_per_subjob);
-  void allocateResourcesToSubjobs(std::vector<Host>& cpus, std::vector<Job>& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob,  size_t max_storage_per_subjob, std::vector<subJob>& all_subjobs);
+  void allocateResourcesToSubjobs(std::vector<Host>& cpus, JobQueue& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob,  size_t max_storage_per_subjob, std::vector<subJob>& all_subjobs);
   void printJobInfo(subJob& subjob);  
   
 private:

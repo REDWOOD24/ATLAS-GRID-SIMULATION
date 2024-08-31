@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
    //Parse json with information about ATLAS sites
    const std::string         siteConnInfoFile  = std::string(argv[1]);
-   const std::string         siteInfoFile  = std::string(argv[2]);
+   const std::string         siteInfoFile      = std::string(argv[2]);
    std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile);
    auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
    auto                      siteConnInfo      = parser->getSiteConnInfo();
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
    
    //Create Jobs
    std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
-   auto jobs = jm->create_jobs(2);
+   auto jobs = jm->create_jobs(20);
 
    //Pass to Dispatcher
    std::unique_ptr<PANDA_DISPATCHER> dispatcher = std::make_unique<PANDA_DISPATCHER>(&e);
