@@ -92,8 +92,6 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 
 ## Initializing Sites (Sample Site)
 
-## Site Details
-
 ### INFN-ROMA3
 
 **CPUs:**  37 ±(3) 
@@ -130,7 +128,7 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
                         \ Jobs
                          \
                           +------------+     +---------------------------------+       +---------+ 
-                          | Algorithm  | --> | Sub-Jobs allocated to Resources |  -->  | Output  |
+                          | Dispatcher | --> | Sub-Jobs allocated to Resources |  -->  | Output  |
                           +------------+     +---------------------------------+       +---------+ 
                          /
                         / Resources
