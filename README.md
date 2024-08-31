@@ -94,7 +94,7 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 
 ## Site Details
 
-### AGLT2
+### INFN-ROMA3
 
 **CPUs:**  37 ±(3) 
 
@@ -112,7 +112,7 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 ### Notes
 
 - Information obtained from site data dumps.
-- CPUS based off GFLOPS obtained from data dumps from site, estimating 500 GFLOPS per core per cpu.
+- CPUs based off GFLOPS obtained from data dumps from site, estimating 500 GFLOPS per core per cpu.
 - Other estimates such as latency for connections, disk read and write bandwidths, cpu speed based on estimates.
 
 ## Job Manager
