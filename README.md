@@ -177,14 +177,25 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 ## SimGrid Output for Sub-Job
 
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 50279.824121] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.00000109.root' of size '10005685' on host 'INFN-ROMA3_cpu-12'
+
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 100536.249206] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.0000011.root' of size '10001028' on host 'INFN-ROMA3_cpu-12'
+
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 150734.937680] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.00000110.root' of size '9989540' on host 'INFN-ROMA3_cpu-12'
+
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 200958.467982] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.00000111.root' of size '9994482' on host 'INFN-ROMA3_cpu-12'
+
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 200958.468178] [ATLAS_SIMULATION/INFO] Finished executing '312646.000000' flops' on host 'INFN-ROMA3_cpu-12'
+
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 310807.396399] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000111.root' of size '9996252' on host 'INFN-ROMA3_cpu-12'
+
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 420653.248286] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000112.root' of size '9995969' on host 'INFN-ROMA3_cpu-12'
+
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 530640.754354] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000113.root' of size '10008864' on host 'INFN-ROMA3_cpu-12'
+
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 640512.065964] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000114.root' of size '9998290' on host 'INFN-ROMA3_cpu-12'
+
 [INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 750405.459849] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000115.root' of size '10000298' on host 'INFN-ROMA3_cpu-12'
-[790672.163145] [host_energy/INFO] Energy consumption of host INFN-ROMA3_cpu-12: 50603018.491319 Joules
+[790672.163145]
+
+[host_energy/INFO] Energy consumption of host INFN-ROMA3_cpu-12: 50603018.491319 Joules
 
