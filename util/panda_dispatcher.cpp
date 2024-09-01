@@ -5,20 +5,23 @@ PANDA_DISPATCHER::PANDA_DISPATCHER(sg4::Engine* _e){e = _e;}
 
 void PANDA_DISPATCHER::dispatch_jobs(JobQueue& jobs, sg4::NetZone* platform)
 {
-  std::vector<Host> cpus;
+  std::vector<Site> sites;
   std::vector<subJob> subjobs;
-  this->getHostsINFO(platform,cpus);
-  this->allocateResourcesToSubjobs(cpus,jobs, weights, max_flops_per_subjob, max_storage_per_subjob, subjobs);
+  this->getHostsINFO(platform,sites);
+  this->allocateResourcesToSubjobs(sites,jobs, weights, max_flops_per_subjob, max_storage_per_subjob, subjobs);
   this->update_all_disks_content(subjobs);
   this->create_actors(subjobs);
 }
 
-void PANDA_DISPATCHER::getHostsINFO(sg4::NetZone* platform, std::vector<Host>& _cpus)
+void PANDA_DISPATCHER::getHostsINFO(sg4::NetZone* platform, std::vector<Site>& _sites)
 {
-  std::vector<Host> cpus;
-  auto sites = platform->get_children();
-  for(const auto& site: sites)
+  std::priority_queue<Site> site_queue;
+  auto all_sites = platform->get_children();
+  for(const auto& site: all_sites)
     {
+    Site _site;
+    _site.name = site->get_cname();
+    _site.priority = 2; //p->genRandNum(1,10);
     for(const auto& host: site->get_all_hosts())
       {
         Host cpu;
@@ -35,10 +38,13 @@ void PANDA_DISPATCHER::getHostsINFO(sg4::NetZone* platform, std::vector<Host>& _
           d.write_bw = disk->get_write_bandwidth();
           cpu.disks.push_back(d);
 	  }
-        cpus.push_back(cpu);
+        _site.cpus.push_back(cpu);
       }
+      site_queue.push(_site);
     }
-  std::move(std::begin(cpus), std::end(cpus), std::back_inserter(_cpus));
+  std::vector<Site> sites;
+  while (!site_queue.empty()) {sites.push_back(site_queue.top()); site_queue.pop();}
+  std::move(std::begin(sites), std::end(sites), std::back_inserter(_sites));
 
 }
 
@@ -174,15 +180,10 @@ Host* PANDA_DISPATCHER::findBestAvailableCPU(std::vector<Host>& cpus, subJob& sj
         if (score > best_score) {
             best_score = score;
             best_cpu = &cpu;
-            best_disk = current_best_disk;
+            best_cpu->best_disk = current_best_disk;
         }
     }
 
-    if (!best_cpu || best_disk.empty()) {
-        throw std::runtime_error("Failed to find a suitable Resources for job.");
-    }
-
-    best_cpu->best_disk = best_disk;
     return best_cpu;
 }
 
@@ -266,21 +267,34 @@ std::vector<subJob> PANDA_DISPATCHER::splitJobIntoSubjobs(Job& job, size_t max_f
 }
 
 
-void PANDA_DISPATCHER::allocateResourcesToSubjobs(std::vector<Host>& cpus, JobQueue& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob, size_t max_storage_per_subjob, std::vector<subJob>& all_subjobs) {
+void PANDA_DISPATCHER::allocateResourcesToSubjobs(std::vector<Site>& sites, JobQueue& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob, size_t max_storage_per_subjob, std::vector<subJob>& all_subjobs) {
 
   
-    while (!jobs.empty()) {
+    while (!jobs.empty())
+      {
         Job job = jobs.top();
         auto subjobs = splitJobIntoSubjobs(job, max_flops_per_subjob, max_storage_per_subjob);
-	jobs.pop();
-        for (auto& subjob : subjobs) {
-            Host* best_cpu = findBestAvailableCPU(cpus, subjob, weights);
-
-            // Mark the selected CPU and deduct storage from the selected disk
-            best_cpu->is_taken = true;
-            for(auto& d: best_cpu->disks)
-	      {if(d.name == best_cpu->best_disk ) {d.storage -= (this->getTotalSize(subjob.input_files) + this->getTotalSize(subjob.output_files));}}
-
+        for (auto& subjob : subjobs)
+	  {
+	  Host* best_cpu = nullptr;
+	  for(auto& site: sites) {
+	    best_cpu = findBestAvailableCPU(site.cpus, subjob, weights);
+	    if (best_cpu) //Found a CPU. Mark the selected CPU and deduct storage from the selected disk.
+	      {
+	       best_cpu->is_taken = true;
+	       for(auto& d: best_cpu->disks)
+		 {
+		   if(d.name == best_cpu->best_disk )
+		     {
+		       d.storage -= (this->getTotalSize(subjob.input_files) + this->getTotalSize(subjob.output_files));
+		     }
+		 }
+	       break;
+	      } 
+	  }
+            
+	  if(!best_cpu){throw std::runtime_error("Failed to find a suitable Resources for job.");}
+           
 	    subjob.read_host  =  best_cpu->name;
 	    subjob.write_host =	 best_cpu->name;
             subjob.comp_host  =	 best_cpu->name;
@@ -288,11 +302,11 @@ void PANDA_DISPATCHER::allocateResourcesToSubjobs(std::vector<Host>& cpus, JobQu
 	    subjob.disk       =  best_cpu->best_disk;
 
 	    this->printJobInfo(subjob);
-        }
+	  }
 
       std::move(std::begin(subjobs), std::end(subjobs), std::back_inserter(all_subjobs));
-
-    }
+      jobs.pop();
+      }
 
 } 
 
