@@ -34,22 +34,31 @@ struct subJob {
 };
 
 
-//Need basic characterization of hosts and disks to find the optimal one for each job.
+//Need basic characterization of sites, hosts and disks to find the optimal one for each job.
 struct disk_params {
   std::string name{};
-  size_t storage{};  // in MB
-  double read_bw{};  // in GB/s
-  double write_bw{}; // in GB/s
+  size_t      storage{};  
+  double      read_bw{}; 
+  double      write_bw{};
 };
 
 struct Host {
-  std::string name{};
-  double speed{};    // in GHz
-  int cores{};
-  bool is_taken{};
+  std::string              name{};
+  double                   speed{};
+  int                      cores{};
+  bool                     is_taken{};
   std::vector<disk_params> disks{};
-  std::string best_disk{};
-};  // Disks by their ID
+  std::string              best_disk{};
+};
+
+struct Site {
+  std::string       name{};
+  int               priority{};
+  std::vector<Host> cpus{};
+  bool operator<(const Site& other) const {return priority <= other.priority;}
+};
+
+
 
 
 class PANDA_DISPATCHER
@@ -67,18 +76,19 @@ public:
   void update_all_disks_content(std::vector<subJob>& subjobs);
   void update_disk_content(sg4::Disk* d, const std::string content);
   std::string get_disk_content(const std::map<std::string, size_t>& inputMap);
-  void getHostsINFO(sg4::NetZone* platform, std::vector<Host>& cpus);
+  void getHostsINFO(sg4::NetZone* platform, std::vector<Site>& sites);
 
   //Functions needed to specify hosts for jobs
   double calculateWeightedScore(Host& cpu, subJob& sj, const std::map<std::string, double>& weights, std::string& best_disk_name);
   double getTotalSize(const std::map<std::string, size_t>& files);
   Host* findBestAvailableCPU(std::vector<Host>& cpus, subJob& sj, const std::map<std::string, double>& weights);
   std::vector<subJob> splitJobIntoSubjobs(Job& job, size_t max_flops_per_subjob, size_t max_storage_per_subjob);
-  void allocateResourcesToSubjobs(std::vector<Host>& cpus, JobQueue& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob,  size_t max_storage_per_subjob, std::vector<subJob>& all_subjobs);
+  void allocateResourcesToSubjobs(std::vector<Site>& sites, JobQueue& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob,  size_t max_storage_per_subjob, std::vector<subJob>& all_subjobs);
   void printJobInfo(subJob& subjob);  
   
 private:
   sg4::Engine* e;
+  std::unique_ptr<Parser> p = std::make_unique<Parser>();
 
   const std::map<std::string, double> weights = {
         {"speed", 1.0},
