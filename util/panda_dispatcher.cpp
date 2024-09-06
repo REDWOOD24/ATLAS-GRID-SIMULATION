@@ -8,7 +8,7 @@ void PANDA_DISPATCHER::dispatch_jobs(JobQueue& jobs, sg4::NetZone* platform)
   std::vector<Site> sites;
   std::vector<subJob> subjobs;
   this->getHostsINFO(platform,sites);
-  this->allocateResourcesToSubjobs(sites,jobs, weights, max_flops_per_subjob, max_storage_per_subjob, subjobs);
+  this->allocateResourcesToSubjobs(sites,jobs, weights, this->max_flops_per_subjob, this->max_storage_per_subjob, subjobs);
   this->update_all_disks_content(subjobs);
   this->create_actors(subjobs);
 }
@@ -21,7 +21,7 @@ void PANDA_DISPATCHER::getHostsINFO(sg4::NetZone* platform, std::vector<Site>& _
     {
     Site _site;
     _site.name = site->get_cname();
-    _site.priority = 2; //p->genRandNum(1,10);
+    int _cpu_count = 0;
     for(const auto& host: site->get_all_hosts())
       {
         Host cpu;
@@ -39,7 +39,11 @@ void PANDA_DISPATCHER::getHostsINFO(sg4::NetZone* platform, std::vector<Site>& _
           cpu.disks.push_back(d);
 	  }
         _site.cpus.push_back(cpu);
+	_cpu_count++;
+	//Site priority is determined by quality of cpus available
+	_site.priority += cpu.speed/1e8 * this->weights.at("speed") + cpu.cores * this->weights.at("cores");
       }
+    _site.priority = std::round(_site.priority/_cpu_count); //Normalize
       site_queue.push(_site);
     }
   std::vector<Site> sites;
@@ -153,8 +157,8 @@ double PANDA_DISPATCHER::calculateWeightedScore(Host& cpu, subJob& sj, const std
     score += best_disk_score * weights.at("disk");
 
     //If job is computation or storage intensive, this should impact the score
-    if(sj.flops > 10*max_flops_per_subjob)                  score  += cpu.speed/1e8;
-    if(total_required_storage > 50*max_storage_per_subjob)  score  += total_required_storage/1e10;
+    if(sj.flops > 10*this->max_flops_per_subjob)                  score  += cpu.speed/1e8;
+    if(total_required_storage > 50*this->max_storage_per_subjob)  score  += total_required_storage/1e10;
 
     return score;
 }
@@ -313,23 +317,23 @@ void PANDA_DISPATCHER::allocateResourcesToSubjobs(std::vector<Site>& sites, JobQ
 void PANDA_DISPATCHER::printJobInfo(subJob& subjob)
 {
       std::cout << "----------------------------------------------------------------------" << std::endl;
-      std::cout << "Submitting .. "        <<  subjob.id     << std::endl;
-      std::cout << "FLOPs to be executed: "    <<  subjob.flops  << std::endl;
-      std::cout << "Files to be read: "    <<  std::endl;
+      std::cout << "\033[32m" << "Submitting .. "          <<  subjob.id     << std::endl;
+      std::cout << "\033[37m" << "FLOPs to be executed: "  <<  subjob.flops  << std::endl;
+      std::cout << "\033[33m" << "Files to be read: "      <<  std::endl;
       for(const auto& file: subjob.input_files){
       std::cout << "File: " << std::setw(40) << std::left << file.first
       << " Size: " << std::setw(10) << std::right << file.second
       << std::endl;}
-      std::cout << "Files to be written: " <<  std::endl;
+      std::cout << "\033[36m" << "Files to be written: " <<  std::endl;
       for(const auto& file: subjob.output_files){
       std::cout << "File: " << std::setw(40) << std::left << file.first
       << " Size: " << std::setw(10) << std::right << file.second
       << std::endl;}
-      std::cout << "Cores Used: " << subjob.cores <<  std::endl;
-      std::cout << "Disks Used: " << subjob.disk <<  std::endl;
-      std::cout << "Read Host : " << subjob.read_host <<  std::endl;
-      std::cout << "Write Host: " << subjob.write_host <<  std::endl;
-      std::cout << "Comp Host : " << subjob.comp_host <<  std::endl;
+      std::cout << "\033[35m" << "Cores Used: "  << subjob.cores      <<  std::endl;
+      std::cout << "\033[0m"  << "Disk Used :  " << subjob.disk       <<  std::endl;
+      std::cout << "\033[31m" << "Read Host : "  << subjob.read_host  <<  std::endl;
+      std::cout << "\033[32m" << "Write Host: "  << subjob.write_host <<  std::endl;
+      std::cout << "\033[34m" << "Comp Host : "  << subjob.comp_host  << "\033[0m" << std::endl;
 
       std::cout << "----------------------------------------------------------------------" << std::endl;
 
