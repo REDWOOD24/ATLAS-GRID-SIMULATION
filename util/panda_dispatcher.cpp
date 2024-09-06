@@ -177,7 +177,7 @@ Host* PANDA_DISPATCHER::findBestAvailableCPU(std::vector<Host>& cpus, subJob& sj
         std::string current_best_disk;
         double score = calculateWeightedScore(cpu, sj, weights, current_best_disk);
 	//std::cout << score << std::endl;
-        if (score > best_score) {
+        if (score > best_score && !current_best_disk.empty()) {
             best_score = score;
             best_cpu = &cpu;
             best_cpu->best_disk = current_best_disk;
