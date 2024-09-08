@@ -20,41 +20,40 @@
 #include "actions.h"
 namespace sg4 = simgrid::s4u;
 
-//A job is made of many subJobs. Information needed to a specify a subJob                                  
+//A job is made of many subJobs. Information needed to a specify a subJob.             
 struct subJob {
   std::string                       id{};
   double                            flops{};
   std::map<std::string, size_t>     input_files{};
   std::map<std::string, size_t>     output_files{};
-  std::string                       read_host{};
-  std::string                       comp_host{};
-  std::string                       write_host{};
   int                               cores{};
   std::string                       disk{};
+  std::string                       comp_host{};
 };
-
 
 //Need basic characterization of sites, hosts and disks to find the optimal one for each job.
 struct disk_params {
-  std::string name{};
-  size_t      storage{};  
-  double      read_bw{}; 
-  double      write_bw{};
+  std::string                name{};
+  size_t                     storage{};  
+  double                     read_bw{}; 
+  double                     write_bw{};
 };
 
 struct Host {
-  std::string              name{};
-  double                   speed{};
-  int                      cores{};
-  bool                     is_taken{};
-  std::vector<disk_params> disks{};
-  std::string              best_disk{};
+  std::string                name{};
+  double                     speed{};
+  int                        cores{};
+  size_t                     flops_available{};
+  std::set<disk_params*>     disks{};
+  std::set<subJob*>          subjobs{};
+  bool operator<(const Host& other) const {return flops_available <= other.flops_available;}
 };
 
 struct Site {
-  std::string       name{};
-  int               priority{};
-  std::vector<Host> cpus{};
+  std::string                name{};
+  int                        priority{};
+  std::set<Host*>            cpus{};
+  int                        cpus_in_use{};
   bool operator<(const Site& other) const {return priority <= other.priority;}
 };
 
@@ -70,21 +69,21 @@ public:
  ~PANDA_DISPATCHER(){};
 
 
-  static void execute_subjob(const subJob s);
-  void create_actors(const std::vector<subJob>& subjobs);
+  static void execute_subjob(const std::set<subJob*>& subjobs);
+  void create_actors(const std::set<Host*>& hosts_with_jobs);
   void dispatch_jobs(JobQueue& jobs, sg4::NetZone* platform);
-  void update_all_disks_content(std::vector<subJob>& subjobs);
+  void update_all_disks_content(const std::set<Host*>& hosts_with_jobs);
   void update_disk_content(sg4::Disk* d, const std::string content);
   std::string get_disk_content(const std::map<std::string, size_t>& inputMap);
   void getHostsINFO(sg4::NetZone* platform, std::vector<Site>& sites);
 
   //Functions needed to specify hosts for jobs
-  double calculateWeightedScore(Host& cpu, subJob& sj, const std::map<std::string, double>& weights, std::string& best_disk_name);
+  double calculateWeightedScore(Host* cpu, subJob* sj, const std::map<std::string, double>& weights, std::string& best_disk_name);
   double getTotalSize(const std::map<std::string, size_t>& files);
-  Host* findBestAvailableCPU(std::vector<Host>& cpus, subJob& sj, const std::map<std::string, double>& weights);
-  std::vector<subJob> splitJobIntoSubjobs(Job& job, size_t max_flops_per_subjob, size_t max_storage_per_subjob);
-  void allocateResourcesToSubjobs(std::vector<Site>& sites, JobQueue& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob,  size_t max_storage_per_subjob, std::vector<subJob>& all_subjobs);
-  void printJobInfo(subJob& subjob);  
+  Host* findBestAvailableCPU(std::set<Host*>& cpus, subJob* sj, const std::map<std::string, double>& weights);
+  std::set<subJob*> splitJobIntoSubjobs(Job& job, size_t max_flops_per_subjob, size_t max_storage_per_subjob);
+  void allocateResourcesToSubjobs(std::vector<Site>& sites, JobQueue& jobs, const std::map<std::string, double>& weights, size_t max_flops_per_subjob,  size_t max_storage_per_subjob, std::set<Host*>&   hosts_with_jobs);
+  void printJobInfo(subJob* subjob);  
   
 private:
   sg4::Engine* e;
