@@ -20,7 +20,7 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
     std::string suffix = ".root";
     int input_files    = p->genRandNum(100,200);
 
-    for(int file = 0; file < input_files; file++){
+    for(int file = 1; file <= input_files; file++){
       std::string name      = prefix + std::to_string(file)+suffix;
       size_t      size      = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
       job.input_files[name] = size;
@@ -33,7 +33,7 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
     suffix           = ".root";
     int	output_files = p->genRandNum(100,200);
 
-    for(int file = 0; file < output_files; file++){
+    for(int file = 1; file <= output_files; file++){
       std::string name       = prefix + std::to_string(file)+suffix;
       size_t      size       = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
       job.output_files[name] = size;
