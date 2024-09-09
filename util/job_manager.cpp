@@ -10,7 +10,7 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
     Job job;
     job._id            = i;
     job.id             = "Job-"+std::to_string(i);
-    job.flops          = p->GaussianDistribution(1e7,10000);
+    job.flops          = std::round(p->GaussianDistribution(1e7,10000));
     job.input_storage  = 0;
     job.output_storage = 0;
     job.priority       = 2; //p->genRandNum(1,10);

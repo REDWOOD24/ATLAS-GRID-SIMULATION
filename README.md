@@ -8,6 +8,7 @@ Before you begin, ensure you have the following packages installed:
 
 - **SimGrid v3.35** 
 - **Boost**
+- **HDF5** (required for output storage)
 
 These packages are essential for building and running the simulation.
 
@@ -46,7 +47,7 @@ Follow these steps to build the project on lxplus:
 ## Run Instructions
 
    ```bash
-  ./atlas-grid-simulator ../data/site_conn_info.json ../data/site_info.json
+  ./atlas-grid-simulator ../data/site_conn_info.json ../data/site_info.json ../job_logs/log.h5
    ```
 
 ## Platform
@@ -92,18 +93,17 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 
 ## Initializing Sites (Sample Site)
 
-### INFN-ROMA3
+### praguelcg2
 
-**CPUs:**  37 ±(3) 
+**CPUs:**  1277 ±(3) 
 
 **Cores:** 32
 
-**Disk Information:**
+**Disk Information per CPU:**
 
-- **CERN-PROD_DATADISK:**        625703 GiB
-- **INFN-ROMA3_DATADISK:**       54 GiB
-- **INFN-ROMA3_LOCALGROUPDISK:** 973 GiB
-- **INFN-ROMA3_SCRATCHDISK:**    86 GiB
+- **PRAGUELCG2_DATADISK:**         2927 GiB
+- **PRAGUELCG2_LOCALGROUPDISK:**   517 GiB
+- **PRAGUELCG2_SCRATCHDISK:**      86 GiB
 
 ---
 
@@ -140,60 +140,46 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 ## Sample Sub-Job
 
 ## Sub-Job Details
-- **Sub-Job ID:** Job-2-subJob-3
-- **FLOPs to be Executed:** 312,646
+- **Sub-Job ID:** Job-18-subJob-13
+- **FLOPs to be Executed:** 400,451
 
 ### Files to be Read
 | File Path                            | Size (Bytes) |
 |--------------------------------------|--------------|
-| /input/user.input.2.00000109.root    | 10,005,685   |
-| /input/user.input.2.0000011.root     | 10,001,028   |
-| /input/user.input.2.00000110.root    | 9,989,540    |
-| /input/user.input.2.00000111.root    | 9,994,482    |
+| /input/user.input.18.0000035.root    | 9,992,671    |
+| /input/user.input.18.0000036.root    | 9,990,360    |
+| /input/user.input.18.0000037.root    | 10,011,170   |
+| /input/user.input.18.0000038.root    | 9,986,847    |
+| /input/user.input.18.0000039.root    | 10,011,480   |
 
 ### Files to be Written
 | File Path                            | Size (Bytes) |
 |--------------------------------------|--------------|
-| /output/user.output.2.00000111.root  | 9,996,252    |
-| /output/user.output.2.00000112.root  | 9,995,969    |
-| /output/user.output.2.00000113.root  | 10,008,864   |
-| /output/user.output.2.00000114.root  | 9,998,290    |
-| /output/user.output.2.00000115.root  | 10,000,298   |
+| /output/user.output.18.0000047.root  | 10,011,591   |
+| /output/user.output.18.0000048.root  | 10,000,451   |
+| /output/user.output.18.0000049.root  | 10,000,584   |
+| /output/user.output.18.000005.root   | 9,991,906    |
+
 
 
 ### Resource Usage
 - **Cores Used:** 32
-- **Disks Used:** CERN-PROD_DATADISK
+- **Disks Used:** PRAGUELCG2_LOCALGROUPDISK
 
-### Hosts
-- **Read Host:**    INFN-ROMA3_cpu-12
-- **Write Host:**   INFN-ROMA3_cpu-12
-- **Compute Host:** INFN-ROMA3_cpu-12
+### Host
+- **Compute Host:** praguelcg2_cpu-999
 
 
 
 ## SimGrid Output for Sub-Job
 
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 50279.824121] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.00000109.root' of size '10005685' on host 'INFN-ROMA3_cpu-12'
+### HOST-praguelcg2_cpu-999
 
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 100536.249206] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.0000011.root' of size '10001028' on host 'INFN-ROMA3_cpu-12'
-
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 150734.937680] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.00000110.root' of size '9989540' on host 'INFN-ROMA3_cpu-12'
-
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 200958.467982] [ATLAS_SIMULATION/INFO] Finished reading file '/data/input/user.input.2.00000111.root' of size '9994482' on host 'INFN-ROMA3_cpu-12'
-
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 200958.468178] [ATLAS_SIMULATION/INFO] Finished executing '312646.000000' flops' on host 'INFN-ROMA3_cpu-12'
-
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 310807.396399] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000111.root' of size '9996252' on host 'INFN-ROMA3_cpu-12'
-
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 420653.248286] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000112.root' of size '9995969' on host 'INFN-ROMA3_cpu-12'
-
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 530640.754354] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000113.root' of size '10008864' on host 'INFN-ROMA3_cpu-12'
-
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 640512.065964] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000114.root' of size '9998290' on host 'INFN-ROMA3_cpu-12'
-
-[INFN-ROMA3_cpu-12:Job-2-subJob-3:(34) 750405.459849] [ATLAS_SIMULATION/INFO] Finished writing file '/data/output/user.output.2.00000115.root' of size '10000298' on host 'INFN-ROMA3_cpu-12'
-[790672.163145]
-
-[host_energy/INFO] Energy consumption of host INFN-ROMA3_cpu-12: 50603018.491319 Joules
+- **ID**: "Job-18-subJob-13"
+- **FLOPS EXECUTED**: 400451 FLOPs
+- **FILES READ SIZE**: 49992528 Bytes
+- **FILES WRITTEN SIZE**: 40004532 Bytes
+- **READ IO TIME**: 0.00207438 s
+- **WRITE IO TIME**: 0.00370412 s
+- **FLOPS EXEC TIME**: 0.000235559 s
 

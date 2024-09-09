@@ -26,7 +26,7 @@
 struct Job {
   int                              _id{};
   std::string                       id{};
-  double                            flops{};
+  int                               flops{};
   std::map<std::string, size_t>     input_files{};
   std::map<std::string, size_t>     output_files{};
   size_t                            input_storage{};

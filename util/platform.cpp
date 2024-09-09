@@ -83,7 +83,7 @@ void Platform::initialize_site_connections(sg4::NetZone* platform, std::map<std:
 void Platform::initialize_plugins()
 {
   sg_storage_file_system_init();
-  sg_host_energy_plugin_init();
+  //sg_host_energy_plugin_init();
 }
 
 
