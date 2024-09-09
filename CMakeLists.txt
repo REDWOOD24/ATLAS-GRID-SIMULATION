@@ -21,13 +21,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 # Find SimGrid and Boost
 find_package(SimGrid REQUIRED)
 find_package(Boost REQUIRED)
+find_package(HDF5 REQUIRED COMPONENTS CXX )
+
 
 # Add json subdir
 add_subdirectory(json)
 list( APPEND BUILT_PACKAGES "json")
 
 # include directories
-include_directories(${SimGrid_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
+include_directories(${SimGrid_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${HDF5_CXX_INCLUDE_DIRS})
 include_directories(include/)
 include_directories(plugins/include/)
 
@@ -45,5 +47,6 @@ add_executable(atlas-grid-simulator ${SOURCE_FILES})
 target_link_libraries(atlas-grid-simulator
             ${SimGrid_LIBRARY}
 	    ${Boost_LIBRARIES}
+	    ${HDF5_CXX_LIBRARIES}
             )
 

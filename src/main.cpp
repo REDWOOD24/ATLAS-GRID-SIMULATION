@@ -10,7 +10,6 @@
 
 
 #include <iostream>
-#include <iostream>
 #include <vector>
 #include <map>
 #include <set>
@@ -28,12 +27,13 @@
 int main(int argc, char** argv)
 {
    //Usage 
-   std::string usage = std::string("usage: ") + argv[0] + " ../data/site_conn_info.json ../data/site_info.json";
-   if(argc != 3){std::cout << usage << std::endl; exit(-1);}
+   std::string usage = std::string("usage: ") + argv[0] + " ../data/site_conn_info.json ../data/site_info.json ../job_logs/log.h5";
+   if(argc != 4){std::cout << usage << std::endl; exit(-1);}
 
    //Parse json with information about ATLAS sites
    const std::string         siteConnInfoFile  = std::string(argv[1]);
    const std::string         siteInfoFile      = std::string(argv[2]);
+   const std::string         outputFile        = std::string(argv[3]);
    std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile);
    auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
    auto                      siteConnInfo      = parser->getSiteConnInfo();
@@ -61,13 +61,13 @@ int main(int argc, char** argv)
    auto jobs = jm->create_jobs(20);
 
    //Pass to Dispatcher
-   std::unique_ptr<PANDA_DISPATCHER> dispatcher = std::make_unique<PANDA_DISPATCHER>(&e);
+   std::unique_ptr<PANDA_DISPATCHER> dispatcher = std::make_unique<PANDA_DISPATCHER>(&e,outputFile);
    dispatcher->dispatch_jobs(jobs,platform);
    
    //Run Simulation
    platform->seal();
+   std::cout << "Simulation in Progress ...";
    e.run();
-   
-
+   std::cout << std::endl << "Simulation Finished Succesfully! Information written out at: " << outputFile << std::endl;
    return 0;
 }
