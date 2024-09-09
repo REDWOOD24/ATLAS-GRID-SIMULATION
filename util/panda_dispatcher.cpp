@@ -1,13 +1,32 @@
 #include "panda_dispatcher.h"
 #include <iostream>
 
-PANDA_DISPATCHER::PANDA_DISPATCHER(sg4::Engine* _e){e = _e;}
+
+PANDA_DISPATCHER::PANDA_DISPATCHER(sg4::Engine* _e, const std::string& _outputFile){e = _e; outputFile = _outputFile;}
+
+H5::H5File    PANDA_DISPATCHER::h5_file;
+H5::CompType  PANDA_DISPATCHER::datatype;
+
+
+void PANDA_DISPATCHER::h5init()
+{
+  h5_file = H5::H5File(this->outputFile.c_str() , H5F_ACC_TRUNC);
+  datatype = sizeof(output);
+  datatype.insertMember("ID",                  HOFFSET(output, id),                 H5::StrType(H5::PredType::C_S1, H5T_VARIABLE)); 
+  datatype.insertMember("FLOPS EXECUTED",      HOFFSET(output,flops_exec),               H5::PredType::NATIVE_UINT);
+  datatype.insertMember("FILES READ SIZE",     HOFFSET(output,files_read_size),     H5::PredType::NATIVE_UINT);
+  datatype.insertMember("FILES WRITTEN SIZE",  HOFFSET(output,files_written_size),  H5::PredType::NATIVE_UINT);
+  datatype.insertMember("READ IO TIME",        HOFFSET(output,read_IO_time),        H5::PredType::NATIVE_FLOAT);
+  datatype.insertMember("WRITE IO TIME",       HOFFSET(output,write_IO_time),       H5::PredType::NATIVE_FLOAT);
+  datatype.insertMember("FLOPS EXEC TIME",     HOFFSET(output,flops_exec_time),     H5::PredType::NATIVE_FLOAT);
+}
 
 void PANDA_DISPATCHER::dispatch_jobs(JobQueue& jobs, sg4::NetZone* platform)
 {
-  std::vector<Site*> sites;
-  std::set<Host*>    hosts_with_jobs;
+  std::vector<Site*>  sites;
+  std::set<Host*>     hosts_with_jobs;
 
+  this->h5init();
   this->getHostsINFO(platform,sites);
   this->allocateResourcesToSubjobs(sites,jobs, weights, this->max_flops_per_subjob, this->max_storage_per_subjob, hosts_with_jobs);
   this->update_all_disks_content(hosts_with_jobs);
@@ -57,11 +76,13 @@ void PANDA_DISPATCHER::getHostsINFO(sg4::NetZone* platform, std::vector<Site*>& 
 
 void PANDA_DISPATCHER::execute_subjob(const std::vector<subJob*>& subjobs)
 {
+
+  std::vector<output> outputs;
   for(const auto& s : subjobs)
     {
       //Parse Job Info
       std::string                    id            = s->id;
-      double                         flops         = s->flops;
+      int                            flops         = s->flops;
       std::map<std::string, size_t>  input_files   = s->input_files;
       std::map<std::string, size_t>  output_files  = s->output_files;
       std::string                    read_host     = s->comp_host;
@@ -70,9 +91,13 @@ void PANDA_DISPATCHER::execute_subjob(const std::vector<subJob*>& subjobs)
       int                            cores         = s->cores;
       std::string                    disk          = s->disk;
       delete                         s;
- 
+
+      output o;
+      o.id = id.c_str();
+
+      
       //Get Engine Instance
-      const auto* e = simgrid::s4u::Engine::get_instance();
+      const auto* e = sg4::Engine::get_instance();
       
       //Find Read Disk Mount Point
       std::string read_mount;
@@ -90,20 +115,46 @@ void PANDA_DISPATCHER::execute_subjob(const std::vector<subJob*>& subjobs)
       std::unique_ptr<Actions> actions = std::make_unique<Actions>();
   
       //Read in files
+      size_t read_size = 0;
+      float  start =  sg4::Engine::get_clock();
       for(const auto& inputfile: input_files)
 	{
-	  actions->read(read_mount+inputfile.first,e->host_by_name(read_host));
+	  read_size += actions->read(read_mount+inputfile.first,e->host_by_name(read_host));
 	}
-
+      o.files_read_size     = read_size;
+      o.read_IO_time        = sg4::Engine::get_clock() - start;
+      
       //Execute FLOPS
-      actions->exec_task_multi_thread(flops,cores,comp_host);
+      int flops_exec = 0;
+      start =  sg4::Engine::get_clock();
+      flops_exec += actions->exec_task_multi_thread(flops,cores,comp_host);
+      o.flops_exec          = flops_exec;
+      o.flops_exec_time     = sg4::Engine::get_clock() - start;
 
       //Write out files
+      size_t write_size = 0;
+      start =  sg4::Engine::get_clock();
       for(const auto& outputfile: output_files)
 	{
-	  actions->write(write_mount+outputfile.first, outputfile.second, e->host_by_name(write_host));
+	  write_size += actions->write(write_mount+outputfile.first, outputfile.second, e->host_by_name(write_host));
 	}
+      o.files_written_size  = write_size;
+      o.write_IO_time       = sg4::Engine::get_clock() - start;
+      
+      //Save
+      outputs.push_back(o);
+
+      //Update Progress
+      std::cout << ".";
     }
+
+  hsize_t numberOfOutputs= outputs.size();
+  H5::DataSpace dataspace(1,&numberOfOutputs,nullptr);
+  const std::string datasetName="HOST-"+std::string(sg4::this_actor::get_host()->get_cname());
+  H5::DataSet dataset=h5_file.createDataSet(datasetName, datatype, dataspace);
+  dataset.write(outputs.data(), datatype);
+  outputs.clear();
+
 }
 
 
