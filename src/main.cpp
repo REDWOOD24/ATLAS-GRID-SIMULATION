@@ -17,6 +17,7 @@
 #include <string>
 #include <memory>
 #include <math.h>
+#include <chrono>
 #include <simgrid/s4u.hpp>
 #include "parser.h"
 #include "platform.h"
@@ -66,8 +67,11 @@ int main(int argc, char** argv)
    
    //Run Simulation
    platform->seal();
-   std::cout << "Simulation in Progress ...";
+   std::cout << "Simulation in Progress ..." << std::endl;
+   auto start = std::chrono::system_clock::now();
    e.run();
-   std::cout << std::endl << "Simulation Finished Succesfully! Information written out at: " << outputFile << std::endl;
+   auto finish  = std::chrono::system_clock::now();
+   std::chrono::duration<double> time = finish - start;
+   std::cout  << "Simulation Finished Succesfully in " << time.count() << " seconds! Information written out at: " << outputFile << std::endl;
    return 0;
 }
