@@ -60,7 +60,7 @@ struct Site {
 
 //Output to Save
 struct output {
-  const char*                id{};
+  char*                      id{};
   int                        flops_exec{};
   int                        files_read_size{};
   int                        files_written_size{};
@@ -84,6 +84,7 @@ protected:
   void create_actors(const std::set<Host*>& hosts_with_jobs);
   void update_all_disks_content(const std::set<Host*>& hosts_with_jobs);
   void update_disk_content(sg4::Disk* d, const std::string& content);
+  std::map<std::string, size_t> merge_content(const std::vector<std::map<std::string, size_t>>& maps);
   std::string get_disk_content(const std::map<std::string, size_t>& inputMap);
   void getHostsINFO(sg4::NetZone* platform, std::vector<Site*>& sites);
   void cleanup(std::vector<Site*>& sites);
