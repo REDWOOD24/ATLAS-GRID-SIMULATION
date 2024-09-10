@@ -93,8 +93,8 @@ void PANDA_DISPATCHER::execute_subjob(const std::vector<subJob*>& subjobs)
       delete                         s;
 
       output o;
-      o.id = id.c_str();
-
+      o.id = new char[id.size() + 1];
+      std::strcpy(o.id, id.c_str());
       
       //Get Engine Instance
       const auto* e = sg4::Engine::get_instance();
@@ -143,9 +143,6 @@ void PANDA_DISPATCHER::execute_subjob(const std::vector<subJob*>& subjobs)
       
       //Save
       outputs.push_back(o);
-
-      //Update Progress
-      std::cout << ".";
     }
 
   hsize_t numberOfOutputs= outputs.size();
@@ -153,6 +150,7 @@ void PANDA_DISPATCHER::execute_subjob(const std::vector<subJob*>& subjobs)
   const std::string datasetName="HOST-"+std::string(sg4::this_actor::get_host()->get_cname());
   H5::DataSet dataset=h5_file.createDataSet(datasetName, datatype, dataspace);
   dataset.write(outputs.data(), datatype);
+  for(auto& o: outputs){delete o.id;}
   outputs.clear();
 
 }
@@ -172,18 +170,30 @@ void PANDA_DISPATCHER::cleanup(std::vector<Site*>& sites)
 
 void PANDA_DISPATCHER::update_all_disks_content(const std::set<Host*>& hosts_with_jobs)
 {
+
+  std::map<sg4::Disk*, std::vector<std::map<std::string, size_t>>> disk_content_info;
   for(const auto& h: hosts_with_jobs)
     {
-      for(const auto& s: h->subjobs)
-      {
-	sg4::Disk* disk = nullptr;
-	for(const auto& d: e->host_by_name(h->name)->get_disks())
-	  {if(std::string(d->get_cname()) == s->disk){disk = d; break;}}
-	if(!disk) throw std::runtime_error("Disk not found, while setting input files.");
-	this->update_disk_content(disk, this->get_disk_content(s->input_files));
-      }
+      for(const auto& d: e->host_by_name(h->name)->get_disks())
+	{
+	  for(const auto& s: h->subjobs)
+	    {
+	      if(std::string(d->get_cname()) == s->disk){disk_content_info[d].push_back(s->input_files);}
+	    }
+	}
     }
+
+  for(auto& d: disk_content_info)
+    this->update_disk_content(d.first, this->get_disk_content(this->merge_content(d.second)));
 }
+
+std::map<std::string, size_t> PANDA_DISPATCHER::merge_content(const std::vector<std::map<std::string, size_t>>& maps)
+{
+    std::map<std::string, size_t> result;
+    for (const auto& map : maps) {result.insert(map.begin(), map.end());}
+    return result;
+}
+
 
 void PANDA_DISPATCHER::update_disk_content(sg4::Disk* d, const std::string& content)
 {
