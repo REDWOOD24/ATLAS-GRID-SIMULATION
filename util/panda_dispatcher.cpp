@@ -13,7 +13,7 @@ void PANDA_DISPATCHER::h5init()
   h5_file = H5::H5File(this->outputFile.c_str() , H5F_ACC_TRUNC);
   datatype = sizeof(output);
   datatype.insertMember("ID",                  HOFFSET(output, id),                 H5::StrType(H5::PredType::C_S1, H5T_VARIABLE)); 
-  datatype.insertMember("FLOPS EXECUTED",      HOFFSET(output,flops_exec),               H5::PredType::NATIVE_UINT);
+  datatype.insertMember("FLOPS EXECUTED",      HOFFSET(output,flops_exec),          H5::PredType::NATIVE_UINT);
   datatype.insertMember("FILES READ SIZE",     HOFFSET(output,files_read_size),     H5::PredType::NATIVE_UINT);
   datatype.insertMember("FILES WRITTEN SIZE",  HOFFSET(output,files_written_size),  H5::PredType::NATIVE_UINT);
   datatype.insertMember("READ IO TIME",        HOFFSET(output,read_IO_time),        H5::PredType::NATIVE_FLOAT);
