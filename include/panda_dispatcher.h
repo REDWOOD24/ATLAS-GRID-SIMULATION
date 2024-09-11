@@ -17,12 +17,12 @@
 #include <math.h>
 #include <simgrid/s4u.hpp>
 #include "H5Cpp.h"
-#include "job_manager.h"
+#include "task_manager.h"
 #include "actions.h"
 namespace sg4 = simgrid::s4u;
 
-//A job is made of many subJobs. Information needed to a specify a subJob.             
-struct subJob {
+//A job is made of many Jobs. Information needed to a specify a Job.             
+struct Job {
   std::string                       id{};
   int                               flops{};
   std::map<std::string, size_t>     input_files{};
@@ -46,7 +46,7 @@ struct Host {
   int                        cores{};
   size_t                     flops_available{};
   std::vector<disk_params*>  disks{};
-  std::vector<subJob*>       subjobs{};
+  std::vector<Job*>       jobs{};
   bool operator<(const Host& other) const {return flops_available <= other.flops_available;}
 };
 
@@ -77,10 +77,10 @@ class PANDA_DISPATCHER
 public:
   PANDA_DISPATCHER(sg4::Engine* _e, const std::string& _outputFile);
  ~PANDA_DISPATCHER(){};
-  void dispatch_jobs(JobQueue& jobs, sg4::NetZone* platform);
+  void dispatch_tasks(TaskQueue& tasks, sg4::NetZone* platform);
   
 protected:
-  static void execute_subjob(const std::vector<subJob*>& subjobs);
+  static void execute_job(const std::vector<Job*>& jobs);
   void create_actors(const std::set<Host*>& hosts_with_jobs);
   void update_all_disks_content(const std::set<Host*>& hosts_with_jobs);
   void update_disk_content(sg4::Disk* d, const std::string& content);
@@ -90,12 +90,12 @@ protected:
   void cleanup(std::vector<Site*>& sites);
   void h5init();
   //Functions needed to specify hosts for jobs
-  double calculateWeightedScore(Host* cpu, subJob* sj, const std::map<std::string, double>& weights, std::string& best_disk_name);
+  double calculateWeightedScore(Host* cpu, Job* j, const std::map<std::string, double>& weights, std::string& best_disk_name);
   double getTotalSize(const std::map<std::string, size_t>& files);
-  Host* findBestAvailableCPU(std::vector<Host*>& cpus, subJob* sj, const std::map<std::string, double>& weights);
-  std::vector<subJob*> splitJobIntoSubjobs(Job& job, size_t& max_flops_per_subjob, size_t& max_storage_per_subjob);
-  void allocateResourcesToSubjobs(std::vector<Site*>& sites, JobQueue& jobs, const std::map<std::string, double>& weights, size_t& max_flops_per_subjob,  size_t& max_storage_per_subjob, std::set<Host*>&   hosts_with_jobs);
-  void printJobInfo(subJob* subjob);  
+  Host* findBestAvailableCPU(std::vector<Host*>& cpus, Job* j, const std::map<std::string, double>& weights);
+  std::vector<Job*> splitTaskIntoJobs(Task& task, size_t& max_flops_per_job, size_t& max_storage_per_job);
+  void allocateResourcesToJobs(std::vector<Site*>& sites, TaskQueue& tasks, const std::map<std::string, double>& weights, size_t& max_flops_per_job,  size_t& max_storage_per_job, std::set<Host*>&   hosts_with_jobs);
+  void printJobInfo(Job* job);  
   
 private:
   sg4::Engine*            e;
@@ -114,8 +114,8 @@ private:
         {"disk_read_bw", 1.0},
         {"disk_write_bw", 1.0}
     };
-  size_t max_flops_per_subjob = 1e6;
-  size_t max_storage_per_subjob = 1e8;
+  size_t max_flops_per_job = 1e6;
+  size_t max_storage_per_job = 1e8;
 };
 
 #endif
