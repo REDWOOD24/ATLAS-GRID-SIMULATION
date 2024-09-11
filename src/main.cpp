@@ -21,7 +21,7 @@
 #include <simgrid/s4u.hpp>
 #include "parser.h"
 #include "platform.h"
-#include "job_manager.h"
+#include "task_manager.h"
 #include "panda_dispatcher.h"
 
 
@@ -58,12 +58,12 @@ int main(int argc, char** argv)
    pf->initialize_site_connections(platform,siteConnInfo,sites);
    
    //Create Jobs
-   std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
-   auto jobs = jm->create_jobs(20);
+   std::unique_ptr<TASK_MANAGER> jm = std::make_unique<TASK_MANAGER>();
+   auto tasks = jm->create_tasks(20);
 
    //Pass to Dispatcher
    std::unique_ptr<PANDA_DISPATCHER> dispatcher = std::make_unique<PANDA_DISPATCHER>(&e,outputFile);
-   dispatcher->dispatch_jobs(jobs,platform);
+   dispatcher->dispatch_tasks(tasks,platform);
    
    //Run Simulation
    platform->seal();
