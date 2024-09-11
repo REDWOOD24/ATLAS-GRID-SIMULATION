@@ -1,19 +1,19 @@
-#include "job_manager.h"
+#include "task_manager.h"
 
 
-JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
+TaskQueue TASK_MANAGER::create_tasks(int num_of_tasks)
 {
-  JobQueue jobs;
+  TaskQueue tasks;
 
-  for(int i = 1; i <= num_of_jobs; i++){
+  for(int i = 1; i <= num_of_tasks; i++){
 
-    Job job;
-    job._id            = i;
-    job.id             = "Job-"+std::to_string(i);
-    job.flops          = std::round(p->GaussianDistribution(1e7,10000));
-    job.input_storage  = 0;
-    job.output_storage = 0;
-    job.priority       = 2; //p->genRandNum(1,10);
+    Task task;
+    task._id            = i;
+    task.id             = "Task-"+std::to_string(i);
+    task.flops          = std::round(p->GaussianDistribution(1e7,10000));
+    task.input_storage  = 0;
+    task.output_storage = 0;
+    task.priority       = 2; //p->genRandNum(1,10);
     
     //Random number of input files with size pulled from a Gaussian Distribution.
     std::string prefix = "/input/user.input."+std::to_string(i)+".00000";
@@ -23,8 +23,8 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
     for(int file = 1; file <= input_files; file++){
       std::string name      = prefix + std::to_string(file)+suffix;
       size_t      size      = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
-      job.input_files[name] = size;
-      job.input_storage    += size;
+      task.input_files[name] = size;
+      task.input_storage    += size;
     }
     
 
@@ -36,12 +36,12 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
     for(int file = 1; file <= output_files; file++){
       std::string name       = prefix + std::to_string(file)+suffix;
       size_t      size       = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
-      job.output_files[name] = size;
-      job.output_storage     += size;
+      task.output_files[name] = size;
+      task.output_storage     += size;
     }
     
-    jobs.push(job);
+    tasks.push(task);
   }
   
-  return jobs;
+  return tasks;
 }
