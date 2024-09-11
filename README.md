@@ -118,25 +118,10 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
  - Job has 3 parts -> (Read, Compute, Write).
  - Set sizes of files to be read and written from a gaussian distribution (mean and stddev estimated).
  - Estimate GFLOPS for job.
+ - Jobs are broken into subjobs as described in the dispatcher section below.
+ - Example subjob shown below.
 
 
-## PANDA Dispatcher 
-
-    +-------------------+ 
-    | Job Manager       |
-    +-------------------+
-                        \ Jobs
-                         \
-                          +------------+     +---------------------------------+       +---------+ 
-                          | Dispatcher | --> | Sub-Jobs allocated to Resources |  -->  | Output  |
-                          +------------+     +---------------------------------+       +---------+ 
-                         /
-                        / Resources
-    +-------------------+ 
-    | Platform          |
-    +-------------------+ 
-    
-    
 ## Sample Sub-Job
 
 ## Sub-Job Details
@@ -170,8 +155,45 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 - **Compute Host:** praguelcg2_cpu-999
 
 
+## PANDA Dispatcher 
+
+    +-------------------+ 
+    | Job Manager       |
+    +-------------------+
+                        \ Jobs
+                         \
+                          +------------+     +---------------------------------+       +---------+ 
+                          | Dispatcher | --> | Sub-Jobs allocated to Resources |  -->  | Output  |
+                          +------------+     +---------------------------------+       +---------+ 
+                         /
+                        / Resources
+    +-------------------+ 
+    | Platform          |
+    +-------------------+ 
+    
+## How it works.
+
+
+The dispatcher operates by taking two key inputs: a prioritized queue of jobs and a platform containing details about all available resources. Using a straightforward algorithm, the dispatcher efficiently matches jobs to the appropriate resources.
+
+### Resource Prioritization
+Information about the various sites and their resources (such as CPU speed and cores) is collected into a queue, with priority given to sites that offer higher-quality resources.
+
+### Job Breakdown
+Each job is divided into a series of subjobs based on the maximum storage and computational requirements (FLOP). These subjobs, requiring similar resources, are then individually assigned to available CPUs.
+
+### CPU Allocation
+CPUs are evaluated site by site, in order of site priority. For each site the CPUs are ranked based on CPU quality factors such as storage, cores, speed, and available computation capacity. For efficiency, the search depth is limited to 20. When a subjob is assigned to a CPU, that CPU's quality decreases as its computational load increases.
+
+To ensure no single site is overburdened, once 50% of a site's CPUs have been assigned subjobs, a round-robin strategy is employed to distribute the remaining subjobs across other sites. If all sites reach 50% CPU usage, the round-robin strategy continues to allocate subjobs, rotating sites for each new assignment.
+
+### Execution
+After all subjobs have been dispatched, the hosts with assigned subjobs are passed to SimGrid for execution.
+
 
 ## SimGrid Output for Sub-Job
+
+Output is saved in the form of an HDF5 file for efficiency reasons. The file has a number of datasets defined by the hosts which carry the subjobs. Associated with each such dataset is information for all subjobs assigned to that CPU, sample output for one of the subjobs on a CPU is shown below.
 
 ### HOST-praguelcg2_cpu-999
 
@@ -183,3 +205,10 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 - **WRITE IO TIME**: 0.00370412 s
 - **FLOPS EXEC TIME**: 0.000235559 s
 
+## 5000 Jobs
+
+- Ran on Mac M1.
+- 152222 subjobs.
+- Finished in 2 hour 41 minutes.
+- 2.70 GB max memory usage.
+- 57 MB output HDF5 file.
