@@ -113,19 +113,19 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 - CPUs based off GFLOPS obtained from data dumps from site, estimating 500 GFLOPS per core per cpu.
 - Other estimates such as latency for connections, disk read and write bandwidths, cpu speed based on estimates.
 
-## Job Manager
+## Task Manager
 
- - Job has 3 parts -> (Read, Compute, Write).
+ - Task has 3 parts -> (Read, Compute, Write).
  - Set sizes of files to be read and written from a gaussian distribution (mean and stddev estimated).
- - Estimate GFLOPS for job.
- - Jobs are broken into subjobs as described in the dispatcher section below.
- - Example subjob shown below.
+ - Estimate GFLOPS for tasks.
+ - Tasks are broken into jobs as described in the dispatcher section below.
+ - Example job shown below.
 
 
-## Sample Sub-Job
+## Sample Job
 
-## Sub-Job Details
-- **Sub-Job ID:** Job-18-subJob-13
+## Job Details
+- **Job ID:** Task-18-Job-13
 - **FLOPs to be Executed:** 400,451
 
 ### Files to be Read
@@ -158,12 +158,12 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 ## PANDA Dispatcher 
 
     +-------------------+ 
-    | Job Manager       |
+    | Task Manager      |
     +-------------------+
-                        \ Jobs
+                        \ Tasks
                          \
                           +------------+     +---------------------------------+       +---------+ 
-                          | Dispatcher | --> | Sub-Jobs allocated to Resources |  -->  | Output  |
+                          | Dispatcher | --> | Jobs allocated to Resources     |  -->  | Output  |
                           +------------+     +---------------------------------+       +---------+ 
                          /
                         / Resources
@@ -174,30 +174,30 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 ## How it works.
 
 
-The dispatcher operates by taking two key inputs: a prioritized queue of jobs and a platform containing details about all available resources. Using a straightforward algorithm, the dispatcher efficiently matches jobs to the appropriate resources.
+The dispatcher operates by taking two key inputs: a prioritized queue of tasks and a platform containing details about all available resources. Using a straightforward algorithm, the dispatcher efficiently matches tasks to the appropriate resources.
 
 ### Resource Prioritization
 Information about the various sites and their resources (such as CPU speed and cores) is collected into a queue, with priority given to sites that offer higher-quality resources.
 
-### Job Breakdown
-Each job is divided into a series of subjobs based on the maximum storage and computational requirements (FLOP). These subjobs, requiring similar resources, are then individually assigned to available CPUs.
+### Task Breakdown
+Each task is divided into a series of jobs based on the maximum storage and computational requirements (FLOP). These jobs, requiring similar resources, are then individually assigned to available CPUs.
 
 ### CPU Allocation
-CPUs are evaluated site by site, in order of site priority. For each site the CPUs are ranked based on CPU quality factors such as storage, cores, speed, and available computation capacity. For efficiency, the search depth is limited to 20. When a subjob is assigned to a CPU, that CPU's quality decreases as its computational load increases.
+CPUs are evaluated site by site, in order of site priority. For each site the CPUs are ranked based on CPU quality factors such as storage, cores, speed, and available computation capacity. For efficiency, the search depth is limited to 20. When a job is assigned to a CPU, that CPU's quality decreases as its computational load increases.
 
-To ensure no single site is overburdened, once 50% of a site's CPUs have been assigned subjobs, a round-robin strategy is employed to distribute the remaining subjobs across other sites. If all sites reach 50% CPU usage, the round-robin strategy continues to allocate subjobs, rotating sites for each new assignment.
+To ensure no single site is overburdened, once 50% of a site's CPUs have been assigned jobs, a round-robin strategy is employed to distribute the remaining jobs across other sites. If all sites reach 50% CPU usage, the round-robin strategy continues to allocate jobs, rotating sites for each new assignment.
 
 ### Execution
-After all subjobs have been dispatched, the hosts with assigned subjobs are passed to SimGrid for execution.
+After all jobs have been dispatched, the hosts with assigned jobs are passed to SimGrid for execution.
 
 
-## SimGrid Output for Sub-Job
+## SimGrid Output for Job
 
-Output is saved in the form of an HDF5 file for efficiency reasons. The file has a number of datasets defined by the hosts which carry the subjobs. Associated with each such dataset is information for all subjobs assigned to that CPU, sample output for one of the subjobs on a CPU is shown below.
+Output is saved in the form of an HDF5 file for efficiency reasons. The file has a number of datasets defined by the hosts which carry the jobs. Associated with each such dataset is information for all jobs assigned to that CPU, sample output for one of the jobs on a CPU is shown below.
 
 ### HOST-praguelcg2_cpu-999
 
-- **ID**: "Job-18-subJob-13"
+- **ID**: "Task-18-Job-13"
 - **FLOPS EXECUTED**: 400451 FLOPs
 - **FILES READ SIZE**: 49992528 Bytes
 - **FILES WRITTEN SIZE**: 40004532 Bytes
@@ -208,7 +208,7 @@ Output is saved in the form of an HDF5 file for efficiency reasons. The file has
 ## 5000 Jobs
 
 - Ran on Mac M1.
-- 152222 subjobs.
+- 152222 jobs.
 - Finished in 2 hour 41 minutes.
 - 2.70 GB max memory usage.
 - 57 MB output HDF5 file.

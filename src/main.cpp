@@ -57,9 +57,9 @@ int main(int argc, char** argv)
    //Setup Connections between sites
    pf->initialize_site_connections(platform,siteConnInfo,sites);
    
-   //Create Jobs
-   std::unique_ptr<TASK_MANAGER> jm = std::make_unique<TASK_MANAGER>();
-   auto tasks = jm->create_tasks(20);
+   //Create Tasks
+   std::unique_ptr<TASK_MANAGER> tm = std::make_unique<TASK_MANAGER>();
+   auto tasks = tm->create_tasks(20);
 
    //Pass to Dispatcher
    std::unique_ptr<PANDA_DISPATCHER> dispatcher = std::make_unique<PANDA_DISPATCHER>(&e,outputFile);
