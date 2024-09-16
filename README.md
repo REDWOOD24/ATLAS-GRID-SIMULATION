@@ -50,6 +50,12 @@ Follow these steps to build the project on lxplus:
   ./atlas-grid-simulator ../data/site_conn_info.json ../data/site_info.json ../job_logs/log.h5
    ```
 
+## View Output
+
+   ```bash
+   h5dump ../job_logs/log.h5
+   ```
+   
 ## Platform
 
 Basic Layout of the ATLAS Grid implemented in the simulation.
