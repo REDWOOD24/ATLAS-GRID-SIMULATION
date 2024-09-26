@@ -29,7 +29,7 @@ add_subdirectory(json)
 list( APPEND BUILT_PACKAGES "json")
 
 # include directories
-include_directories(${SimGrid_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${HDF5_CXX_INCLUDE_DIRS})
+include_directories(${SimGrid_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${HDF5_CXX_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/json/single_include)
 include_directories(include/)
 include_directories(plugins/include/)
 
