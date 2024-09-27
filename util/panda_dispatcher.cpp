@@ -83,8 +83,8 @@ void PANDA_DISPATCHER::execute_job(const std::vector<Job*>& jobs)
       //Parse Job Info
       std::string                    id            = s->id;
       int                            flops         = s->flops;
-      std::map<std::string, size_t>  input_files   = s->input_files;
-      std::map<std::string, size_t>  output_files  = s->output_files;
+      std::unordered_map<std::string, size_t>  input_files   = s->input_files;
+      std::unordered_map<std::string, size_t>  output_files  = s->output_files;
       std::string                    read_host     = s->comp_host;
       std::string                    comp_host     = s->comp_host;
       std::string                    write_host    = s->comp_host;
@@ -171,7 +171,7 @@ void PANDA_DISPATCHER::cleanup(std::vector<Site*>& sites)
 void PANDA_DISPATCHER::update_all_disks_content(const std::set<Host*>& hosts_with_jobs)
 {
 
-  std::map<sg4::Disk*, std::vector<std::map<std::string, size_t>>> disk_content_info;
+  std::unordered_map<sg4::Disk*, std::vector<std::unordered_map<std::string, size_t>>> disk_content_info;
   for(const auto& h: hosts_with_jobs)
     {
       for(const auto& d: e->host_by_name(h->name)->get_disks())
@@ -187,9 +187,9 @@ void PANDA_DISPATCHER::update_all_disks_content(const std::set<Host*>& hosts_wit
     this->update_disk_content(d.first, this->get_disk_content(this->merge_content(d.second)));
 }
 
-std::map<std::string, size_t> PANDA_DISPATCHER::merge_content(const std::vector<std::map<std::string, size_t>>& maps)
+std::unordered_map<std::string, size_t> PANDA_DISPATCHER::merge_content(const std::vector<std::unordered_map<std::string, size_t>>& maps)
 {
-    std::map<std::string, size_t> result;
+    std::unordered_map<std::string, size_t> result;
     for (const auto& map : maps) {result.insert(map.begin(), map.end());}
     return result;
 }
@@ -201,7 +201,7 @@ void PANDA_DISPATCHER::update_disk_content(sg4::Disk* d, const std::string& cont
   d->seal();
 }
 
-std::string PANDA_DISPATCHER::get_disk_content(const std::map<std::string, size_t>& inputMap)
+std::string PANDA_DISPATCHER::get_disk_content(const std::unordered_map<std::string, size_t>& inputMap)
 {
     std::string result;
     bool first = true;
@@ -213,7 +213,7 @@ std::string PANDA_DISPATCHER::get_disk_content(const std::map<std::string, size_
 }
 
 
-double PANDA_DISPATCHER::calculateWeightedScore(Host* cpu, Job* j, const std::map<std::string, double>& weights, std::string& best_disk_name)
+double PANDA_DISPATCHER::calculateWeightedScore(Host* cpu, Job* j, const std::unordered_map<std::string, double>& weights, std::string& best_disk_name)
 {
     double score = cpu->speed/1e8 * weights.at("speed") + cpu->cores * weights.at("cores");
     double best_disk_score = std::numeric_limits<double>::lowest();
@@ -237,14 +237,14 @@ double PANDA_DISPATCHER::calculateWeightedScore(Host* cpu, Job* j, const std::ma
     return score;
 }
 
-double PANDA_DISPATCHER::getTotalSize(const std::map<std::string, size_t>& files)
+double PANDA_DISPATCHER::getTotalSize(const std::unordered_map<std::string, size_t>& files)
 {
   size_t total_size = 0;
   for (const auto& file : files) {total_size += file.second;}
   return total_size;
 }
 
-Host* PANDA_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j, const std::map<std::string, double>& weights)
+Host* PANDA_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j, const std::unordered_map<std::string, double>& weights)
 {
     Host*          best_cpu       = nullptr;
     std::string    best_disk;
@@ -312,8 +312,8 @@ std::vector<Job*> PANDA_DISPATCHER::splitTaskIntoJobs(Task& task, size_t& max_fl
     size_t write_leftover_storage   = (total_write_size) % num_jobs;
 
       
-    std::map<std::string, size_t> read_files  = task.input_files;
-    std::map<std::string, size_t> write_files = task.output_files;
+    std::unordered_map<std::string, size_t> read_files  = task.input_files;
+    std::unordered_map<std::string, size_t> write_files = task.output_files;
 
     for (size_t i = 0; i < num_jobs; ++i) {
         Job* job = new Job;
@@ -365,7 +365,7 @@ std::vector<Job*> PANDA_DISPATCHER::splitTaskIntoJobs(Task& task, size_t& max_fl
 }
 
 
-void PANDA_DISPATCHER::allocateResourcesToJobs(std::vector<Site*>& sites, TaskQueue& tasks, const std::map<std::string, double>& weights, size_t& max_flops_per_job, size_t& max_storage_per_job, std::set<Host*>& hosts_with_jobs) {
+void PANDA_DISPATCHER::allocateResourcesToJobs(std::vector<Site*>& sites, TaskQueue& tasks, const std::unordered_map<std::string, double>& weights, size_t& max_flops_per_job, size_t& max_storage_per_job, std::set<Host*>& hosts_with_jobs) {
 
   bool  use_round_robin      = false;
   int   current_site_index   = 0;

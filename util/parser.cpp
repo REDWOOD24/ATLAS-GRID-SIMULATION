@@ -82,10 +82,10 @@ std::vector<DiskInfo> Parser::getDisksInfo(const std::string site_name, int num_
 }
 
 
-std::map<std::string, std::map<std::string, CPUInfo>> Parser::getSiteNameCPUInfo()
+std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>> Parser::getSiteNameCPUInfo()
 {
 
-  std::map<std::string, std::map<std::string, CPUInfo>> siteNameCPUInfo;
+  std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>> siteNameCPUInfo;
   
   for(const auto& site: site_names){
 
@@ -118,19 +118,19 @@ std::map<std::string, std::map<std::string, CPUInfo>> Parser::getSiteNameCPUInfo
 
 
 
-std::map<std::string, std::pair<double, double>> Parser::getSiteConnInfo()
+std::unordered_map<std::string, std::pair<double, double>> Parser::getSiteConnInfo()
  {
   std::ifstream in(siteConnInfoFile);
   auto j=json::parse(in);
 
   //Defining Latency in ms based on 'closeness' value in json file
-  std::map<int, int> closeness_latency_map = {
+  std::unordered_map<int, int> closeness_latency_map = {
         {0, 0}, {1, 10}, {2, 20}, {3, 30}, {4, 40},
         {5, 50}, {6, 60}, {7, 70}, {8, 80}, {9, 90},
         {10, 100}, {11, 110}, {12, 120}};
 
   //Store Site Info
-  std::map<std::string, std::pair<double, double>> siteConnInfo;
+  std::unordered_map<std::string, std::pair<double, double>> siteConnInfo;
   for(auto it1 = site_names.begin(); it1 != site_names.end(); ++it1) {
     for(auto it2 = std::next(it1); it2 != site_names.end(); ++it2) {
       std::string site1 = *it1;

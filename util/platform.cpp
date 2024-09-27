@@ -6,7 +6,7 @@ sg4::NetZone* Platform::create_platform(const std::string& platform_name)
 return sg4::create_full_zone(platform_name);
 }
 
-sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& site_name, std::map<std::string, CPUInfo>& cpuInfo)
+sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& site_name, std::unordered_map<std::string, CPUInfo>& cpuInfo)
 {
   //Create the Site
   auto* site = sg4::create_star_zone(site_name);
@@ -33,28 +33,28 @@ sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& s
 
   //cleanup
   cpuInfo.clear();
-  std::map<std::string, CPUInfo>().swap(cpuInfo);
+  std::unordered_map<std::string, CPUInfo>().swap(cpuInfo);
   return site;
 }
 
-std::map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform,  std::map<std::string, std::map<std::string, CPUInfo>>& siteNameCPUInfo)
+std::unordered_map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform,  std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>& siteNameCPUInfo)
 {
-   std::map<std::string, sg4::NetZone*> sites;
+   std::unordered_map<std::string, sg4::NetZone*> sites;
    std::cout << "Inititalizing SimGrid Platform with all Sites .......";   
    for (auto& sitePair : siteNameCPUInfo) {
      const std::string&              site_name = sitePair.first;
-     std::map<std::string, CPUInfo>& cpuInfo   = sitePair.second;
+     std::unordered_map<std::string, CPUInfo>& cpuInfo   = sitePair.second;
      sites[site_name] =  this->create_site(platform, site_name, cpuInfo);
      std::cout << ".";}
    std::cout << std::endl;
    //cleanup
    siteNameCPUInfo.clear();
-   std::map<std::string, std::map<std::string, CPUInfo>>().swap(siteNameCPUInfo);
+   std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>().swap(siteNameCPUInfo);
    return sites;
 }
 
 
-void Platform::initialize_site_connections(sg4::NetZone* platform, std::map<std::string, std::pair<double, double>>& siteConnInfo, std::map<std::string, sg4::NetZone*>& sites)
+void Platform::initialize_site_connections(sg4::NetZone* platform, std::unordered_map<std::string, std::pair<double, double>>& siteConnInfo, std::unordered_map<std::string, sg4::NetZone*>& sites)
 {
 
   //Creating Sites and the Connections between them
