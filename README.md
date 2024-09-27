@@ -6,7 +6,7 @@ This repository aims to streamline the process of configuring and testing ATLAS 
 ## Prerequisites
 Before you begin, ensure you have the following packages installed:
 
-- **SimGrid v3.35** 
+- **SimGrid v3.36** 
 - **Boost**
 - **HDF5** (required for output storage)
 
@@ -32,7 +32,7 @@ Follow these steps to build the project on lxplus:
    git clone https://github.com/simgrid/simgrid.git
    cd simgrid
    git fetch --all --tags --prune
-   git checkout tags/v3.35 -b test
+   git checkout tags/v3.36 -b test
    mkdir build
    cd build
    cmake ..
