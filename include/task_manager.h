@@ -27,8 +27,8 @@ struct Task {
   int                              _id{};
   std::string                       id{};
   int                               flops{};
-  std::map<std::string, size_t>     input_files{};
-  std::map<std::string, size_t>     output_files{};
+  std::unordered_map<std::string, size_t>     input_files{};
+  std::unordered_map<std::string, size_t>     output_files{};
   size_t                            input_storage{};
   size_t                            output_storage{};
   int                               priority{};    

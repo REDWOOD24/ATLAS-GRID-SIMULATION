@@ -55,15 +55,15 @@ public:
  void                                                  setSiteNames();
  void                                                  setSiteCPUCount();
  std::vector<DiskInfo>                                 getDisksInfo(const std::string site_name, int num_of_cpus);
- std::map<std::string, std::pair<double, double>>      getSiteConnInfo();
- std::map<std::string, std::map<std::string,CPUInfo>>  getSiteNameCPUInfo();
+ std::unordered_map<std::string, std::pair<double, double>>      getSiteConnInfo();
+ std::unordered_map<std::string, std::unordered_map<std::string,CPUInfo>>  getSiteNameCPUInfo();
  
  
 private:
   std::string                siteConnInfoFile;
   std::string                siteInfoFile;
   std::set<std::string>      site_names;
-  std::map<std::string,int>  siteCPUCount;
+  std::unordered_map<std::string,int>  siteCPUCount;
 };
 
 #endif
