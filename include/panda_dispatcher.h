@@ -21,7 +21,7 @@
 #include "actions.h"
 namespace sg4 = simgrid::s4u;
 
-//A job is made of many Jobs. Information needed to a specify a Job.             
+//A Task is made of many Jobs. Information needed to a specify a Job.             
 struct Job {
   std::string                       id{};
   int                               flops{};

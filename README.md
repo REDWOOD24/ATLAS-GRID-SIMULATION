@@ -7,7 +7,6 @@ This repository aims to streamline the process of configuring and testing ATLAS 
 Before you begin, ensure you have the following packages installed:
 
 - **SimGrid v3.36** 
-- **Boost**
 - **HDF5** (required for output storage)
 
 These packages are essential for building and running the simulation.
