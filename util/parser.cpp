@@ -9,8 +9,6 @@ Parser::Parser(const std::string& _siteConnInfoFile, const std::string& _siteInf
   this->setSiteNames();
 }
 
-
-//I don't have information about CPUs and cores at various sites, so assign randomly.
 int Parser::genRandNum(int lower, int upper)
 {
     std::random_device rd;
