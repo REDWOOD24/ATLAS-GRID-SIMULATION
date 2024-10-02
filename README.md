@@ -210,10 +210,20 @@ Output is saved in the form of an HDF5 file for efficiency reasons. The file has
 - **WRITE IO TIME**: 0.00370412 s
 - **FLOPS EXEC TIME**: 0.000235559 s
 
-## 5000 Tasks
+## Test with 5000 Tasks
 
 - Ran on Mac M1.
 - 152222 jobs.
 - Finished in 2 hour 41 minutes.
 - 2.70 GB max memory usage.
 - 57 MB output HDF5 file.
+
+## Developer info
+
+New code should be developed in private forks of the main repository. When a stable version is ready, make sure to check if there is already a new version available before creating the pull request to merge the new code with the main repository branch. See the steps below.
+
+- Check if a remote repository is already set up: git remote -v
+- If not, execute: git remote add upstream https://github.com/REDWOOD24/ATLAS-GRID-SIMULATION.git
+- See if there is any new version available from upstream: git fetch upstream
+- Merge with the private/local code: git merge upstream/main
+- Update the private/local repo: git push
