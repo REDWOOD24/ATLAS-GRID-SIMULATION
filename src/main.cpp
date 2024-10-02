@@ -23,6 +23,7 @@
 #include "platform.h"
 #include "task_manager.h"
 #include "panda_dispatcher.h"
+#include "version.h"
 
 
 int main(int argc, char** argv)
@@ -38,8 +39,6 @@ int main(int argc, char** argv)
    std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile);
    auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
    auto                      siteConnInfo      = parser->getSiteConnInfo();
-
-
 
    //Initialize Simulation Engine
    sg4::Engine e(&argc, argv);
@@ -73,5 +72,10 @@ int main(int argc, char** argv)
    auto finish  = std::chrono::system_clock::now();
    std::chrono::duration<double> time = finish - start;
    std::cout  << "Simulation Finished Succesfully in " << time.count() << " seconds! Information written out at: " << outputFile << std::endl;
+
+
+   //Print simulator name and current version
+   std::cout << "\nSimATLAS version: " << MAJOR_VERSION << "." << MINOR_VERSION << "." << BUILD_NUMBER << std::endl;
+
    return 0;
 }
