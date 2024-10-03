@@ -81,16 +81,16 @@ void PANDA_DISPATCHER::execute_job(const std::vector<Job*>& jobs)
   for(const auto& s : jobs)
     {
       //Parse Job Info
-      std::string                    id            = s->id;
-      int                            flops         = s->flops;
+      std::string                              id            = s->id;
+      int                                      flops         = s->flops;
       std::unordered_map<std::string, size_t>  input_files   = s->input_files;
       std::unordered_map<std::string, size_t>  output_files  = s->output_files;
-      std::string                    read_host     = s->comp_host;
-      std::string                    comp_host     = s->comp_host;
-      std::string                    write_host    = s->comp_host;
-      int                            cores         = s->cores;
-      std::string                    disk          = s->disk;
-      delete                         s;
+      std::string                              read_host     = s->comp_host;
+      std::string                              comp_host     = s->comp_host;
+      std::string                              write_host    = s->comp_host;
+      int                                      cores         = s->cores;
+      std::string                              disk          = s->disk;
+      delete                                                   s;
 
       output o;
       o.id = new char[id.size() + 1];
@@ -304,12 +304,12 @@ std::vector<Job*> PANDA_DISPATCHER::splitTaskIntoJobs(Task& task, size_t& max_fl
     );
 
     // Calculate FLOPs and storage per job
-    size_t flops_per_job         = total_flops / num_jobs;
-    size_t leftover_flops           = total_flops % num_jobs;
-    size_t read_storage_per_job  = (total_read_size) / num_jobs;
-    size_t read_leftover_storage    = (total_read_size) % num_jobs;
-    size_t write_storage_per_job = (total_write_size) / num_jobs;
-    size_t write_leftover_storage   = (total_write_size) % num_jobs;
+    size_t flops_per_job            = total_flops       / num_jobs;
+    size_t leftover_flops           = total_flops       % num_jobs;
+    size_t read_storage_per_job     = total_read_size   / num_jobs;
+    size_t read_leftover_storage    = total_read_size   % num_jobs;
+    size_t write_storage_per_job    = total_write_size  / num_jobs;
+    size_t write_leftover_storage   = total_write_size  % num_jobs;
 
       
     std::unordered_map<std::string, size_t> read_files  = task.input_files;
@@ -320,15 +320,15 @@ std::vector<Job*> PANDA_DISPATCHER::splitTaskIntoJobs(Task& task, size_t& max_fl
         job->id = task.id + "-Job-" + std::to_string(i);
 
         // Allocate FLOPs to the job
-        job->flops =  flops_per_job + (i < leftover_flops ? 1 : 0);  // Distribute leftover FLOPs
+        job->flops      =  flops_per_job + (i < leftover_flops ? 1 : 0);  // Distribute leftover FLOPs
         task.flops     -= job->flops;
 
-        size_t read_current_storage = 0;
+        size_t read_current_storage  = 0;
         size_t write_current_storage = 0;
 
 	
         // Allocate storage to the job (equal distribution)
-        size_t read_storage_limit = read_storage_per_job + (i < read_leftover_storage ? 1 : 0);
+        size_t read_storage_limit  = read_storage_per_job + (i < read_leftover_storage ? 1 : 0);
         size_t write_storage_limit = write_storage_per_job + (i < write_leftover_storage ? 1 : 0);
 
         // Allocate read files to the job
@@ -373,7 +373,7 @@ void PANDA_DISPATCHER::allocateResourcesToJobs(std::vector<Site*>& sites, TaskQu
   while (!tasks.empty())
     {
       Task  task      = tasks.top();
-      auto jobs   = splitTaskIntoJobs(task, max_flops_per_job, max_storage_per_job);
+      auto  jobs      = splitTaskIntoJobs(task, max_flops_per_job, max_storage_per_job);
       for (auto& job : jobs)
 	{
 	  Host*  best_cpu    = nullptr;
