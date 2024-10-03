@@ -3,7 +3,6 @@
 // Email: rak177@pitt.edu
 // Created Date: 2024-08-15
 // Description: Class to create actions that actors (jobs) will execute.
-// Version: 1.0
 // ==============================================
 
 

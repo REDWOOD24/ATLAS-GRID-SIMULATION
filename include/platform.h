@@ -3,7 +3,6 @@
 // Email: rak177@pitt.edu
 // Created Date: 2024-08-15
 // Description: Class to Instantiate SimGrid Platform which simulates the ATLAS GRID.
-// Version: 1.0
 // ==============================================
 
 
