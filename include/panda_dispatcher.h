@@ -3,7 +3,6 @@
 // Email: rak177@pitt.edu
 // Created Date: 2024-08-27
 // Description: Class to distribute Jobs on grid.
-// Version: 1.0
 // ==============================================
 
 
@@ -23,13 +22,13 @@ namespace sg4 = simgrid::s4u;
 
 //A Task is made of many Jobs. Information needed to a specify a Job.             
 struct Job {
-  std::string                       id{};
-  int                               flops{};
+  std::string                                 id{};
+  int                                         flops{};
   std::unordered_map<std::string, size_t>     input_files{};
   std::unordered_map<std::string, size_t>     output_files{};
-  int                               cores{};
-  std::string                       disk{};
-  std::string                       comp_host{};
+  int                                         cores{};
+  std::string                                 disk{};
+  std::string                                 comp_host{};
 };
 
 //Need basic characterization of sites, hosts and disks to find the optimal one for each job.
@@ -46,7 +45,7 @@ struct Host {
   int                        cores{};
   size_t                     flops_available{};
   std::vector<disk_params*>  disks{};
-  std::vector<Job*>       jobs{};
+  std::vector<Job*>          jobs{};
   bool operator<(const Host& other) const {return flops_available <= other.flops_available;}
 };
 
@@ -114,7 +113,7 @@ private:
         {"disk_read_bw", 1.0},
         {"disk_write_bw", 1.0}
     };
-  size_t max_flops_per_job = 1e6;
+  size_t max_flops_per_job   = 1e6;
   size_t max_storage_per_job = 1e8;
 };
 
