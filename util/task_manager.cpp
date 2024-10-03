@@ -21,8 +21,8 @@ TaskQueue TASK_MANAGER::create_tasks(int num_of_tasks)
     int input_files    = p->genRandNum(100,200);
 
     for(int file = 1; file <= input_files; file++){
-      std::string name      = prefix + std::to_string(file)+suffix;
-      size_t      size      = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
+      std::string name       = prefix + std::to_string(file)+suffix;
+      size_t      size       = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
       task.input_files[name] = size;
       task.input_storage    += size;
     }
@@ -34,9 +34,9 @@ TaskQueue TASK_MANAGER::create_tasks(int num_of_tasks)
     int	output_files = p->genRandNum(100,200);
 
     for(int file = 1; file <= output_files; file++){
-      std::string name       = prefix + std::to_string(file)+suffix;
-      size_t      size       = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
-      task.output_files[name] = size;
+      std::string name         = prefix + std::to_string(file)+suffix;
+      size_t      size         = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
+      task.output_files[name]  = size;
       task.output_storage     += size;
     }
     

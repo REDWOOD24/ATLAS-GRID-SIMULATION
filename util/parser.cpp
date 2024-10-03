@@ -4,7 +4,7 @@
 Parser::Parser(const std::string& _siteConnInfoFile, const std::string& _siteInfoFile)
 {
   siteConnInfoFile = _siteConnInfoFile;
-  siteInfoFile = _siteInfoFile;
+  siteInfoFile     = _siteInfoFile;
   this->setSiteCPUCount(); //Reason this is set before site-names is because is site has 0 cpus (no info) I don't include it.
   this->setSiteNames();
 }

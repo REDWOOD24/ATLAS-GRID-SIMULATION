@@ -3,7 +3,6 @@
 // Email: rak177@pitt.edu                                                                                                        
 // Created Date: 2024-08-15                                                                                                      
 // Description: Class to parse json containing information about ATLAS grid sites.                                               
-// Version: 1.0                                                                                                                  
 // ==============================================   
 
 
@@ -50,19 +49,19 @@ public:
   Parser(){}
  ~Parser(){};
 
- int                                                   genRandNum(int lower, int upper);
- double                                                GaussianDistribution(double mean, double stddev);
- void                                                  setSiteNames();
- void                                                  setSiteCPUCount();
- std::vector<DiskInfo>                                 getDisksInfo(const std::string site_name, int num_of_cpus);
- std::unordered_map<std::string, std::pair<double, double>>      getSiteConnInfo();
+ int                                                                       genRandNum(int lower, int upper);
+ double                                                                    GaussianDistribution(double mean, double stddev);
+ void                                                                      setSiteNames();
+ void                                                                      setSiteCPUCount();
+ std::vector<DiskInfo>                                                     getDisksInfo(const std::string site_name, int num_of_cpus);
+ std::unordered_map<std::string, std::pair<double, double>>                getSiteConnInfo();
  std::unordered_map<std::string, std::unordered_map<std::string,CPUInfo>>  getSiteNameCPUInfo();
  
  
 private:
-  std::string                siteConnInfoFile;
-  std::string                siteInfoFile;
-  std::set<std::string>      site_names;
+  std::string                          siteConnInfoFile;
+  std::string                          siteInfoFile;
+  std::set<std::string>                site_names;
   std::unordered_map<std::string,int>  siteCPUCount;
 };
 
