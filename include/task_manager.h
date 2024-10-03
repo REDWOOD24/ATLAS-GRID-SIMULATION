@@ -3,7 +3,6 @@
 // Email: rak177@pitt.edu
 // Created Date: 2024-08-27
 // Description: Class to create and manage Tasks.
-// Version: 1.0
 // ==============================================
 
 
@@ -24,14 +23,14 @@
 
 //Information needed to a specify a Task                                                                                         
 struct Task {
-  int                              _id{};
-  std::string                       id{};
-  int                               flops{};
+  int                                         _id{};
+  std::string                                  id{};
+  int                                          flops{};
   std::unordered_map<std::string, size_t>     input_files{};
   std::unordered_map<std::string, size_t>     output_files{};
-  size_t                            input_storage{};
-  size_t                            output_storage{};
-  int                               priority{};    
+  size_t                                      input_storage{};
+  size_t                                      output_storage{};
+  int                                         priority{};    
   bool operator<(const Task& other) const {if(priority == other.priority){return _id > other._id;} return priority < other.priority;}
 };
 
