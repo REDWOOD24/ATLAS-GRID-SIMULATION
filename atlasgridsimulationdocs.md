@@ -64,6 +64,7 @@ To perform these steps, the brokerage model utilizes data from various sources, 
 - **Suggested Metrics**:
   - Job start time (difference between submitted time and actual start time)
   - Successful job completion time
+  - Global Queue
 
 ## 6. Handling Remote Transfers
 
