@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/atlas-grid-simulator.dir/src/main.cpp.o.d"
   "CMakeFiles/atlas-grid-simulator.dir/util/actions.cpp.o"
   "CMakeFiles/atlas-grid-simulator.dir/util/actions.cpp.o.d"
+  "CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o"
+  "CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o.d"
   "CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o"
   "CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o.d"
   "CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o"

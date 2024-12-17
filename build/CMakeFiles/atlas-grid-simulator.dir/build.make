@@ -111,10 +111,24 @@ CMakeFiles/atlas-grid-simulator.dir/util/actions.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/atlas-grid-simulator.dir/util/actions.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/util/actions.cpp -o CMakeFiles/atlas-grid-simulator.dir/util/actions.cpp.s
 
+CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o: CMakeFiles/atlas-grid-simulator.dir/flags.make
+CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o: ../util/job_manager.cpp
+CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o: CMakeFiles/atlas-grid-simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o -MF CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o.d -o CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o -c /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/util/job_manager.cpp
+
+CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/util/job_manager.cpp > CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.i
+
+CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/util/job_manager.cpp -o CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.s
+
 CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o: CMakeFiles/atlas-grid-simulator.dir/flags.make
 CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o: ../util/panda_dispatcher.cpp
 CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o: CMakeFiles/atlas-grid-simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o -MF CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o.d -o CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o -c /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/util/panda_dispatcher.cpp
 
 CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.i: cmake_force
@@ -128,7 +142,7 @@ CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.s: cmake_force
 CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o: CMakeFiles/atlas-grid-simulator.dir/flags.make
 CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o: ../util/parser.cpp
 CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o: CMakeFiles/atlas-grid-simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o -MF CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o.d -o CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o -c /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/util/parser.cpp
 
 CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.i: cmake_force
@@ -142,7 +156,7 @@ CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.s: cmake_force
 CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o: CMakeFiles/atlas-grid-simulator.dir/flags.make
 CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o: ../util/platform.cpp
 CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o: CMakeFiles/atlas-grid-simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o -MF CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o.d -o CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o -c /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/util/platform.cpp
 
 CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.i: cmake_force
@@ -156,7 +170,7 @@ CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.s: cmake_force
 CMakeFiles/atlas-grid-simulator.dir/util/task_manager.cpp.o: CMakeFiles/atlas-grid-simulator.dir/flags.make
 CMakeFiles/atlas-grid-simulator.dir/util/task_manager.cpp.o: ../util/task_manager.cpp
 CMakeFiles/atlas-grid-simulator.dir/util/task_manager.cpp.o: CMakeFiles/atlas-grid-simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/atlas-grid-simulator.dir/util/task_manager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/atlas-grid-simulator.dir/util/task_manager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atlas-grid-simulator.dir/util/task_manager.cpp.o -MF CMakeFiles/atlas-grid-simulator.dir/util/task_manager.cpp.o.d -o CMakeFiles/atlas-grid-simulator.dir/util/task_manager.cpp.o -c /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/util/task_manager.cpp
 
 CMakeFiles/atlas-grid-simulator.dir/util/task_manager.cpp.i: cmake_force
@@ -172,6 +186,7 @@ atlas__grid__simulator_OBJECTS = \
 "CMakeFiles/atlas-grid-simulator.dir/plugins/src/ATLAS_FileSystem.cpp.o" \
 "CMakeFiles/atlas-grid-simulator.dir/src/main.cpp.o" \
 "CMakeFiles/atlas-grid-simulator.dir/util/actions.cpp.o" \
+"CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o" \
 "CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o" \
 "CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o" \
 "CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o" \
@@ -183,6 +198,7 @@ atlas__grid__simulator_EXTERNAL_OBJECTS =
 atlas-grid-simulator: CMakeFiles/atlas-grid-simulator.dir/plugins/src/ATLAS_FileSystem.cpp.o
 atlas-grid-simulator: CMakeFiles/atlas-grid-simulator.dir/src/main.cpp.o
 atlas-grid-simulator: CMakeFiles/atlas-grid-simulator.dir/util/actions.cpp.o
+atlas-grid-simulator: CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o
 atlas-grid-simulator: CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o
 atlas-grid-simulator: CMakeFiles/atlas-grid-simulator.dir/util/parser.cpp.o
 atlas-grid-simulator: CMakeFiles/atlas-grid-simulator.dir/util/platform.cpp.o
@@ -199,7 +215,7 @@ atlas-grid-simulator: /usr/lib/x86_64-linux-gnu/libz.so
 atlas-grid-simulator: /usr/lib/x86_64-linux-gnu/libdl.a
 atlas-grid-simulator: /usr/lib/x86_64-linux-gnu/libm.so
 atlas-grid-simulator: CMakeFiles/atlas-grid-simulator.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable atlas-grid-simulator"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable atlas-grid-simulator"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/atlas-grid-simulator.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
