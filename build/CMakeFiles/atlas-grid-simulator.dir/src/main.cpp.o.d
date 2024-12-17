@@ -781,6 +781,7 @@ CMakeFiles/atlas-grid-simulator.dir/src/main.cpp.o: \
  /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/simgrid/include/simgrid/plugins/energy.h \
  /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/include/parser.h \
  /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/include/task_manager.h \
+ /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/include/job_manager.h \
  /home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/include/panda_dispatcher.h \
  /usr/include/hdf5/serial/H5Cpp.h /usr/include/hdf5/serial/H5Include.h \
  /usr/include/hdf5/serial/hdf5.h /usr/include/hdf5/serial/H5public.h \

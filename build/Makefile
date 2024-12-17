@@ -201,6 +201,30 @@ util/actions.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/atlas-grid-simulator.dir/build.make CMakeFiles/atlas-grid-simulator.dir/util/actions.cpp.s
 .PHONY : util/actions.cpp.s
 
+util/job_manager.o: util/job_manager.cpp.o
+.PHONY : util/job_manager.o
+
+# target to build an object file
+util/job_manager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/atlas-grid-simulator.dir/build.make CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.o
+.PHONY : util/job_manager.cpp.o
+
+util/job_manager.i: util/job_manager.cpp.i
+.PHONY : util/job_manager.i
+
+# target to preprocess a source file
+util/job_manager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/atlas-grid-simulator.dir/build.make CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.i
+.PHONY : util/job_manager.cpp.i
+
+util/job_manager.s: util/job_manager.cpp.s
+.PHONY : util/job_manager.s
+
+# target to generate assembly for a file
+util/job_manager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/atlas-grid-simulator.dir/build.make CMakeFiles/atlas-grid-simulator.dir/util/job_manager.cpp.s
+.PHONY : util/job_manager.cpp.s
+
 util/panda_dispatcher.o: util/panda_dispatcher.cpp.o
 .PHONY : util/panda_dispatcher.o
 
@@ -315,6 +339,9 @@ help:
 	@echo "... util/actions.o"
 	@echo "... util/actions.i"
 	@echo "... util/actions.s"
+	@echo "... util/job_manager.o"
+	@echo "... util/job_manager.i"
+	@echo "... util/job_manager.s"
 	@echo "... util/panda_dispatcher.o"
 	@echo "... util/panda_dispatcher.i"
 	@echo "... util/panda_dispatcher.s"
