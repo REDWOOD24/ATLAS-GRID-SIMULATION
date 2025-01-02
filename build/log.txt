@@ -1,18 +1,18 @@
 ----------------------------------------------------
 [32mAdding Site .... AGLT2
-[35mCPUS          : 1774
+[35mCPUS          : 1778
 [33mDISK-INFO-CPU : 
 NAME          : AGLT2_CALIBDISK                :   152.000000GiB
-NAME          : AGLT2_DATADISK                 :  6336.000000GiB
+NAME          : AGLT2_DATADISK                 :  6322.000000GiB
 NAME          : AGLT2_LOCALGROUPDISK           :   197.000000GiB
 NAME          : AGLT2_SCRATCHDISK              :    96.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... ARNES
-[35mCPUS          : 992
+[35mCPUS          : 993
 [33mDISK-INFO-CPU : 
-NAME          : NDGF-T1_DATADISK               : 24970.000000GiB
-NAME          : NDGF-T1_SCRATCHDISK            :   238.000000GiB
+NAME          : NDGF-T1_DATADISK               : 24944.000000GiB
+NAME          : NDGF-T1_SCRATCHDISK            :   237.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... BEIJING-LCG2
@@ -32,117 +32,117 @@ NAME          : BNL-OSG2_SCRATCHDISK           :   402.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... BNL-ATLAS-OPP
-[35mCPUS          : 235
+[35mCPUS          : 240
 [33mDISK-INFO-CPU : 
-NAME          : BNL-OSG2_DATADISK              : 128553.000000GiB
-NAME          : BNL-OSG2_LOCALGROUPDISK        : 16518.000000GiB
-NAME          : BNL-OSG2_SCRATCHDISK           :  3977.000000GiB
+NAME          : BNL-OSG2_DATADISK              : 125875.000000GiB
+NAME          : BNL-OSG2_LOCALGROUPDISK        : 16174.000000GiB
+NAME          : BNL-OSG2_SCRATCHDISK           :  3894.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... CA-SFU-T2
-[35mCPUS          : 1228
+[35mCPUS          : 1231
 [33mDISK-INFO-CPU : 
-NAME          : CA-SFU-T2_DATADISK             :  3909.000000GiB
+NAME          : CA-SFU-T2_DATADISK             :  3899.000000GiB
 NAME          : CA-SFU-T2_LOCALGROUPDISK       :   244.000000GiB
-NAME          : CA-SFU-T2_SCRATCHDISK          :    98.000000GiB
+NAME          : CA-SFU-T2_SCRATCHDISK          :    97.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... CA-VICTORIA-WESTGRID-T2
-[35mCPUS          : 2427
+[35mCPUS          : 2425
 [33mDISK-INFO-CPU : 
-NAME          : CA-VICTORIA-WESTGRID-T2_DATADISK :   789.000000GiB
+NAME          : CA-VICTORIA-WESTGRID-T2_DATADISK :   790.000000GiB
 NAME          : CA-VICTORIA-WESTGRID-T2_LOCALGROUPDISK :     8.000000GiB
 NAME          : CA-VICTORIA-WESTGRID-T2_SCRATCHDISK :    33.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... CA-WATERLOO-T2
-[35mCPUS          : 459
+[35mCPUS          : 461
 [33mDISK-INFO-CPU : 
-NAME          : CA-WATERLOO-T2_DATADISK        :  4736.000000GiB
-NAME          : CA-WATERLOO-T2_LOCALGROUPDISK  :    66.000000GiB
-NAME          : CA-WATERLOO-T2_SCRATCHDISK     :   109.000000GiB
+NAME          : CA-WATERLOO-T2_DATADISK        :  4716.000000GiB
+NAME          : CA-WATERLOO-T2_LOCALGROUPDISK  :    65.000000GiB
+NAME          : CA-WATERLOO-T2_SCRATCHDISK     :   108.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... CSCS-LCG2
-[35mCPUS          : 282
+[35mCPUS          : 286
 [33mDISK-INFO-CPU : 
-NAME          : CSCS-LCG2_DATADISK             : 16754.000000GiB
-NAME          : CSCS-LCG2_LOCALGROUPDISK       :   227.000000GiB
-NAME          : CSCS-LCG2_SCRATCHDISK          :   227.000000GiB
+NAME          : CSCS-LCG2_DATADISK             : 16520.000000GiB
+NAME          : CSCS-LCG2_LOCALGROUPDISK       :   224.000000GiB
+NAME          : CSCS-LCG2_SCRATCHDISK          :   224.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... CYFRONET-LCG2
-[35mCPUS          : 431
+[35mCPUS          : 428
 [33mDISK-INFO-CPU : 
-NAME          : CYFRONET-LCG2-EOS_DATADISK     :  4640.000000GiB
-NAME          : CYFRONET-LCG2-EOS_SCRATCHDISK  :   232.000000GiB
+NAME          : CYFRONET-LCG2-EOS_DATADISK     :  4673.000000GiB
+NAME          : CYFRONET-LCG2-EOS_SCRATCHDISK  :   234.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... DESY-HH
-[35mCPUS          : 1446
+[35mCPUS          : 1443
 [33mDISK-INFO-CPU : 
-NAME          : DESY-HH_DATADISK               :  1961.000000GiB
-NAME          : DESY-HH_LOCALGROUPDISK         :  2317.000000GiB
+NAME          : DESY-HH_DATADISK               :  1965.000000GiB
+NAME          : DESY-HH_LOCALGROUPDISK         :  2322.000000GiB
 NAME          : DESY-HH_SCRATCHDISK            :    97.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... DESY-ZN
-[35mCPUS          : 2065
+[35mCPUS          : 2067
 [33mDISK-INFO-CPU : 
-NAME          : DESY-ZN_DATADISK               :  1332.000000GiB
+NAME          : DESY-ZN_DATADISK               :  1330.000000GiB
 NAME          : DESY-ZN_LOCALGROUPDISK         :   242.000000GiB
 NAME          : DESY-ZN_SCRATCHDISK            :    24.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... EELA-UTFSM
-[35mCPUS          : 12
+[35mCPUS          : 11
 [33mDISK-INFO-CPU : 
-NAME          : EELA-UTFSM_DATADISK            : 25000.000000GiB
-NAME          : EELA-UTFSM_LOCALGROUPDISK      :  1517.000000GiB
-NAME          : EELA-UTFSM_SCRATCHDISK         :  2133.000000GiB
+NAME          : EELA-UTFSM_DATADISK            : 27273.000000GiB
+NAME          : EELA-UTFSM_LOCALGROUPDISK      :  1655.000000GiB
+NAME          : EELA-UTFSM_SCRATCHDISK         :  2327.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... FMPhI-UNIBA
-[35mCPUS          : 129
+[35mCPUS          : 130
 [33mDISK-INFO-CPU : 
-NAME          : FMPHI-UNIBA_DATADISK           :  8752.000000GiB
-NAME          : FMPHI-UNIBA_LOCALGROUPDISK     :   853.000000GiB
-NAME          : FMPHI-UNIBA_SCRATCHDISK        :   426.000000GiB
+NAME          : FMPHI-UNIBA_DATADISK           :  8685.000000GiB
+NAME          : FMPHI-UNIBA_LOCALGROUPDISK     :   846.000000GiB
+NAME          : FMPHI-UNIBA_SCRATCHDISK        :   423.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... FZK-LCG2
-[35mCPUS          : 3962
+[35mCPUS          : 3965
 [33mDISK-INFO-CPU : 
-NAME          : FZK-LCG2_DATADISK              :  4228.000000GiB
+NAME          : FZK-LCG2_DATADISK              :  4224.000000GiB
 NAME          : FZK-LCG2_SCRATCHDISK           :    63.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... GRIF-IRFU
-[35mCPUS          : 511
+[35mCPUS          : 513
 [33mDISK-INFO-CPU : 
-NAME          : GRIF_DATADISK                  : 11546.000000GiB
-NAME          : GRIF_LOCALGROUPDISK            :  1370.000000GiB
-NAME          : GRIF_SCRATCHDISK               :   294.000000GiB
+NAME          : GRIF_DATADISK                  : 11501.000000GiB
+NAME          : GRIF_LOCALGROUPDISK            :  1365.000000GiB
+NAME          : GRIF_SCRATCHDISK               :   292.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... GRIF-LAL
-[35mCPUS          : 690
+[35mCPUS          : 692
 [33mDISK-INFO-CPU : 
-NAME          : GRIF_DATADISK                  :  8551.000000GiB
-NAME          : GRIF_LOCALGROUPDISK            :  1014.000000GiB
+NAME          : GRIF_DATADISK                  :  8526.000000GiB
+NAME          : GRIF_LOCALGROUPDISK            :  1012.000000GiB
 NAME          : GRIF_SCRATCHDISK               :   217.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... GRIF-LPNHE
-[35mCPUS          : 935
+[35mCPUS          : 934
 [33mDISK-INFO-CPU : 
-NAME          : GRIF_DATADISK                  :  6310.000000GiB
+NAME          : GRIF_DATADISK                  :  6317.000000GiB
 NAME          : GRIF_LOCALGROUPDISK            :   749.000000GiB
-NAME          : GRIF_SCRATCHDISK               :   160.000000GiB
+NAME          : GRIF_SCRATCHDISK               :   161.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... GoeGrid
-[35mCPUS          : 2555
+[35mCPUS          : 2556
 [33mDISK-INFO-CPU : 
 NAME          : GOEGRID_DATADISK               :   959.000000GiB
 NAME          : GOEGRID_LOCALGROUPDISK         :    59.000000GiB
@@ -150,200 +150,200 @@ NAME          : GOEGRID_SCRATCHDISK            :    59.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... HEPHY-UIBK
-[35mCPUS          : 119
+[35mCPUS          : 123
 [33mDISK-INFO-CPU : 
-NAME          : LRZ-LMU_DATADISK               : 22975.000000GiB
+NAME          : LRZ-LMU_DATADISK               : 22228.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... HK-LCG2
-[35mCPUS          : 121
+[35mCPUS          : 120
 [33mDISK-INFO-CPU : 
-NAME          : HK-LCG2_DATADISK               :  7815.000000GiB
+NAME          : HK-LCG2_DATADISK               :  7880.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... IEPSAS-Kosice
-[35mCPUS          : 220
+[35mCPUS          : 219
 [33mDISK-INFO-CPU : 
-NAME          : IEPSAS-KOSICE_DATADISK         :  5148.000000GiB
-NAME          : IEPSAS-KOSICE_LOCALGROUPDISK   :   555.000000GiB
-NAME          : IEPSAS-KOSICE_SCRATCHDISK      :   477.000000GiB
+NAME          : IEPSAS-KOSICE_DATADISK         :  5171.000000GiB
+NAME          : IEPSAS-KOSICE_LOCALGROUPDISK   :   557.000000GiB
+NAME          : IEPSAS-KOSICE_SCRATCHDISK      :   479.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... IFIC-LCG2
-[35mCPUS          : 967
+[35mCPUS          : 970
 [33mDISK-INFO-CPU : 
 NAME          : IFIC-LCG2_CALIBDISK            :    23.000000GiB
-NAME          : IFIC-LCG2_DATADISK             :  3516.000000GiB
-NAME          : IFIC-LCG2_LOCALGROUPDISK       :   259.000000GiB
+NAME          : IFIC-LCG2_DATADISK             :  3505.000000GiB
+NAME          : IFIC-LCG2_LOCALGROUPDISK       :   258.000000GiB
 NAME          : IFIC-LCG2_SCRATCHDISK          :   103.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... IN2P3-CC
-[35mCPUS          : 1639
+[35mCPUS          : 1643
 [33mDISK-INFO-CPU : 
-NAME          : IN2P3-CC_DATADISK              : 11490.000000GiB
-NAME          : IN2P3-CC_LOCALGROUPDISK        :   320.000000GiB
+NAME          : IN2P3-CC_DATADISK              : 11462.000000GiB
+NAME          : IN2P3-CC_LOCALGROUPDISK        :   319.000000GiB
 NAME          : IN2P3-CC_SCRATCHDISK           :   101.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... IN2P3-CPPM
-[35mCPUS          : 1119
+[35mCPUS          : 1116
 [33mDISK-INFO-CPU : 
-NAME          : IN2P3-CPPM_DATADISK            :  1995.000000GiB
-NAME          : IN2P3-CPPM_LOCALGROUPDISK      :   219.000000GiB
+NAME          : IN2P3-CPPM_DATADISK            :  2000.000000GiB
+NAME          : IN2P3-CPPM_LOCALGROUPDISK      :   220.000000GiB
 NAME          : IN2P3-CPPM_SCRATCHDISK         :    29.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... IN2P3-LAPP
-[35mCPUS          : 655
+[35mCPUS          : 660
 [33mDISK-INFO-CPU : 
-NAME          : IN2P3-LAPP-DCACHE_DATADISK     : 10763.000000GiB
-NAME          : IN2P3-LAPP-DCACHE_LOCALGROUPDISK :    90.000000GiB
+NAME          : IN2P3-LAPP-DCACHE_DATADISK     : 10682.000000GiB
+NAME          : IN2P3-LAPP-DCACHE_LOCALGROUPDISK :    89.000000GiB
 NAME          : IN2P3-LAPP-DCACHE_SCRATCHDISK  :    76.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... IN2P3-LPC
-[35mCPUS          : 274
+[35mCPUS          : 271
 [33mDISK-INFO-CPU : 
-NAME          : IN2P3-LPC_DATADISK             : 10441.000000GiB
-NAME          : IN2P3-LPC_LOCALGROUPDISK       :   104.000000GiB
-NAME          : IN2P3-LPC_SCRATCHDISK          :   193.000000GiB
+NAME          : IN2P3-LPC_DATADISK             : 10557.000000GiB
+NAME          : IN2P3-LPC_LOCALGROUPDISK       :   105.000000GiB
+NAME          : IN2P3-LPC_SCRATCHDISK          :   195.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... INFN-FRASCATI
-[35mCPUS          : 759
+[35mCPUS          : 758
 [33mDISK-INFO-CPU : 
-NAME          : INFN-FRASCATI_DATADISK         :  2608.000000GiB
+NAME          : INFN-FRASCATI_DATADISK         :  2611.000000GiB
 NAME          : INFN-FRASCATI_LOCALGROUPDISK   :    51.000000GiB
 NAME          : INFN-FRASCATI_SCRATCHDISK      :    58.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... INFN-GENOVA
-[35mCPUS          : 81
+[35mCPUS          : 77
 [33mDISK-INFO-CPU : 
-NAME          : INFN-GENOVA_DATADISK           :   109.000000GiB
-NAME          : INFN-GENOVA_LOCALGROUPDISK     :   407.000000GiB
-NAME          : INFN-GENOVA_SCRATCHDISK        :   109.000000GiB
+NAME          : INFN-GENOVA_DATADISK           :   114.000000GiB
+NAME          : INFN-GENOVA_LOCALGROUPDISK     :   428.000000GiB
+NAME          : INFN-GENOVA_SCRATCHDISK        :   114.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... INFN-LECCE
-[35mCPUS          : 143
+[35mCPUS          : 144
 [33mDISK-INFO-CPU : 
-NAME          : INFN-LECCE_LOCALGROUPDISK      :   254.000000GiB
-NAME          : INFN-LECCE_SCRATCHDISK         :   122.000000GiB
-NAME          : INFN-NAPOLI-ATLAS_DATADISK     : 39186.000000GiB
+NAME          : INFN-LECCE_LOCALGROUPDISK      :   252.000000GiB
+NAME          : INFN-LECCE_SCRATCHDISK         :   121.000000GiB
+NAME          : INFN-NAPOLI-ATLAS_DATADISK     : 38914.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... INFN-MILANO-ATLASC
-[35mCPUS          : 388
+[35mCPUS          : 393
 [33mDISK-INFO-CPU : 
-NAME          : INFN-MILANO-ATLASC_DATADISK    :  5042.000000GiB
-NAME          : INFN-MILANO-ATLASC_LOCALGROUPDISK :   794.000000GiB
+NAME          : INFN-MILANO-ATLASC_DATADISK    :  4978.000000GiB
+NAME          : INFN-MILANO-ATLASC_LOCALGROUPDISK :   784.000000GiB
 NAME          : INFN-MILANO-ATLASC_SCRATCHDISK :    66.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... INFN-NAPOLI-ATLAS
-[35mCPUS          : 1243
+[35mCPUS          : 1242
 [33mDISK-INFO-CPU : 
 NAME          : INFN-LECCE_SCRATCHDISK         :    14.000000GiB
-NAME          : INFN-NAPOLI-ATLAS_DATADISK     :  4508.000000GiB
+NAME          : INFN-NAPOLI-ATLAS_DATADISK     :  4512.000000GiB
 NAME          : INFN-NAPOLI-ATLAS_LOCALGROUPDISK :    44.000000GiB
 NAME          : INFN-NAPOLI-ATLAS_SCRATCHDISK  :    62.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... INFN-ROMA1
-[35mCPUS          : 477
+[35mCPUS          : 473
 [33mDISK-INFO-CPU : 
-NAME          : INFN-ROMA1_CALIBDISK           :   138.000000GiB
-NAME          : INFN-ROMA1_DATADISK            :  3342.000000GiB
-NAME          : INFN-ROMA1_LOCALGROUPDISK      :   346.000000GiB
-NAME          : INFN-ROMA1_SCRATCHDISK         :   184.000000GiB
+NAME          : INFN-ROMA1_CALIBDISK           :   139.000000GiB
+NAME          : INFN-ROMA1_DATADISK            :  3371.000000GiB
+NAME          : INFN-ROMA1_LOCALGROUPDISK      :   349.000000GiB
+NAME          : INFN-ROMA1_SCRATCHDISK         :   186.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... INFN-ROMA3
-[35mCPUS          : 33
+[35mCPUS          : 36
 [33mDISK-INFO-CPU : 
-NAME          : CERN-PROD_DATADISK             : 701545.000000GiB
-NAME          : INFN-ROMA3_DATADISK            :    61.000000GiB
-NAME          : INFN-ROMA3_LOCALGROUPDISK      :  1091.000000GiB
-NAME          : INFN-ROMA3_SCRATCHDISK         :    97.000000GiB
+NAME          : CERN-PROD_DATADISK             : 643083.000000GiB
+NAME          : INFN-ROMA3_DATADISK            :    56.000000GiB
+NAME          : INFN-ROMA3_LOCALGROUPDISK      :  1000.000000GiB
+NAME          : INFN-ROMA3_SCRATCHDISK         :    89.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... INFN-T1
-[35mCPUS          : 1465
+[35mCPUS          : 1464
 [33mDISK-INFO-CPU : 
-NAME          : INFN-T1_DATADISK               :  6429.000000GiB
+NAME          : INFN-T1_DATADISK               :  6433.000000GiB
 NAME          : INFN-T1_SCRATCHDISK            :   137.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... JINR-LCG2
-[35mCPUS          : 285
+[35mCPUS          : 290
 [33mDISK-INFO-CPU : 
-NAME          : JINR-LCG2_DATADISK             :  3228.000000GiB
-NAME          : JINR-LCG2_LOCALGROUPDISK       :   175.000000GiB
-NAME          : JINR-LCG2_SCRATCHDISK          :   176.000000GiB
+NAME          : JINR-LCG2_DATADISK             :  3172.000000GiB
+NAME          : JINR-LCG2_LOCALGROUPDISK       :   172.000000GiB
+NAME          : JINR-LCG2_SCRATCHDISK          :   173.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... LRZ-LMU
-[35mCPUS          : 530
+[35mCPUS          : 526
 [33mDISK-INFO-CPU : 
-NAME          : LRZ-LMU_CALIBDISK              :    99.000000GiB
-NAME          : LRZ-LMU_DATADISK               :  5159.000000GiB
-NAME          : LRZ-LMU_LOCALGROUPDISK         :   711.000000GiB
-NAME          : LRZ-LMU_SCRATCHDISK            :   156.000000GiB
+NAME          : LRZ-LMU_CALIBDISK              :   100.000000GiB
+NAME          : LRZ-LMU_DATADISK               :  5198.000000GiB
+NAME          : LRZ-LMU_LOCALGROUPDISK         :   716.000000GiB
+NAME          : LRZ-LMU_SCRATCHDISK            :   158.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... MPPMU
-[35mCPUS          : 1012
+[35mCPUS          : 1013
 [33mDISK-INFO-CPU : 
 NAME          : MPPMU_CALIBDISK                :    35.000000GiB
-NAME          : MPPMU_DATADISK                 :  2964.000000GiB
-NAME          : MPPMU_LOCALGROUPDISK           :   534.000000GiB
+NAME          : MPPMU_DATADISK                 :  2962.000000GiB
+NAME          : MPPMU_LOCALGROUPDISK           :   533.000000GiB
 NAME          : MPPMU_SCRATCHDISK              :    99.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... MWT2
-[35mCPUS          : 2350
+[35mCPUS          : 2348
 [33mDISK-INFO-CPU : 
-NAME          : MWT2_DATADISK                  :  8511.000000GiB
-NAME          : MWT2_UC_LOCALGROUPDISK         :   255.000000GiB
+NAME          : MWT2_DATADISK                  :  8518.000000GiB
+NAME          : MWT2_UC_LOCALGROUPDISK         :   256.000000GiB
 NAME          : MWT2_UC_SCRATCHDISK            :   213.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... NCG-INGRID-PT
-[35mCPUS          : 115
+[35mCPUS          : 113
 [33mDISK-INFO-CPU : 
-NAME          : NCG-INGRID-PT_DATADISK         :  4348.000000GiB
-NAME          : NCG-INGRID-PT_LOCALGROUPDISK   :   522.000000GiB
-NAME          : NCG-INGRID-PT_SCRATCHDISK      :    87.000000GiB
+NAME          : NCG-INGRID-PT_DATADISK         :  4425.000000GiB
+NAME          : NCG-INGRID-PT_LOCALGROUPDISK   :   531.000000GiB
+NAME          : NCG-INGRID-PT_SCRATCHDISK      :    88.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... NDGF-T1
-[35mCPUS          : 91
+[35mCPUS          : 93
 [33mDISK-INFO-CPU : 
-NAME          : NDGF-T1_DATADISK               : 272196.000000GiB
-NAME          : NDGF-T1_SCRATCHDISK            :  2591.000000GiB
+NAME          : NDGF-T1_DATADISK               : 266342.000000GiB
+NAME          : NDGF-T1_SCRATCHDISK            :  2535.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... NIKHEF
-[35mCPUS          : 1970
+[35mCPUS          : 1971
 [33mDISK-INFO-CPU : 
-NAME          : NIKHEF_DATADISK                :  1972.000000GiB
+NAME          : NIKHEF_DATADISK                :  1971.000000GiB
 NAME          : NIKHEF_SCRATCHDISK             :    28.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... NO-NORGRID-T2
-[35mCPUS          : 29
+[35mCPUS          : 26
 [33mDISK-INFO-CPU : 
-NAME          : NDGF-T1_DATADISK               : 854131.000000GiB
-NAME          : NDGF-T1_SCRATCHDISK            :  8131.000000GiB
-NAME          : NO-NORGRID-T2_LOCALGROUPDISK   :   862.000000GiB
+NAME          : NDGF-T1_DATADISK               : 952685.000000GiB
+NAME          : NDGF-T1_SCRATCHDISK            :  9069.000000GiB
+NAME          : NO-NORGRID-T2_LOCALGROUPDISK   :   962.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... OU_OSCER_ATLAS
-[35mCPUS          : 57
+[35mCPUS          : 53
 [33mDISK-INFO-CPU : 
-NAME          : OU_OSCER_ATLAS_DATADISK        :  8772.000000GiB
+NAME          : OU_OSCER_ATLAS_DATADISK        :  9434.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... RAL-LCG2-ECHO
@@ -354,55 +354,55 @@ NAME          : RAL-LCG2-ECHO_SCRATCHDISK      :    87.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... RO-07-NIPNE
-[35mCPUS          : 937
+[35mCPUS          : 939
 [33mDISK-INFO-CPU : 
-NAME          : RO-07-NIPNE_DATADISK           :  4376.000000GiB
+NAME          : RO-07-NIPNE_DATADISK           :  4366.000000GiB
 NAME          : RO-07-NIPNE_SCRATCHDISK        :   117.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... RO-14-ITIM
-[35mCPUS          : 239
+[35mCPUS          : 241
 [33mDISK-INFO-CPU : 
-NAME          : RO-07-NIPNE_DATADISK           : 17155.000000GiB
-NAME          : RO-07-NIPNE_SCRATCHDISK        :   460.000000GiB
+NAME          : RO-07-NIPNE_DATADISK           : 17012.000000GiB
+NAME          : RO-07-NIPNE_SCRATCHDISK        :   456.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... RO-16-UAIC
-[35mCPUS          : 189
+[35mCPUS          : 190
 [33mDISK-INFO-CPU : 
-NAME          : RO-07-NIPNE_DATADISK           : 21693.000000GiB
-NAME          : RO-07-NIPNE_SCRATCHDISK        :   582.000000GiB
+NAME          : RO-07-NIPNE_DATADISK           : 21579.000000GiB
+NAME          : RO-07-NIPNE_SCRATCHDISK        :   579.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... RRC-KI-T1
-[35mCPUS          : 513
+[35mCPUS          : 516
 [33mDISK-INFO-CPU : 
-NAME          : RRC-KI-T1_DATADISK             :  8895.000000GiB
+NAME          : RRC-KI-T1_DATADISK             :  8843.000000GiB
 NAME          : RRC-KI-T1_LOCALGROUPDISK       :    10.000000GiB
-NAME          : RRC-KI-T1_SCRATCHDISK          :   186.000000GiB
+NAME          : RRC-KI-T1_SCRATCHDISK          :   185.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... RU-Protvino-IHEP
-[35mCPUS          : 216
+[35mCPUS          : 218
 [33mDISK-INFO-CPU : 
-NAME          : RU-PROTVINO-IHEP_DATADISK      :  4758.000000GiB
-NAME          : RU-PROTVINO-IHEP_LOCALGROUPDISK :   231.000000GiB
-NAME          : RU-PROTVINO-IHEP_SCRATCHDISK   :   231.000000GiB
+NAME          : RU-PROTVINO-IHEP_DATADISK      :  4715.000000GiB
+NAME          : RU-PROTVINO-IHEP_LOCALGROUPDISK :   229.000000GiB
+NAME          : RU-PROTVINO-IHEP_SCRATCHDISK   :   229.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... SAMPA
-[35mCPUS          : 170
+[35mCPUS          : 169
 [33mDISK-INFO-CPU : 
-NAME          : PIC_DATADISK                   : 28824.000000GiB
-NAME          : SAMPA_DATADISK                 :  1506.000000GiB
-NAME          : SAMPA_SCRATCHDISK              :   918.000000GiB
+NAME          : PIC_DATADISK                   : 28994.000000GiB
+NAME          : SAMPA_DATADISK                 :  1515.000000GiB
+NAME          : SAMPA_SCRATCHDISK              :   923.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... SARA-MATRIX
-[35mCPUS          : 1452
+[35mCPUS          : 1456
 [33mDISK-INFO-CPU : 
-NAME          : SARA-MATRIX_DATADISK           :  3596.000000GiB
-NAME          : SARA-MATRIX_SCRATCHDISK        :    76.000000GiB
+NAME          : SARA-MATRIX_DATADISK           :  3586.000000GiB
+NAME          : SARA-MATRIX_SCRATCHDISK        :    75.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... SWT2_CPB
@@ -414,11 +414,11 @@ NAME          : SWT2_CPB_SCRATCHDISK           :   352.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... SiGNET
-[35mCPUS          : 142
+[35mCPUS          : 141
 [33mDISK-INFO-CPU : 
-NAME          : NDGF-T1_DATADISK               : 174435.000000GiB
-NAME          : NDGF-T1_SCRATCHDISK            :  1660.000000GiB
-NAME          : SIGNET_LOCALGROUPDISK          :   352.000000GiB
+NAME          : NDGF-T1_DATADISK               : 175672.000000GiB
+NAME          : NDGF-T1_SCRATCHDISK            :  1672.000000GiB
+NAME          : SIGNET_LOCALGROUPDISK          :   355.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... TECHNION-HEP
@@ -429,70 +429,70 @@ NAME          : TECHNION-HEP_SCRATCHDISK       :    23.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... TOKYO-LCG2
-[35mCPUS          : 2659
+[35mCPUS          : 2662
 [33mDISK-INFO-CPU : 
-NAME          : TOKYO-LCG2_DATADISK            :  3986.000000GiB
-NAME          : TOKYO-LCG2_LOCALGROUPDISK      :   752.000000GiB
+NAME          : TOKYO-LCG2_DATADISK            :  3982.000000GiB
+NAME          : TOKYO-LCG2_LOCALGROUPDISK      :   751.000000GiB
 NAME          : TOKYO-LCG2_SCRATCHDISK         :   150.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... TRIUMF-LCG2
-[35mCPUS          : 2011
+[35mCPUS          : 2007
 [33mDISK-INFO-CPU : 
-NAME          : TRIUMF-LCG2_DATADISK           :  6464.000000GiB
+NAME          : TRIUMF-LCG2_DATADISK           :  6477.000000GiB
 NAME          : TRIUMF-LCG2_LOCALGROUPDISK     :    37.000000GiB
-NAME          : TRIUMF-LCG2_SCRATCHDISK        :   298.000000GiB
+NAME          : TRIUMF-LCG2_SCRATCHDISK        :   299.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... TW-FTT
-[35mCPUS          : 66
+[35mCPUS          : 62
 [33mDISK-INFO-CPU : 
-NAME          : TW-LCG2_DATADISK               : 33318.000000GiB
+NAME          : TW-LCG2_DATADISK               : 35468.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... Taiwan-LCG2
-[35mCPUS          : 40
+[35mCPUS          : 38
 [33mDISK-INFO-CPU : 
-NAME          : TW-LCG2_DATADISK               : 54976.000000GiB
+NAME          : TW-LCG2_DATADISK               : 57869.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UAM-LCG2
-[35mCPUS          : 250
+[35mCPUS          : 248
 [33mDISK-INFO-CPU : 
-NAME          : UAM-LCG2_DATADISK              :  4577.000000GiB
-NAME          : UAM-LCG2_LOCALGROUPDISK        :   160.000000GiB
-NAME          : UAM-LCG2_SCRATCHDISK           :   100.000000GiB
+NAME          : UAM-LCG2_DATADISK              :  4614.000000GiB
+NAME          : UAM-LCG2_LOCALGROUPDISK        :   161.000000GiB
+NAME          : UAM-LCG2_SCRATCHDISK           :   101.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-LT2-Brunel
-[35mCPUS          : 42
+[35mCPUS          : 43
 [33mDISK-INFO-CPU : 
-NAME          : UKI-LT2-QMUL_DATADISK          : 214286.000000GiB
-NAME          : UKI-LT2-QMUL_SCRATCHDISK       : 11905.000000GiB
+NAME          : UKI-LT2-QMUL_DATADISK          : 209302.000000GiB
+NAME          : UKI-LT2-QMUL_SCRATCHDISK       : 11628.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-LT2-QMUL
-[35mCPUS          : 2914
+[35mCPUS          : 2913
 [33mDISK-INFO-CPU : 
-NAME          : UKI-LT2-QMUL_DATADISK          :  3089.000000GiB
+NAME          : UKI-LT2-QMUL_DATADISK          :  3090.000000GiB
 NAME          : UKI-LT2-QMUL_LOCALGROUPDISK    :   343.000000GiB
 NAME          : UKI-LT2-QMUL_SCRATCHDISK       :   172.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-LT2-RHUL
-[35mCPUS          : 256
+[35mCPUS          : 253
 [33mDISK-INFO-CPU : 
-NAME          : UKI-LT2-QMUL_DATADISK          : 35156.000000GiB
-NAME          : UKI-LT2-QMUL_LOCALGROUPDISK    :  3906.000000GiB
-NAME          : UKI-LT2-QMUL_SCRATCHDISK       :  1953.000000GiB
+NAME          : UKI-LT2-QMUL_DATADISK          : 35573.000000GiB
+NAME          : UKI-LT2-QMUL_LOCALGROUPDISK    :  3953.000000GiB
+NAME          : UKI-LT2-QMUL_SCRATCHDISK       :  1976.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-NORTHGRID-LIV-HEP
-[35mCPUS          : 60
+[35mCPUS          : 59
 [33mDISK-INFO-CPU : 
-NAME          : UKI-NORTHGRID-LIV-HEP_DATADISK :  7470.000000GiB
+NAME          : UKI-NORTHGRID-LIV-HEP_DATADISK :  7597.000000GiB
 NAME          : UKI-NORTHGRID-LIV-HEP_LOCALGROUPDISK :     4.000000GiB
-NAME          : UKI-NORTHGRID-LIV-HEP_SCRATCHDISK :   733.000000GiB
+NAME          : UKI-NORTHGRID-LIV-HEP_SCRATCHDISK :   745.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-NORTHGRID-MAN-HEP
@@ -504,18 +504,18 @@ NAME          : UKI-NORTHGRID-MAN-HEP_SCRATCHDISK :    76.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-NORTHGRID-SHEF-HEP
-[35mCPUS          : 446
+[35mCPUS          : 445
 [33mDISK-INFO-CPU : 
-NAME          : UKI-LT2-QMUL_DATADISK          : 20179.000000GiB
-NAME          : UKI-LT2-QMUL_LOCALGROUPDISK    :  2242.000000GiB
-NAME          : UKI-LT2-QMUL_SCRATCHDISK       :  1121.000000GiB
+NAME          : UKI-LT2-QMUL_DATADISK          : 20225.000000GiB
+NAME          : UKI-LT2-QMUL_LOCALGROUPDISK    :  2247.000000GiB
+NAME          : UKI-LT2-QMUL_SCRATCHDISK       :  1124.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-SCOTGRID-ECDF
-[35mCPUS          : 560
+[35mCPUS          : 559
 [33mDISK-INFO-CPU : 
-NAME          : UKI-SCOTGRID-GLASGOW-CEPH_DATADISK :  8036.000000GiB
-NAME          : UKI-SCOTGRID-GLASGOW-CEPH_LOCALGROUPDISK :   375.000000GiB
+NAME          : UKI-SCOTGRID-GLASGOW-CEPH_DATADISK :  8050.000000GiB
+NAME          : UKI-SCOTGRID-GLASGOW-CEPH_LOCALGROUPDISK :   376.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-SOUTHGRID-BHAM-HEP
@@ -527,63 +527,63 @@ NAME          : UKI-NORTHGRID-MAN-HEP_SCRATCHDISK :  3836.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-SOUTHGRID-OX-HEP
-[35mCPUS          : 1310
+[35mCPUS          : 1307
 [33mDISK-INFO-CPU : 
-NAME          : UKI-LT2-QMUL_DATADISK          :  6870.000000GiB
-NAME          : UKI-LT2-QMUL_LOCALGROUPDISK    :   763.000000GiB
-NAME          : UKI-LT2-QMUL_SCRATCHDISK       :   382.000000GiB
+NAME          : UKI-LT2-QMUL_DATADISK          :  6886.000000GiB
+NAME          : UKI-LT2-QMUL_LOCALGROUPDISK    :   765.000000GiB
+NAME          : UKI-LT2-QMUL_SCRATCHDISK       :   383.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UKI-SOUTHGRID-RALPP
-[35mCPUS          : 553
+[35mCPUS          : 554
 [33mDISK-INFO-CPU : 
-NAME          : UKI-SOUTHGRID-RALPP_DATADISK   :  1266.000000GiB
+NAME          : UKI-SOUTHGRID-RALPP_DATADISK   :  1264.000000GiB
 NAME          : UKI-SOUTHGRID-RALPP_LOCALGROUPDISK :   271.000000GiB
 NAME          : UKI-SOUTHGRID-RALPP_SCRATCHDISK :    45.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UNI-FREIBURG
-[35mCPUS          : 442
+[35mCPUS          : 437
 [33mDISK-INFO-CPU : 
-NAME          : UNI-FREIBURG_DATADISK          :  7353.000000GiB
-NAME          : UNI-FREIBURG_LOCALGROUPDISK    :  1471.000000GiB
-NAME          : UNI-FREIBURG_SCRATCHDISK       :   136.000000GiB
+NAME          : UNI-FREIBURG_DATADISK          :  7437.000000GiB
+NAME          : UNI-FREIBURG_LOCALGROUPDISK    :  1487.000000GiB
+NAME          : UNI-FREIBURG_SCRATCHDISK       :   137.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UNI-SIEGEN-HEP
-[35mCPUS          : 2
+[35mCPUS          : 4
 [33mDISK-INFO-CPU : 
-NAME          : WUPPERTALPROD_DATADISK         : 1412470.000000GiB
-NAME          : WUPPERTALPROD_SCRATCHDISK      : 22550.000000GiB
+NAME          : WUPPERTALPROD_DATADISK         : 706235.000000GiB
+NAME          : WUPPERTALPROD_SCRATCHDISK      : 11275.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... UNIBE-LHEP
-[35mCPUS          : 188
+[35mCPUS          : 190
 [33mDISK-INFO-CPU : 
-NAME          : NDGF-T1_DATADISK               : 131754.000000GiB
-NAME          : NDGF-T1_SCRATCHDISK            :  1254.000000GiB
-NAME          : UNIBE-LHEP_LOCALGROUPDISK      :   957.000000GiB
+NAME          : NDGF-T1_DATADISK               : 130367.000000GiB
+NAME          : NDGF-T1_SCRATCHDISK            :  1241.000000GiB
+NAME          : UNIBE-LHEP_LOCALGROUPDISK      :   947.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... WEIZMANN-LCG2
-[35mCPUS          : 1792
+[35mCPUS          : 1793
 [33mDISK-INFO-CPU : 
-NAME          : TECHNION-HEP_DATADISK          :  1493.000000GiB
+NAME          : TECHNION-HEP_DATADISK          :  1492.000000GiB
 NAME          : TECHNION-HEP_SCRATCHDISK       :    14.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... ifae
-[35mCPUS          : 979
+[35mCPUS          : 977
 [33mDISK-INFO-CPU : 
-NAME          : IFAE_DATADISK                  :   613.000000GiB
-NAME          : IFAE_LOCALGROUPDISK            :   153.000000GiB
-NAME          : IFAE_SCRATCHDISK               :   817.000000GiB
+NAME          : IFAE_DATADISK                  :   614.000000GiB
+NAME          : IFAE_LOCALGROUPDISK            :   154.000000GiB
+NAME          : IFAE_SCRATCHDISK               :   819.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
 [32mAdding Site .... pic
-[35mCPUS          : 1236
+[35mCPUS          : 1232
 [33mDISK-INFO-CPU : 
-NAME          : PIC_DATADISK                   :  3964.000000GiB
+NAME          : PIC_DATADISK                   :  3977.000000GiB
 NAME          : PIC_SCRATCHDISK                :   162.000000GiB
 [0m----------------------------------------------------
 ----------------------------------------------------
@@ -595,23 +595,107 @@ NAME          : PRAGUELCG2_LOCALGROUPDISK      :   517.000000GiB
 NAME          : PRAGUELCG2_SCRATCHDISK         :    86.000000GiB
 [0m----------------------------------------------------
 Inititalizing SimGrid Platform with all Sites ....................................................................................
-Computing Site NameCA-VICTORIA-K8S-TEST-T2
-Computing Site NameCA-VICTORIA-K8S-TEST-T2
-Computing Site NameAGLT2
 Computing site name: AGLT2
-Computing Site NameAGLT2
+----------------------------------------------------------------------
+[32mSubmitting .. 
+[37mFLOPs to be executed: 1.84905e+13
+[33mFiles to be read: 
+File: /input/user.input.6009593299.000000.000006.root Size: 3375820039
+File: /input/user.input.6009593299.000000.000005.root Size: 3375820039
+File: /input/user.input.6009593299.000000.000004.root Size: 3375820039
+File: /input/user.input.6009593299.000000.000003.root Size: 3375820039
+File: /input/user.input.6009593299.000000.000002.root Size: 3375820039
+File: /input/user.input.6009593299.000000.000001.root Size: 3375820039
+[36mFiles to be written: 
+File: /output/user.output.6009593299.000000.000001.root Size:   29400441
+[35mCores Used: 32
+[0mDisk Used :  AGLT2_CALIBDISK
+[34mHost : AGLT2_cpu-1032[0m
+----------------------------------------------------------------------
 Computing site name: AGLT2
-Computing Site NameGRIF-LAL
+----------------------------------------------------------------------
+[32mSubmitting .. 
+[37mFLOPs to be executed: 2.33362e+13
+[33mFiles to be read: 
+File: /input/user.input.6009593300.000000.000006.root Size: 3358528508
+File: /input/user.input.6009593300.000000.000005.root Size: 3358528508
+File: /input/user.input.6009593300.000000.000003.root Size: 3358528508
+File: /input/user.input.6009593300.000000.000002.root Size: 3358528508
+File: /input/user.input.6009593300.000000.000004.root Size: 3358528508
+File: /input/user.input.6009593300.000000.000001.root Size: 3358528508
+[36mFiles to be written: 
+File: /output/user.output.6009593300.000000.000001.root Size:   29320215
+[35mCores Used: 32
+[0mDisk Used :  AGLT2_CALIBDISK
+[34mHost : AGLT2_cpu-1031[0m
+----------------------------------------------------------------------
 Computing site name: GRIF-LAL
-Computing Site NameMWT2
+----------------------------------------------------------------------
+[32mSubmitting .. 
+[37mFLOPs to be executed: 3.62919e+12
+[33mFiles to be read: 
+File: /input/user.input.6009593302.000000.000002.root Size: 3332304872
+File: /input/user.input.6009593302.000000.000001.root Size: 3332304872
+[36mFiles to be written: 
+File: /output/user.output.6009593302.000000.000001.root Size:   27574271
+[35mCores Used: 32
+[0mDisk Used :  GRIF_DATADISK
+[34mHost : GRIF-LAL_cpu-103[0m
+----------------------------------------------------------------------
 Computing site name: MWT2
-Computing Site NameFZK-LCG2
+----------------------------------------------------------------------
+[32mSubmitting .. 
+[37mFLOPs to be executed: 6.26765e+12
+[33mFiles to be read: 
+File: /input/user.input.6009593303.000000.000001.root Size: 5242609180
+[36mFiles to be written: 
+File: /output/user.output.6009593303.000000.000001.root Size:   27121818
+[35mCores Used: 32
+[0mDisk Used :  MWT2_UC_LOCALGROUPDISK
+[34mHost : MWT2_cpu-105[0m
+----------------------------------------------------------------------
 Computing site name: FZK-LCG2
-Computing Site NameFZK-LCG2
+----------------------------------------------------------------------
+[32mSubmitting .. 
+[37mFLOPs to be executed: 0
+[33mFiles to be read: 
+File: /input/user.input.6009821221.000000.000002.root Size: 3422238344
+File: /input/user.input.6009821221.000000.000001.root Size: 3422238344
+[36mFiles to be written: 
+File: /output/user.output.6009821221.000000.000001.root Size:          0
+[35mCores Used: 32
+[0mDisk Used :  FZK-LCG2_SCRATCHDISK
+[34mHost : FZK-LCG2_cpu-1020[0m
+----------------------------------------------------------------------
 Computing site name: FZK-LCG2
-Computing Site NameFZK-LCG2
+----------------------------------------------------------------------
+[32mSubmitting .. 
+[37mFLOPs to be executed: 2.68972e+10
+[33mFiles to be read: 
+File: /input/user.input.6009821285.000000.000005.root Size: 3301642672
+File: /input/user.input.6009821285.000000.000004.root Size: 3301642672
+File: /input/user.input.6009821285.000000.000003.root Size: 3301642672
+File: /input/user.input.6009821285.000000.000002.root Size: 3301642672
+File: /input/user.input.6009821285.000000.000001.root Size: 3301642672
+[36mFiles to be written: 
+File: /output/user.output.6009821285.000000.000001.root Size:          0
+[35mCores Used: 32
+[0mDisk Used :  FZK-LCG2_SCRATCHDISK
+[34mHost : FZK-LCG2_cpu-102[0m
+----------------------------------------------------------------------
 Computing site name: FZK-LCG2
+----------------------------------------------------------------------
+[32mSubmitting .. 
+[37mFLOPs to be executed: 1.04544e+11
+[33mFiles to be read: 
+File: /input/user.input.6009821295.000000.000004.root Size: 3680809915
+File: /input/user.input.6009821295.000000.000003.root Size: 3680809915
+File: /input/user.input.6009821295.000000.000002.root Size: 3680809915
+File: /input/user.input.6009821295.000000.000001.root Size: 3680809915
+[36mFiles to be written: 
+File: /output/user.output.6009821295.000000.000001.root Size:          0
+[35mCores Used: 32
+[0mDisk Used :  FZK-LCG2_SCRATCHDISK
+[34mHost : FZK-LCG2_cpu-1019[0m
+----------------------------------------------------------------------
 Simulation in Progress ...
-Simulation Finished Succesfully in 6.47e-05 seconds! Information written out at: ../job_logs/log.h5
-
-SimATLAS version: 1.0.0
