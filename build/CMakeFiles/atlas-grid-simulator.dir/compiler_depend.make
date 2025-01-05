@@ -1915,7 +1915,6 @@ CMakeFiles/atlas-grid-simulator.dir/src/main.cpp.o: ../src/main.cpp \
   /usr/include/hdf5/serial/H5Group.h \
   /usr/include/hdf5/serial/H5File.h \
   /usr/include/hdf5/serial/H5Library.h \
-  ../include/task_manager.h \
   ../include/job_manager.h \
   ../include/actions.h \
   ../include/version.h
@@ -3986,7 +3985,7 @@ CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o: ../util/panda_d
   /usr/include/hdf5/serial/H5Group.h \
   /usr/include/hdf5/serial/H5File.h \
   /usr/include/hdf5/serial/H5Library.h \
-  ../include/task_manager.h \
+  ../include/job_manager.h \
   /usr/include/c++/11/random \
   /usr/include/c++/11/bits/random.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/opt_random.h \
@@ -4028,7 +4027,6 @@ CMakeFiles/atlas-grid-simulator.dir/util/panda_dispatcher.cpp.o: ../util/panda_d
   /usr/include/c++/11/bits/fs_dir.h \
   /usr/include/c++/11/bits/fs_ops.h \
   /usr/include/c++/11/any \
-  ../include/job_manager.h \
   ../include/actions.h \
   ../plugins/include/ATLAS_FileSystem.h \
   ../simgrid/include/simgrid/plugins/energy.h \
