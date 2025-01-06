@@ -46,8 +46,24 @@ Follow these steps to build the project on lxplus:
 ## Run Instructions
 
    ```bash
-  ./atlas-grid-simulator run 
+  ./atlas-grid-simulator ../data/site_conn_info.json ../data/site_info.json ../data/jobs.csv -1 ../job_logs/log.h5
    ```
+
+| **Argument**                          | **Description**                                                                                  |
+|---------------------------------------|--------------------------------------------------------------------------------------------------|
+| `../data/site_conn_info.json`         | Path to the JSON file containing site connectivity information.     |
+| `../data/site_info.json`              | Path to the JSON file with information about individual sites, including resources and capacities. |
+| `../data/jobs.csv`                    | Path to the CSV file with historical user job information.|
+| `-1`                                  | Number of jobs to be read from the job data source. If set to `-1`, all jobs will be read.  |
+| `../job_logs/log.h5`                  | Output file path for logging simulation results. Stores simulation logs in HDF5 format.          |
+
+| **Argument**                          | **Description**                                                                                  |
+|---------------------------------------|--------------------------------------------------------------------------------------------------|
+| `../data/site_conn_info.json`         | Path to the JSON file containing site connectivity information.     |
+| `../data/site_info.json`              | Path to the JSON file with information about individual sites, including resources and capacities. |
+| `../data/jobs.csv`                    | Path to the CSV file with historical user job information.|
+| `-1`                                  | Number of jobs to be read from the job data source. If set to `-1`, all jobs will be read.  |
+| `../job_logs/log.h5`                  | Output file path for logging simulation results. Stores simulation logs in HDF5 format.          |
 
 ## View Output
 
@@ -118,19 +134,18 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 - CPUs based off GFLOPS obtained from data dumps from site, estimating 500 GFLOPS per core per cpu.
 - Other estimates such as latency for connections, disk read and write bandwidths, cpu speed based on estimates.
 
-## Task Manager
+## Job Manager
 
- - Task has 3 parts -> (Read, Compute, Write).
- - Set sizes of files to be read and written from a gaussian distribution (mean and stddev estimated).
- - Estimate GFLOPS for tasks.
- - Tasks are broken into jobs as described in the dispatcher section below.
+ - Jobs are created from historical jobs.
+ - Set sizes of files to be read and written from a historical jobs, each input/output file size is determined by columns total_input_file_size/no of input files 
+ - Estimate GFLOPS for jobs, computing_site->gflops*job->cpu_consumption_time*job->core_count;
  - Example job shown below.
 
 
 ## Sample Job
 
 ## Job Details
-- **Job ID:** Task-18-Job-13
+- **Job ID:** 6089452826 // PANDAID
 - **FLOPs to be Executed:** 400,451
 
 ### Files to be Read
@@ -163,9 +178,9 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 ## PANDA Dispatcher 
 
     +-------------------+ 
-    | Task Manager      |
+    | Job Manager      |
     +-------------------+
-                        \ Tasks
+                        \ Jobs
                          \
                           +------------+     +---------------------------------+       +---------+ 
                           | Dispatcher | --> | Jobs allocated to Resources     |  -->  | Output  |
@@ -179,13 +194,10 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 ## How it works.
 
 
-The dispatcher operates by taking two key inputs: a prioritized queue of tasks and a platform containing details about all available resources. Using a straightforward algorithm, the dispatcher efficiently matches tasks to the appropriate resources.
+The current dispatcher operates uses the computing site information from historical jobs and submits the job to the corresponding site.
 
 ### Resource Prioritization
 Information about the various sites and their resources (such as CPU speed and cores) is collected into a queue, with priority given to sites that offer higher-quality resources.
-
-### Task Breakdown
-Each task is divided into a series of jobs based on the maximum storage and computational requirements (FLOP). These jobs, requiring similar resources, are then individually assigned to available CPUs.
 
 ### CPU Allocation
 CPUs are evaluated site by site, in order of site priority. For each site the CPUs are ranked based on CPU quality factors such as storage, cores, speed, and available computation capacity. For efficiency, the search depth is limited to 20. When a job is assigned to a CPU, that CPU's quality decreases as its computational load increases.
@@ -202,7 +214,7 @@ Output is saved in the form of an HDF5 file for efficiency reasons. The file has
 
 ### HOST-praguelcg2_cpu-999
 
-- **ID**: "Task-18-Job-13"
+- **ID**: "6089452826"
 - **FLOPS EXECUTED**: 400451 FLOPs
 - **FILES READ SIZE**: 49992528 Bytes
 - **FILES WRITTEN SIZE**: 40004532 Bytes
@@ -210,13 +222,12 @@ Output is saved in the form of an HDF5 file for efficiency reasons. The file has
 - **WRITE IO TIME**: 0.00370412 s
 - **FLOPS EXEC TIME**: 0.000235559 s
 
-## Test with 5000 Tasks
+## Test with 1000000 Jobs
 
-- Ran on Mac M1.
-- 152222 jobs.
-- Finished in 2 hour 41 minutes.
-- 2.70 GB max memory usage.
-- 57 MB output HDF5 file.
+- Ran on Lenovo Thinkpad with 13th Gen Intel(R) Core(TM) i9-13900H   2.60 GHz.
+- 1000000 jobs.
+- Finished in 5052.59 seconds.
+- 56.78 MB output HDF5 file.
 
 ## Developer info
 
