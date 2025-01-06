@@ -218,8 +218,8 @@ Output is saved in the form of an HDF5 file for efficiency reasons. The file has
 
 - Ran on Lenovo Thinkpad with 13th Gen Intel(R) Core(TM) i9-13900H   2.60 GHz.
 - 1000000 jobs.
-- Finished in ?.
-- ? MB output HDF5 file.
+- Finished in 5052.59 seconds.
+- 56.78 MB output HDF5 file.
 
 ## Developer info
 
