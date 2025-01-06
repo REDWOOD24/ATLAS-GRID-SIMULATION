@@ -57,14 +57,6 @@ Follow these steps to build the project on lxplus:
 | `-1`                                  | Number of jobs to be read from the job data source. If set to `-1`, all jobs will be read.  |
 | `../job_logs/log.h5`                  | Output file path for logging simulation results. Stores simulation logs in HDF5 format.          |
 
-| **Argument**                          | **Description**                                                                                  |
-|---------------------------------------|--------------------------------------------------------------------------------------------------|
-| `../data/site_conn_info.json`         | Path to the JSON file containing site connectivity information.     |
-| `../data/site_info.json`              | Path to the JSON file with information about individual sites, including resources and capacities. |
-| `../data/jobs.csv`                    | Path to the CSV file with historical user job information.|
-| `-1`                                  | Number of jobs to be read from the job data source. If set to `-1`, all jobs will be read.  |
-| `../job_logs/log.h5`                  | Output file path for logging simulation results. Stores simulation logs in HDF5 format.          |
-
 ## View Output
 
    ```bash
