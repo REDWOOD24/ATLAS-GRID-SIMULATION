@@ -81,7 +81,6 @@ int main(int argc, char** argv)
    auto finish  = std::chrono::system_clock::now();
    std::chrono::duration<double> time = finish - start;
    std::cout  << "Simulation Finished Succesfully in " << time.count() << " seconds! Information written out at: " << outputFile << std::endl;
-   std::cout << "No of Jobs sucessfully executed ..." << jobs.size() <<std::endl;
 
    //Print simulator name and current version
    std::cout << "\nSimATLAS version: " << MAJOR_VERSION << "." << MINOR_VERSION << "." << BUILD_NUMBER << std::endl;
