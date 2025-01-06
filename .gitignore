@@ -1,1 +1,3 @@
 build/
+data/all_jobs.csv
+job_logs/log.h5
