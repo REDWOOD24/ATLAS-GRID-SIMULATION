@@ -15,6 +15,7 @@ project(atlas-grid-simulator)
 # Disable annoying warnings
 add_definitions("-DBOOST_ALLOW_DEPRECATED_HEADERS")
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 
 
@@ -22,6 +23,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 find_package(SimGrid REQUIRED)
 find_package(Boost REQUIRED)
 find_package(HDF5 REQUIRED COMPONENTS CXX )
+
 
 
 # Add json subdir
@@ -43,6 +45,10 @@ file(GLOB_RECURSE SOURCE_FILES
 
 # generating the executable
 add_executable(atlas-grid-simulator ${SOURCE_FILES})
+
+target_compile_options(atlas-grid-simulator PRIVATE -g -fsanitize=address)
+target_link_options(atlas-grid-simulator PRIVATE -fsanitize=address)
+
 
 target_link_libraries(atlas-grid-simulator
             ${SimGrid_LIBRARY}

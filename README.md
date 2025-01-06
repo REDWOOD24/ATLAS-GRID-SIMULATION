@@ -46,7 +46,7 @@ Follow these steps to build the project on lxplus:
 ## Run Instructions
 
    ```bash
-  ./atlas-grid-simulator ../data/site_conn_info.json ../data/site_info.json ../job_logs/log.h5
+  ./atlas-grid-simulator run 
    ```
 
 ## View Output

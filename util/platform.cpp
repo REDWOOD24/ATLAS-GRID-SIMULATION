@@ -6,12 +6,12 @@ sg4::NetZone* Platform::create_platform(const std::string& platform_name)
 return sg4::create_full_zone(platform_name);
 }
 
-sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& site_name, std::unordered_map<std::string, CPUInfo>& cpuInfo)
+sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& site_name, std::unordered_map<std::string, CPUInfo>& cpuInfo, int siteGFLOPS)
 {
   //Create the Site
   auto* site = sg4::create_star_zone(site_name);
   site->set_parent(platform);
-
+  site->set_property("gflops",std::to_string(siteGFLOPS));
   //Create CPUS and Cores
   for (const auto& cpu: cpuInfo) {
     const std::string cpuname    = cpu.first;
@@ -37,14 +37,14 @@ sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& s
   return site;
 }
 
-std::unordered_map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform,  std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>& siteNameCPUInfo)
+std::unordered_map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform,  std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>& siteNameCPUInfo,std::unordered_map<std::string,int>& siteNameGFLOPS)
 {
    std::unordered_map<std::string, sg4::NetZone*> sites;
    std::cout << "Inititalizing SimGrid Platform with all Sites .......";   
    for (auto& sitePair : siteNameCPUInfo) {
      const std::string&              site_name = sitePair.first;
      std::unordered_map<std::string, CPUInfo>& cpuInfo   = sitePair.second;
-     sites[site_name] =  this->create_site(platform, site_name, cpuInfo);
+     sites[site_name] =  this->create_site(platform, site_name, cpuInfo, siteNameGFLOPS[site_name]);
      std::cout << ".";}
    std::cout << std::endl;
    //cleanup

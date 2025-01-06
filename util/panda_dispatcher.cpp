@@ -21,14 +21,14 @@ void PANDA_DISPATCHER::h5init()
   datatype.insertMember("FLOPS EXEC TIME",     HOFFSET(output,flops_exec_time),     H5::PredType::NATIVE_FLOAT);
 }
 
-void PANDA_DISPATCHER::dispatch_tasks(TaskQueue& tasks, sg4::NetZone* platform)
+void PANDA_DISPATCHER::dispatch_jobs(JobQueue& jobs, sg4::NetZone* platform)
 {
   std::vector<Site*>  sites;
   std::set<Host*>     hosts_with_jobs;
 
   this->h5init();
   this->getHostsINFO(platform,sites);
-  this->allocateResourcesToJobs(sites,tasks, weights, this->max_flops_per_job, this->max_storage_per_job, hosts_with_jobs);
+  this->allocateResourcesToJobs(sites,jobs, this->max_flops_per_job, this->max_storage_per_job, hosts_with_jobs);
   this->update_all_disks_content(hosts_with_jobs);
   this->create_actors(hosts_with_jobs);
   this->cleanup(sites);
@@ -42,13 +42,14 @@ void PANDA_DISPATCHER::getHostsINFO(sg4::NetZone* platform, std::vector<Site*>& 
     {
     Site* _site = new Site;
     _site->name = site->get_cname();
+    _site->gflops = std::stoi(site->get_property("gflops"));
     for(const auto& host: site->get_all_hosts())
       {
         Host* cpu = new Host;
         cpu->name            = host->get_cname();
         cpu->cores           = host->get_core_count();
         cpu->speed           = host->get_available_speed();
-	cpu->flops_available = cpu->cores*50*1e9;
+	      cpu->flops_available = cpu->cores*50*1e9;
 	
         for(const auto& disk: host->get_disks())
 	  {
@@ -74,14 +75,15 @@ void PANDA_DISPATCHER::getHostsINFO(sg4::NetZone* platform, std::vector<Site*>& 
 }
 
 
-void PANDA_DISPATCHER::execute_job(const std::vector<Job*>& jobs)
+void PANDA_DISPATCHER::execute_job(const std::vector<JobInfo*>& jobs)
 {
 
   std::vector<output> outputs;
   for(const auto& s : jobs)
     {
       //Parse Job Info
-      std::string                              id            = s->id;
+  
+      std::string                              id            = std::to_string(s->jobid);  
       int                                      flops         = s->flops;
       std::unordered_map<std::string, size_t>  input_files   = s->input_files;
       std::unordered_map<std::string, size_t>  output_files  = s->output_files;
@@ -90,7 +92,7 @@ void PANDA_DISPATCHER::execute_job(const std::vector<Job*>& jobs)
       std::string                              write_host    = s->comp_host;
       int                                      cores         = s->cores;
       std::string                              disk          = s->disk;
-      delete                                                   s;
+      // delete                                                   s;
 
       output o;
       o.id = new char[id.size() + 1];
@@ -213,11 +215,11 @@ std::string PANDA_DISPATCHER::get_disk_content(const std::unordered_map<std::str
 }
 
 
-double PANDA_DISPATCHER::calculateWeightedScore(Host* cpu, Job* j, const std::unordered_map<std::string, double>& weights, std::string& best_disk_name)
+double PANDA_DISPATCHER::calculateWeightedScore(Host* cpu, JobInfo* j, const std::unordered_map<std::string, double>& weights, std::string& best_disk_name)
 {
     double score = cpu->speed/1e8 * weights.at("speed") + cpu->cores * weights.at("cores");
     double best_disk_score = std::numeric_limits<double>::lowest();
-    size_t total_required_storage = (this->getTotalSize(j->input_files) + this->getTotalSize(j->output_files));
+    size_t total_required_storage = j->inp_file_bytes + j->out_file_bytes;
 
     for (const auto& d : cpu->disks) {
         if (d->storage >= total_required_storage) {
@@ -244,7 +246,7 @@ double PANDA_DISPATCHER::getTotalSize(const std::unordered_map<std::string, size
   return total_size;
 }
 
-Host* PANDA_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j, const std::unordered_map<std::string, double>& weights)
+Host* PANDA_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, JobInfo* j, const std::unordered_map<std::string, double>& weights)
 {
     Host*          best_cpu       = nullptr;
     std::string    best_disk;
@@ -275,7 +277,7 @@ Host* PANDA_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j, c
 	best_cpu->flops_available -= j->flops;
 	
 	for(auto& d: best_cpu->disks)
-	  {if(d->name == best_disk){d->storage -= (this->getTotalSize(j->input_files) + this->getTotalSize(j->output_files));}}
+	  {if(d->name == best_disk){d->storage -= (j->inp_file_bytes+j->out_file_bytes);}}
 	
 	j->disk       =  best_disk;
 	j->comp_host  =  best_cpu->name;
@@ -286,117 +288,46 @@ Host* PANDA_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j, c
 }
 
 
-std::vector<Job*> PANDA_DISPATCHER::splitTaskIntoJobs(Task& task, size_t& max_flops_per_job, size_t& max_storage_per_job) {
-    // Start with creating jobs
-    std::vector<Job*> jobs;
-
-    size_t total_read_size  = task.input_storage;
-    size_t total_write_size = task.output_storage;
-    size_t total_flops      = task.flops;
-
-    // Calculate the total number of jobs needed based on FLOPs and storage requirements
-    size_t num_jobs = std::max(
-        static_cast<size_t>(1),
-        std::max(
-            (static_cast<size_t>(task.flops)) / max_flops_per_job,
-            (total_read_size + total_write_size) / max_storage_per_job
-        )+1
-    );
-
-    // Calculate FLOPs and storage per job
-    size_t flops_per_job            = total_flops       / num_jobs;
-    size_t leftover_flops           = total_flops       % num_jobs;
-    size_t read_storage_per_job     = total_read_size   / num_jobs;
-    size_t read_leftover_storage    = total_read_size   % num_jobs;
-    size_t write_storage_per_job    = total_write_size  / num_jobs;
-    size_t write_leftover_storage   = total_write_size  % num_jobs;
-
-      
-    std::unordered_map<std::string, size_t> read_files  = task.input_files;
-    std::unordered_map<std::string, size_t> write_files = task.output_files;
-
-    for (size_t i = 0; i < num_jobs; ++i) {
-        Job* job = new Job;
-        job->id = task.id + "-Job-" + std::to_string(i);
-
-        // Allocate FLOPs to the job
-        job->flops      =  flops_per_job + (i < leftover_flops ? 1 : 0);  // Distribute leftover FLOPs
-        task.flops     -= job->flops;
-
-        size_t read_current_storage  = 0;
-        size_t write_current_storage = 0;
-
-	
-        // Allocate storage to the job (equal distribution)
-        size_t read_storage_limit  = read_storage_per_job + (i < read_leftover_storage ? 1 : 0);
-        size_t write_storage_limit = write_storage_per_job + (i < write_leftover_storage ? 1 : 0);
-
-        // Allocate read files to the job
-        for (auto it = read_files.begin(); it != read_files.end();) {
-            if (read_current_storage + it->second <= read_storage_limit) {
-                job->input_files[it->first] = it->second;
-                read_current_storage += it->second;
-                it = read_files.erase(it);
-            } else {
-                ++it;
-            }
-        }
-
-        // Allocate write files to the job
-        for (auto it = write_files.begin(); it != write_files.end();) {
-            if (write_current_storage + it->second <= write_storage_limit) {
-                job->output_files[it->first] = it->second;
-                write_current_storage += it->second;
-                it = write_files.erase(it);
-            } else {
-                ++it;
-            }
-        }
-
-        jobs.push_back(job);
-
-        // Early exit if all tasks are completed
-        if (read_files.empty() && write_files.empty() && task.flops <= 0) {
-            break;
-        }
-    }
-
-    return jobs;
-}
 
 
-void PANDA_DISPATCHER::allocateResourcesToJobs(std::vector<Site*>& sites, TaskQueue& tasks, const std::unordered_map<std::string, double>& weights, size_t& max_flops_per_job, size_t& max_storage_per_job, std::set<Host*>& hosts_with_jobs) {
+void PANDA_DISPATCHER::allocateResourcesToJobs(std::vector<Site*>& sites, JobQueue& jobs, size_t& max_flops_per_job, size_t& max_storage_per_job, std::set<Host*>& hosts_with_jobs) {
 
   bool  use_round_robin      = false;
   int   current_site_index   = 0;
   
-  while (!tasks.empty())
-    {
-      Task  task      = tasks.top();
-      auto  jobs      = splitTaskIntoJobs(task, max_flops_per_job, max_storage_per_job);
-      for (auto& job : jobs)
-	{
-	  Host*  best_cpu    = nullptr;
-	  for(int i = 0; i < sites.size(); ++i)
-	    {
-	      current_site_index = use_round_robin ? (current_site_index + 1) % sites.size() : current_site_index;
-	      auto site          = sites[current_site_index];
-	      use_round_robin    = !use_round_robin && (site->cpus_in_use >= site->cpus.size() / 2);
-	      best_cpu           = findBestAvailableCPU(site->cpus, job, weights);
-	      if(best_cpu) {site->cpus_in_use++; break;} 
-	    }
-	  
-	  if(!best_cpu){throw std::runtime_error("Failed to find a suitable Resources for job.");}
-	  this->printJobInfo(job);
-	  hosts_with_jobs.insert(best_cpu);
-	  }
-      
-      tasks.pop();
+  
+  for (auto& job : jobs)
+  {
+    JobInfo* job_ptr = &job;
+    std::string site_name = job.computing_site;
+    // updating flops of the job
+    Site* computing_site = findSiteByName(sites, site_name);
+    if (computing_site) {
+        std::cout << "Computing site name: " << computing_site->name << std::endl;
+        
+    } else {
+        
+        std::cout << "Site not found!" << site_name << std::endl;
+        continue;
+    }
+    Host*  best_cpu    = nullptr;
+    // computing the flops with an approximation
+    job_ptr->flops = computing_site->gflops*job_ptr->cpu_consumption_time*job_ptr->core_count;
+    best_cpu  = findBestAvailableCPU(computing_site->cpus, job_ptr, weights);
+    if(best_cpu) { 
+      computing_site->cpus_in_use++;
+    } 
+    else{
+      throw std::runtime_error("Failed to find a suitable Resources for job.");
+    }
+    this->printJobInfo(job_ptr);
+    hosts_with_jobs.insert(best_cpu);
+
     }
   
 }
 
-void PANDA_DISPATCHER::printJobInfo(Job* job)
+void PANDA_DISPATCHER::printJobInfo(JobInfo* job)
 {
       std::cout << "----------------------------------------------------------------------" << std::endl;
       std::cout << "\033[32m" << "Submitting .. "          <<  job->id     << std::endl;
@@ -417,4 +348,13 @@ void PANDA_DISPATCHER::printJobInfo(Job* job)
 
       std::cout << "----------------------------------------------------------------------" << std::endl;
 
+}
+
+Site* PANDA_DISPATCHER::findSiteByName(std::vector<Site*>& sites, const std::string& site_name) {
+    
+    auto it = std::find_if(sites.begin(), sites.end(),
+                           [&site_name](Site* site) {
+                               return site->name == site_name;
+                           });
+    return it != sites.end() ? *it : nullptr;
 }
