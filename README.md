@@ -214,12 +214,11 @@ Output is saved in the form of an HDF5 file for efficiency reasons. The file has
 - **WRITE IO TIME**: 0.00370412 s
 - **FLOPS EXEC TIME**: 0.000235559 s
 
-## Test with 1000000 Jobs
+## Test with 1M Jobs
 
 - Ran on Lenovo Thinkpad with 13th Gen Intel(R) Core(TM) i9-13900H   2.60 GHz.
-- 1000000 jobs.
+- 1M jobs.
 - Finished in 5052.59 seconds.
-- 56.78 MB output HDF5 file.
 
 ## Developer info
 
