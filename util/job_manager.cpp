@@ -7,7 +7,7 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
 
   for(int i = 1; i <= num_of_jobs; i++){
 
-    Job* job;
+    Job* job = new Job();
     job->_id            = i;
     job->id             = "Job-"+std::to_string(i);
     job->flops          = std::round(p->GaussianDistribution(1e7,10000));

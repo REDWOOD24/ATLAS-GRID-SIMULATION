@@ -57,7 +57,7 @@ int main(int argc, char** argv)
    pf->initialize_site_connections(platform,siteConnInfo,sites);
 
    //Create Job Executor
-   std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>(&e,outputFile);
+   std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>(outputFile);
    executor->set_dispatcher(dispatcherPath,platform);
    executor->start_receivers();
    e.run();

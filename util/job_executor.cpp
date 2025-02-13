@@ -1,7 +1,7 @@
 #include "job_executor.h"
 
 
-JOB_EXECUTOR::JOB_EXECUTOR(sg4::Engine* _e, const std::string& _outputFile){e = _e; outputFile = _outputFile;}
+JOB_EXECUTOR::JOB_EXECUTOR(const std::string& _outputFile){outputFile = _outputFile;}
 
 H5::H5File			  JOB_EXECUTOR::h5_file;
 H5::CompType		  JOB_EXECUTOR::datatype;
@@ -26,12 +26,14 @@ void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZon
 
 void JOB_EXECUTOR::execute_jobs(JobQueue jobs)
 {
+	const auto* e = sg4::Engine::get_instance();
 	while (!jobs.empty())
 	{
-		Job* job = jobs.top();
+		Job* _job = jobs.top();
+		Job* job = dispatcher->assignJob(_job);
 		std::unordered_map<std::string, size_t>  input_files   = job->input_files;
 		auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(job->comp_site)).at(job->comp_site+job->comp_host+job->disk+"filesystem");
-		this->update_disk_content(fs,input_files);
+		this->update_disk_content(fs,input_files,job->mount);
 		sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host+"-MQ");
 		mqueue->put(job);
 		jobs.pop();
@@ -118,7 +120,7 @@ void JOB_EXECUTOR::start_receivers()
 	{
 		sg4::Actor::create(host->get_name()+"-actor", host, this->receiver, host->get_name()+"-MQ");
 	}
-	eng->run();
+	//eng->run();
 }
 
 void JOB_EXECUTOR::kill_simulation()
@@ -133,9 +135,9 @@ void JOB_EXECUTOR::kill_simulation()
 
 
 
-void JOB_EXECUTOR::update_disk_content(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, std::unordered_map<std::string, size_t>  input_files)
+void JOB_EXECUTOR::update_disk_content(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, std::unordered_map<std::string, size_t>  input_files, const std::string& mount)
 {
-	for(const auto& inputfile: input_files){fs->create_file(inputfile.first, std::to_string(inputfile.second)+"kB");}
+	for(const auto& inputfile: input_files){fs->create_file(mount + inputfile.first,  std::to_string(inputfile.second)+"kB");}
 }
 
 void JOB_EXECUTOR::print_output()
