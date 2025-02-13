@@ -76,7 +76,7 @@ private:
       {
         {"speed", 1.0},
         {"cores", 1.0},
-	      {"disk", 1.0},
+        {"disk", 1.0},
         {"disk_storage", 1.0},
         {"disk_read_bw", 1.0},
         {"disk_write_bw", 1.0}
