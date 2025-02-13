@@ -21,21 +21,21 @@
 #include <simgrid/s4u.hpp>
 #include "parser.h"
 #include "platform.h"
-#include "task_manager.h"
-#include "panda_dispatcher.h"
+#include "job_manager.h"
 #include "version.h"
-
+#include "job_executor.h"
 
 int main(int argc, char** argv)
 {
-   //Usage 
-   std::string usage = std::string("usage: ") + argv[0] + " ../data/site_conn_info.json ../data/site_info.json ../job_logs/log.h5";
-   if(argc != 4){std::cout << usage << std::endl; exit(-1);}
+   //Usage
+   std::string usage = std::string("usage: ") + argv[0] + " ../data/site_conn_info.json ../data/site_info.json dispatcher_plugin_path ../job_logs/log.h5";
+   if(argc != 5){std::cout << usage << std::endl; exit(-1);}
 
    //Parse json with information about ATLAS sites
    const std::string         siteConnInfoFile  = std::string(argv[1]);
    const std::string         siteInfoFile      = std::string(argv[2]);
-   const std::string         outputFile        = std::string(argv[3]);
+   const std::string         dispatcherPath    = std::string(argv[3]);
+   const std::string         outputFile        = std::string(argv[4]);
    std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile);
    auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
    auto                      siteConnInfo      = parser->getSiteConnInfo();
@@ -55,24 +55,21 @@ int main(int argc, char** argv)
 
    //Setup Connections between sites
    pf->initialize_site_connections(platform,siteConnInfo,sites);
-   
-   //Create Tasks
-   std::unique_ptr<TASK_MANAGER> tm = std::make_unique<TASK_MANAGER>();
-   auto tasks = tm->create_tasks(20);
 
-   //Pass to Dispatcher
-   std::unique_ptr<PANDA_DISPATCHER> dispatcher = std::make_unique<PANDA_DISPATCHER>(&e,outputFile);
-   dispatcher->dispatch_tasks(tasks,platform);
-   
-   //Run Simulation
-   platform->seal();
-   std::cout << "Simulation in Progress ..." << std::endl;
-   auto start = std::chrono::system_clock::now();
+   //Create Job Executor
+   std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>(&e,outputFile);
+   executor->set_dispatcher(dispatcherPath,platform);
+   executor->start_receivers();
    e.run();
-   auto finish  = std::chrono::system_clock::now();
-   std::chrono::duration<double> time = finish - start;
-   std::cout  << "Simulation Finished Succesfully in " << time.count() << " seconds! Information written out at: " << outputFile << std::endl;
 
+   //Create Jobs
+   std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
+   auto jobs = jm->create_jobs(20);
+
+   //Execute Jobs
+   executor->execute_jobs(jobs);
+   executor->kill_simulation();
+   executor->print_output();
 
    //Print simulator name and current version
    std::cout << "\nSimATLAS version: " << MAJOR_VERSION << "." << MINOR_VERSION << "." << BUILD_NUMBER << std::endl;

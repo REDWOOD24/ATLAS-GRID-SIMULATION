@@ -18,13 +18,13 @@ list( APPEND BUILT_PACKAGES "json")
 # include directories
 include_directories(${Boost_INCLUDE_DIR} ${HDF5_CXX_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/json/single_include)
 include_directories(include/)
-include_directories(plugins/include/)
+include_directories(old-file-system/include/)
 include_directories(simgrid/include/ simgrid/build/include/)
 # source files
 file(GLOB_RECURSE SOURCE_FILES
     "src/*.cpp"
     "util/*.cpp"
-    "plugins/src/*.cpp"
+    "old-file-system/src/*.cpp"
 )
 
 
