@@ -2,53 +2,25 @@
 
 XBT_LOG_NEW_DEFAULT_CATEGORY(ATLAS_SIMULATION, "Messages specific for this s4u example");
 
-int Actions::exec_task_multi_thread(int flops, int cores, std::string exec_host)
+
+sg4::ExecPtr Actions::exec_task_multi_thread_async(double flops, int cores)
 {
-   sg4::this_actor::exec_init(flops)->set_thread_count(cores)->start()->wait();
-   //XBT_INFO("Finished executing '%s' flops' on host '%s'", std::to_string(flops).c_str(), exec_host.c_str());
-   return flops;
+    return sg4::this_actor::exec_async(flops)->set_thread_count(cores);
 }
 
-void Actions::exec_task_multi_thread_async(double flops, int cores, std::string exec_host)
+sg4::IoPtr Actions::read_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::string& filename)
 {
-    sg4::this_actor::exec_async(flops)->set_thread_count(cores);
-}
-
-sg_size_t Actions::read(std::string filename, const_sg_host_t exec_host)
-{
-  auto* file = sg4::File::open(filename,exec_host ,nullptr);
-  const sg_size_t file_size = file->size();
+  auto file = fs->open(filename,"r");
+  const sg_size_t file_size = fs->file_size(filename);
   file->seek(0);
-  const sg_size_t read_bits =file->read(file_size);
-  //XBT_INFO("Finished reading file '%s' of size '%s' on host '%s'", filename.c_str(), std::to_string(read_bits).c_str(), exec_host->get_cname());
-  file->close();
-  return read_bits;
+  return file->read_async(file_size);
 }
 
-sg_size_t Actions::write(std::string filename, size_t file_size, const_sg_host_t exec_host)
+sg4::IoPtr Actions::write_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::string& filepath, size_t file_size)
 {
-  auto* file = sg4::File::open(filename, exec_host ,nullptr);
-  const sg_size_t written_bits = file->write(file_size);
-  //XBT_INFO("Finished writing file '%s' of size '%s' on host '%s'", filename.c_str(), std::to_string(written_bits).c_str(), exec_host->get_cname());
-  file->close();
-  return written_bits;
+  auto file = fs->open(filepath,"w");
+  return file->write_async(file_size);
 }
-
-sg_size_t Actions::size(std::string filename, const_sg_host_t exec_host)
-{
-  auto* file = sg4::File::open(filename, exec_host, nullptr);
-  sg_size_t file_size = file->size();
-  file->close();
-  return file_size;
-}
-
-void Actions::remove(std::string filename, const_sg_host_t exec_host)
-{
-  auto* file = sg4::File::open(filename, exec_host, nullptr);
-  file->unlink();
-  file->close();
-}
-
 
 
   

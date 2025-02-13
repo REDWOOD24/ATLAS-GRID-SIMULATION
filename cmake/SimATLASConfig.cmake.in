@@ -1,0 +1,10 @@
+@PACKAGE_INIT@
+
+# Define include directory
+set(SimATLAS_INCLUDE_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@/SimATLAS")
+
+# Provide variables for find_package() consumers
+set(SimATLAS_FOUND TRUE)
+
+# Print message when package is found
+message(STATUS "SimATLAS package found! Include directories: ${SimATLAS_INCLUDE_DIR}")

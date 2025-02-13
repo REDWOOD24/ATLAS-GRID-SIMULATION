@@ -27,8 +27,14 @@ sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& s
     host->set_property("wattage_off",std::to_string(0.1*cores));
     site->add_route(host->get_netpoint(), nullptr, nullptr, nullptr,{{link, sg4::LinkInRoute::Direction::UP}}, true);
     if(cpuname== std::string(site_name + "_cpu-0")){site->set_gateway(host->get_netpoint());} // Use the first host as a router
-    for(const auto& d: cpu.second.disk_info){
-      host->create_disk(d.name,d.read_bw,d.write_bw)->set_property("size",d.size)->set_property("mount",d.mount)->set_property("content","")->seal();}
+    for(const auto& d: cpu.second.disk_info)
+      {
+      auto _disk = host->create_disk(d.name,d.read_bw,d.write_bw)->set_property("mount",d.mount);
+      auto _ods  = simgrid::fsmod::OneDiskStorage::create(site_name+cpuname+d.name+"storage", _disk);
+      auto _fs    = simgrid::fsmod::FileSystem::create(site_name+cpuname+d.name+"filesystem");
+      _fs->mount_partition(d.mount, _ods, d.size);
+      simgrid::fsmod::FileSystem::register_file_system(site,_fs);
+      }
       host->seal();}
 
   //cleanup
@@ -82,7 +88,6 @@ void Platform::initialize_site_connections(sg4::NetZone* platform, std::unordere
 
 void Platform::initialize_plugins()
 {
-  sg_storage_file_system_init();
   //sg_host_energy_plugin_init();
 }
 

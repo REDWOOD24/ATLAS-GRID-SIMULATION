@@ -9,14 +9,11 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <map>
 #include <set>
 #include <fstream>
-#include <string>
-#include <math.h>
 #include "nlohmann/json.hpp"
+#include <unordered_map>
 #include <random>
-
 
 //Information needed to a specify a Disk                                                      
 struct DiskInfo {
