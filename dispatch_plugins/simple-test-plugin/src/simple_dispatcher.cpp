@@ -99,7 +99,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 	best_cpu->flops_available -= j->flops;
 	
 	for(auto& d: best_cpu->disks)
-	  {if(d->name == best_disk){d->storage -= (this->getTotalSize(j->input_files) + this->getTotalSize(j->output_files));}}
+	  {if(d->name == best_disk){j->mount = d->mount; d->storage -= (this->getTotalSize(j->input_files) + this->getTotalSize(j->output_files));}}
 	
 	j->disk       =  best_disk;
 	j->comp_host  =  best_cpu->name;

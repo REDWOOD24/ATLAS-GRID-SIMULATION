@@ -18,6 +18,7 @@ struct Job {
     size_t                                      output_storage{};
     int                                         priority{};
     int                                         cores{};
+    std::string                                 mount{};
     std::string                                 disk{};
     std::string                                 comp_host{};
     std::string                                 comp_site{};
