@@ -11,10 +11,10 @@ void JOB_EXECUTOR::h5init()
 {
   h5_file = H5::H5File(this->outputFile.c_str() , H5F_ACC_TRUNC);
   datatype = sizeof(output);                                                 
-  datatype.insertMember("ID",                  HOFFSET(output, id),                         H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
+  datatype.insertMember("ID",                  HOFFSET(output, id),                       H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
   datatype.insertMember("FLOPS EXECUTED",      HOFFSET(output,IO_size),			  H5::PredType::NATIVE_UINT);
   datatype.insertMember("FILES READ SIZE",     HOFFSET(output,IO_time),			  H5::PredType::NATIVE_UINT);
-  datatype.insertMember("FILES WRITTEN SIZE",  HOFFSET(output,EXEC_time),			  H5::PredType::NATIVE_UINT);
+  datatype.insertMember("FILES WRITTEN SIZE",  HOFFSET(output,EXEC_time),		  H5::PredType::NATIVE_UINT);
 }
 
 
@@ -50,12 +50,12 @@ void JOB_EXECUTOR::execute_job(Job* job)
   int                                      flops         = job->flops;
   std::unordered_map<std::string, size_t>  input_files   = job->input_files;
   std::unordered_map<std::string, size_t>  output_files  = job->output_files;
-  std::string				 site          = job->comp_site;
+  std::string				   site          = job->comp_site;
   std::string                              read_host     = job->comp_host;
   std::string                              comp_host     = job->comp_host;
   std::string                              write_host    = job->comp_host;
-  std::string				 read_mount    = job->mount;
-  std::string				 write_mount   = job->mount;
+  std::string				   read_mount    = job->mount;
+  std::string				   write_mount   = job->mount;
   int                                      cores         = job->cores;
   std::string                              disk          = job->disk;
   delete                                                   job;
