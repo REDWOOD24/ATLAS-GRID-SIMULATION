@@ -21,7 +21,7 @@ target_include_directories( YourPlugin PUBLIC ${SimATLAS_INCLUDE_DIR})
 
 ### Abstract Class
 <!---->
-The header file which contains the abstract class to create plugins is `DispatcherPlugin.h`.
+The header file which contains the abstract class to help create plugins is `DispatcherPlugin.h`.
 
 ```c++
 #ifndef DISPATCHERPLUGIN_H
@@ -109,7 +109,7 @@ touch simple_dispatcher.cpp
 cd ../include
 touch simple_dispatcher.h 
 ```
-In the `CMakeModules` directory the `FindSimGrid.cmake` `FindFSMod.cmake` files should be copied. These files can be found in the plugin example in the `SimATLAS` project. The directory structure should then look like
+In the `CMakeModules` directory the `FindSimGrid.cmake` `FindFSMod.cmake` files should be copied. These files can be found in the plugin example in the `SimATLAS` project. [Click Here!](https://github.com/REDWOOD24/ATLAS-GRID-SIMULATION/tree/development/dispatch_plugins/simple-test-plugin/CMakeModules) The directory structure should then look like
 
 ```bash
 simple-test-plugin
@@ -167,7 +167,7 @@ extern "C" SimpleDispatcherPlugin* createSimpleDispatcherPlugin()
 
 - The first class `SIMPLE_DISPATCHER` is the actual implementation class which is defined in the `simple_dispatcher.h` and `simple_dispatcher.cpp` files, This class contains the custom workload allocation algorithm (see the one written in the code repo as a reference) [Click Here!](https://github.com/REDWOOD24/ATLAS-GRID-SIMULATION/blob/development/dispatch_plugins/simple-test-plugin/include/simple_dispatcher.h)
 
-- The second class `SimpleDispatcherPlugin` is necessary for defining the plugin and ***must have the same name as the name specified within the add_library command in the CMakeLists.txt file.*** This class will inherit from the `DispatcherPlugin` class, which is the abstract class provided by SimATLAS to allow it to interface with our simulator. This class must always be defined, and override the purely virtual functions in the abstract class.
+- The second class `SimpleDispatcherPlugin` is necessary for defining the plugin and ***must have the same name as the name specified within the add_library command in the CMakeLists.txt file.*** This class will inherit from the `DispatcherPlugin` class, which is the abstract class provided by SimATLAS to allow it to interface with the simulator. This class must always be defined, and override the purely virtual functions in the abstract class.
 
 - Finally the function `createSimpleDispatcherPlugin` is neccesary for properly loading in the plugin to the simulator and ***must always have the name, create + name of plugin class.*** This function must always be defined.
 
