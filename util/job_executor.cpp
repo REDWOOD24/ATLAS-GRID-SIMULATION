@@ -20,7 +20,7 @@ void JOB_EXECUTOR::h5init()
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform){
 	PluginLoader<DispatcherPlugin> plugin_loader;
-    dispatcher = plugin_loader.load(dispatcherPath);
+	dispatcher = plugin_loader.load(dispatcherPath);
 	dispatcher->assignResources(platform);
 }
 
@@ -33,7 +33,7 @@ void JOB_EXECUTOR::execute_jobs(JobQueue jobs)
 		Job* job = dispatcher->assignJob(_job);
 		std::unordered_map<std::string, size_t>  input_files   = job->input_files;
 		auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(job->comp_site)).at(job->comp_site+job->comp_host+job->disk+"filesystem");
-		this->update_disk_content(fs,input_files,job->mount);
+		update_disk_content(fs,input_files,job);
 		sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host+"-MQ");
 		mqueue->put(job);
 		jobs.pop();
@@ -46,16 +46,18 @@ void JOB_EXECUTOR::execute_job(Job* job)
 
     //Parse Job Info
     std::string                              id            = job->id;
-    int                                      flops         = job->flops;
-    std::unordered_map<std::string, size_t>  input_files   = job->input_files;
-    std::unordered_map<std::string, size_t>  output_files  = job->output_files;
+	int                                      flops         = job->flops;
+	std::unordered_map<std::string, size_t>  input_files   = job->input_files;
+	std::unordered_map<std::string, size_t>  output_files  = job->output_files;
 	std::string								 site          = job->comp_site;
-    std::string                              read_host     = job->comp_host;
-    std::string                              comp_host     = job->comp_host;
-    std::string                              write_host    = job->comp_host;
-    int                                      cores         = job->cores;
-    std::string                              disk          = job->disk;
-    delete                                                   job;
+	std::string                              read_host     = job->comp_host;
+	std::string                              comp_host     = job->comp_host;
+	std::string                              write_host    = job->comp_host;
+	std::string								 read_mount    = job->mount;
+	std::string								 write_mount   = job->mount;
+	int                                      cores         = job->cores;
+	std::string                              disk          = job->disk;
+	delete                                                   job;
 
 	//Create Output
     output* o;
@@ -68,18 +70,6 @@ void JOB_EXECUTOR::execute_job(Job* job)
 
     //Get Engine Instance
     const auto* e = sg4::Engine::get_instance();
-
-    //Find Read Disk Mount Point
-    std::string read_mount;
-    for(const auto& d: e->host_by_name(read_host)->get_disks())
-    {if(std::string(d->get_cname()) == disk){read_mount = d->get_property("mount"); break;}}
-    if(read_mount.empty()){throw std::runtime_error("Read Disk mount point not found.");}
-
-    //Find Write Disk Mount Point
-    std::string write_mount;
-    for(const auto& d: e->host_by_name(write_host)->get_disks())
-    {if(std::string(d->get_cname()) == disk){write_mount = d->get_property("mount"); break;}}
-	if(write_mount.empty()){throw std::runtime_error("Write Disk mount point not found.");}
 
 	//Find FileSystem to Read and Write (same for now)
 	auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(site)).at(site+comp_host+disk+"filesystem");
@@ -120,7 +110,7 @@ void JOB_EXECUTOR::start_receivers()
 	{
 		sg4::Actor::create(host->get_name()+"-actor", host, this->receiver, host->get_name()+"-MQ");
 	}
-	//eng->run();
+	eng->run();
 }
 
 void JOB_EXECUTOR::kill_simulation()
@@ -135,9 +125,13 @@ void JOB_EXECUTOR::kill_simulation()
 
 
 
-void JOB_EXECUTOR::update_disk_content(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, std::unordered_map<std::string, size_t>  input_files, const std::string& mount)
+void JOB_EXECUTOR::update_disk_content(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::unordered_map<std::string, size_t>&  input_files, Job* j)
 {
-	for(const auto& inputfile: input_files){fs->create_file(mount + inputfile.first,  std::to_string(inputfile.second)+"kB");}
+	const auto* e = sg4::Engine::get_instance();
+	for(const auto& d: e->host_by_name(j->comp_host)->get_disks())
+	{if(std::string(d->get_cname()) == j->disk){j->mount = d->get_property("mount"); break;}}
+	if(j->mount.empty()){throw std::runtime_error("Read Disk mount point not found.");}
+	for(const auto& inputfile: input_files){fs->create_file(j->mount + inputfile.first,  std::to_string(inputfile.second)+"kB");}
 }
 
 void JOB_EXECUTOR::print_output()
