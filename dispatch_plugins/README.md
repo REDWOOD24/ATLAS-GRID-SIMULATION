@@ -89,7 +89,7 @@ struct Job {
     bool operator<(const Job& other) const {if(priority == other.priority){return _id > other._id;} return priority < other.priority;}
 };
 ```
-The goal of any workload allocation algorithm is to take information about the resources and workload and assign the Job a comp_site, comp_host, disk and disk mount. This is then the output of the method which goes out for execution in SimGrid.
+The goal of any workload allocation algorithm is to take information about the resources and workload and assign the Job a comp_site, comp_host, disk. This is then the output of the method which goes out for execution in SimGrid.
 
 ## Writing Plugins
 

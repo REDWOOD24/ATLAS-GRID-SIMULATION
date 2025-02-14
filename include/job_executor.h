@@ -29,14 +29,14 @@ public:
 
 
     void set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform);
-    void update_disk_content(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, std::unordered_map<std::string, size_t>  input_files, const std::string& mount);
+    static void update_disk_content(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::unordered_map<std::string, size_t>&  input_files, Job* j);
     void execute_jobs(JobQueue jobs);
     static void execute_job(Job* job);
     static void receiver(const std::string& MQ_name);
     void start_receivers();
     void h5init();
-    void kill_simulation();
-    void print_output();
+    static void kill_simulation();
+    static void print_output();
 
 private:
     std::unique_ptr<DispatcherPlugin>    dispatcher;
