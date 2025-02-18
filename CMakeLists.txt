@@ -1,14 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
 
-# lxplus option (OFF by default) DEPRECATED from v1.1
-option(lxplus "Enable lxplus-specific configuration" OFF)
-
-# If lxplus is enabled, skip the rest of the script
-if(lxplus)
-    include(lxplus.cmake)
-    return()
-endif()
-
 message(STATUS "Cmake version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
 project(SimATLAS VERSION 1.0)
 

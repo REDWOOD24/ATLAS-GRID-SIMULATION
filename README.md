@@ -6,12 +6,13 @@ This repository aims to streamline the process of configuring and testing ATLAS 
 ## Prerequisites
 Before you begin, ensure you have the following packages installed:
 
-- **SimGrid v3.36** 
-- **HDF5** (required for output storage)
+- [**Boost**](https://github.com/boostorg/boost)
+- [**SimGrid v3.36**](https://framagit.org/simgrid/simgrid/) 
+- [**SimGrid File System Module v0.2**](https://github.com/simgrid/file-system-module)
 
 These packages are essential for building and running the simulation.
 
-## Local Build Instructions
+## Build Instructions
 Follow these steps to build the project locally:
    ```bash
    git clone https://github.com/REDWOOD24/ATLAS-GRID-SIMULATION.git
@@ -22,37 +23,10 @@ Follow these steps to build the project locally:
    make -j
    ```
 
-## LXPLUS Build Instructions
-Follow these steps to build the project on lxplus:
-   ```bash
-   git clone https://github.com/REDWOOD24/ATLAS-GRID-SIMULATION.git
-   cd ATLAS-GRID-SIMULATION
-   source lxplus_setup.sh
-   git clone https://github.com/simgrid/simgrid.git
-   cd simgrid
-   git fetch --all --tags --prune
-   git checkout tags/v3.36 -b test
-   mkdir build
-   cd build
-   cmake ..
-   make -j
-   cd ../../
-   mkdir build
-   cd build
-   cmake -Dlxplus=ON ..
-   make -j
-   ```
-
 ## Run Instructions
 
    ```bash
-  ./atlas-grid-simulator ../data/site_conn_info.json ../data/site_info.json ../job_logs/log.h5
-   ```
-
-## View Output
-
-   ```bash
-   h5dump ../job_logs/log.h5
+  ./atlas-grid-simulator  ../data/site_conn_info.json ../data/site_info.json dispatcher_plugin_path ../job_logs/log.h5
    ```
    
 ## Platform
@@ -118,12 +92,11 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 - CPUs based off GFLOPS obtained from data dumps from site, estimating 500 GFLOPS per core per cpu.
 - Other estimates such as latency for connections, disk read and write bandwidths, cpu speed based on estimates.
 
-## Task Manager
+## Job Manager
 
- - Task has 3 parts -> (Read, Compute, Write).
+ - Job has 3 parts -> (Read, Compute, Write).
  - Set sizes of files to be read and written from a gaussian distribution (mean and stddev estimated).
  - Estimate GFLOPS for tasks.
- - Tasks are broken into jobs as described in the dispatcher section below.
  - Example job shown below.
 
 
@@ -160,10 +133,10 @@ Basic Layout of the ATLAS Grid implemented in the simulation.
 - **Compute Host:** praguelcg2_cpu-999
 
 
-## PANDA Dispatcher 
+## Job Dispatcher 
 
     +-------------------+ 
-    | Task Manager      |
+    | Job Manager      |
     +-------------------+
                         \ Tasks
                          \
