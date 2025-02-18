@@ -26,7 +26,7 @@ void JOB_EXECUTOR::start_job_execution(JobQueue jobs)
 
   //Start Simulation
   const auto* e = sg4::Engine::get_instance();
-  auto host    = e->get_all_hosts()[0];
+  auto host    = e->get_all_hosts()[0]; //Panda server
   auto actor = sg4::Actor::create("JOB-EXECUTOR-actor", host, this->execute_jobs, std::move(jobs));
   e->run();
 }
@@ -74,14 +74,15 @@ void JOB_EXECUTOR::execute_job(Job* j)
   for(const auto& inputfile: j->input_files){activities.push_back(Actions::read_file_async(fs,j->mount+inputfile.first,j));}
 
   //Compute
-  activities.push_back(Actions::exec_task_multi_thread_async(j->flops,j->cores,j));
+  long long flops = j->flops;
+  activities.push_back(Actions::exec_task_multi_thread_async(flops,j->cores,j));
 
   //Write
   for(const auto& outputfile: j->output_files){activities.push_back(Actions::write_file_async(fs,j->mount+outputfile.first,outputfile.second,j));}
 
   //Wait to finish
   sg4::ActivitySet pending_activities(activities);
-  pending_activities.wait_all();
+  pending_activities.wait_all(); //Still not right, one job at a time.. Add this outside this function
 
 }
 

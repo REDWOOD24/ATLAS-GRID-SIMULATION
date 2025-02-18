@@ -22,6 +22,7 @@ Follow these steps to build the project locally:
    cd build
    cmake ..
    make -j
+   sudo make install
    ```
 
 ## Run Instructions

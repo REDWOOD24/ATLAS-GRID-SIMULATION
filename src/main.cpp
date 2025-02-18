@@ -74,7 +74,6 @@ int main(int argc, char** argv)
    std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
    auto jobs = jm->create_jobs(20);
 
-
    //Execute Jobs
    executor->start_job_execution(jobs);
    executor->saveJobs(jobs);
