@@ -86,7 +86,7 @@ void Platform::initialize_site_connections(sg4::NetZone* platform, std::unordere
   }
 }
 
-void Platform::initialize_plugins()
+void Platform::initialize_simgrid_plugins()
 {
   //sg_host_energy_plugin_init();
 }

@@ -6,7 +6,8 @@ This repository aims to streamline the process of configuring and testing ATLAS 
 ## Prerequisites
 Before you begin, ensure you have the following packages installed:
 
-- [**Boost**](https://github.com/boostorg/boost)
+- [**SQLite3**](https://www.sqlite.org/)
+- [**Boost**](https://www.boost.org/)
 - [**SimGrid v3.36**](https://framagit.org/simgrid/simgrid/) 
 - [**SimGrid File System Module v0.2**](https://github.com/simgrid/file-system-module)
 

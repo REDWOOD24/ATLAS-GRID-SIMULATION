@@ -3,5 +3,5 @@
   "Sites Information": "/Users/raekhan/new_projects/ATLAS-GRID-SIMULATION/data/site_info.json",
   "Sites Connection Information": "/Users/raekhan/new_projects/ATLAS-GRID-SIMULATION/data/site_conn_info.json",
   "Dispatcher Plugin": "/Users/raekhan/new_projects/ATLAS-GRID-SIMULATION/dispatch_plugins/simple-test-plugin/build/libSimpleDispatcherPlugin.dylib",
-  "Output DB": "output.db"
+  "Output DB": "/Users/raekhan/new_projects/ATLAS-GRID-SIMULATION/output/output.db"
 }

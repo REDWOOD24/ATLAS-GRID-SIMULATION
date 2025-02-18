@@ -53,9 +53,9 @@ void initialize_site_connections(sg4::NetZone* platform, std::unordered_map<std:
 
 /**                                                                                                        
  *                                                                                                           
- * This function initializes the various plugins used in the simulation.                             
+ * This function initializes the various simgrid plugins used in the simulation.
  */
-void initialize_plugins();    
+void initialize_simgrid_plugins();
   
 };
 
