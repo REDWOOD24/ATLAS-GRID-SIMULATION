@@ -28,14 +28,22 @@
 int main(int argc, char** argv)
 {
    //Usage
-   std::string usage = std::string("usage: ") + argv[0] + " ../data/site_conn_info.json ../data/site_info.json dispatcher_plugin_path ../job_logs/log.h5";
-   if(argc != 5){std::cout << usage << std::endl; exit(-1);}
+   std::string usage = std::string("usage: ") + argv[0] + " -c config.json";
+   if(argc != 3){std::cout << usage << std::endl; exit(-1);}
+   if(std::string(argv[1]) != std::string("-c")){std::cout << usage << std::endl; exit(-1);}
 
-   //Parse json with information about ATLAS sites
-   const std::string         siteConnInfoFile  = std::string(argv[1]);
-   const std::string         siteInfoFile      = std::string(argv[2]);
-   const std::string         dispatcherPath    = std::string(argv[3]);
-   const std::string         outputFile        = std::string(argv[4]);
+   //Parse Configuration File
+   std::string configFile  = std::string(argv[2]);
+   std::cout << "Reading in Configuration From: " << configFile << std::endl;
+   std::ifstream in(configFile);
+   auto j=json::parse(in);
+
+   const std::string         gridName          = j["Grid name"];
+   const std::string         siteInfoFile      = j["Sites Information"];
+   const std::string         siteConnInfoFile  = j["Sites Connection Information"];
+   const std::string         dispatcherPath    = j["Dispatcher Plugin"];
+   const std::string         outputFile        = j["Output DB"];
+
    std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile);
    auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
    auto                      siteConnInfo      = parser->getSiteConnInfo();
@@ -45,7 +53,7 @@ int main(int argc, char** argv)
 
    //Create the SimGrid platform
    std::unique_ptr<Platform> pf = std::make_unique<Platform>();
-   auto* platform = pf->create_platform("ATLAS-GRID");
+   auto* platform = pf->create_platform(gridName);
 
    //Initialize the Plugins used
    pf->initialize_plugins();
@@ -57,7 +65,7 @@ int main(int argc, char** argv)
    pf->initialize_site_connections(platform,siteConnInfo,sites);
 
    //Create Job Executor
-   std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>(outputFile);
+   std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();
    executor->set_dispatcher(dispatcherPath,platform);
    executor->start_receivers();
 
