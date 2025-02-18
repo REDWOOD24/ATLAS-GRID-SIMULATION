@@ -38,11 +38,14 @@ public:
     // Destructor
     virtual ~DispatcherPlugin() = default;
 
-    // Pure virtual function to be implemented by derived classes to assign Jobs
+    // Pure virtual function must be implemented by derived classes to assign Jobs
     virtual Job* assignJob(Job* job) = 0;
 
-    // Pure virtual function to be implemented by derived classes to assign Resources
+    // Pure virtual function must be implemented by derived classes to assign Resources
     virtual void assignResources(simgrid::s4u::NetZone* platform) = 0;
+
+    // Pure virtual function can be implemented by derived classes if they want to execute code on simulation end
+    virtual void onSimulationEnd(){};
 
     // Delete copy constructor and copy assignment operator
     DispatcherPlugin(const DispatcherPlugin&) = delete;
@@ -57,13 +60,13 @@ public:
 #endif //DISPATCHERPLUGIN_H
 ```
 
-It contains two purely virtual methods which the user has to implement. One is
+It contains two purely virtual methods which the user must implement and one which is optional. One of the methods the user ***must*** implement is
 
 ```c++
     virtual void assignResources(simgrid::s4u::NetZone* platform) = 0;
 ```
 
-This method provides the user with a SimGrid platform which contains information about the resources available on the grid. Using this one can incorporate resource information in their custom allocation algorithm. The second virtual method provided is
+This method provides the user with a SimGrid platform which contains information about the resources available on the grid. Using this one can incorporate resource information in their custom allocation algorithm. The second virtual method the user ***must*** implement is
 
 ```c++
    virtual Job* assignJob(Job* job) = 0;
@@ -90,6 +93,13 @@ struct Job {
 };
 ```
 The goal of any workload allocation algorithm is to take information about the resources and workload and assign the Job a comp_site, comp_host, disk. This is then the output of the method which goes out for execution in SimGrid.
+
+The final optional method the user can implement is
+
+```c++
+   virtual void onSimulationEnd(){};
+```
+This will be called on the simulation end.
 
 ## Writing Plugins
 
@@ -181,10 +191,10 @@ The SimpleDispatcherPlugin class and createSimpleDispatcherPlugin function are m
 class SimpleDispatcherPlugin:public DispatcherPlugin {
 
 public:
-    //Constructor
     SimpleDispatcherPlugin();
     virtual Job* assignJob(Job* job) final override;
     virtual void assignResources(simgrid::s4u::NetZone* platform) final override;
+    virtual void onSimulationEnd() final override;
 
 private:
     std::unique_ptr<SIMPLE_DISPATCHER> sd = std::make_unique<SIMPLE_DISPATCHER>();
@@ -201,10 +211,14 @@ void SimpleDispatcherPlugin::assignResources(simgrid::s4u::NetZone* platform)
   sd->setPlatform(platform);
 }
 
-
 Job* SimpleDispatcherPlugin::assignJob(Job* job)
 {
   return sd->assignJobToResource(job);
+}
+
+void SimpleDispatcherPlugin::onSimulationEnd()
+{
+  sd->cleanup();
 }
 
 extern "C" SimpleDispatcherPlugin* createSimpleDispatcherPlugin()

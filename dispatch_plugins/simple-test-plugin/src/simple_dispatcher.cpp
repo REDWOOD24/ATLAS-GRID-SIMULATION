@@ -16,7 +16,7 @@ void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
         cpu->cores           = host->get_core_count();
         cpu->speed           = host->get_available_speed();
 		cpu->flops_available = cpu->cores*50*1e9;
-	
+
         for(const auto& disk: host->get_disks())
 	  {
           disk_params* d = new disk_params;
@@ -36,7 +36,7 @@ void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
       _site->cpus_in_use = 0;
       site_queue.push(_site);
     }
-  
+
   while (!site_queue.empty()) {_sites.push_back(site_queue.top()); site_queue.pop();}
 }
 
@@ -95,7 +95,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 
     if(best_cpu) //Found a CPU. Deduct storage from the selected disk.                                                
       {
-	best_cpu->jobs.push_back(j);
+	best_cpu->jobs.push_back(j->id);
 	best_cpu->flops_available -= j->flops;
 	
 	for(auto& d: best_cpu->disks)
@@ -150,4 +150,10 @@ void SIMPLE_DISPATCHER::printJobInfo(Job* job)
 
       std::cout << "----------------------------------------------------------------------" << std::endl;
 
+}
+
+void SIMPLE_DISPATCHER::cleanup()
+{
+	for(auto& s : _sites){for(auto& h : s->cpus){for(auto&d : h->disks){delete d;}h->disks.clear(); delete h;}s->cpus.clear();delete s;}
+	_sites.clear();
 }

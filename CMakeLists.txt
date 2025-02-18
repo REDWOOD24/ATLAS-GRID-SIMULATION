@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-# lxplus option (OFF by default)
+# lxplus option (OFF by default) DEPRECATED from v1.1
 option(lxplus "Enable lxplus-specific configuration" OFF)
 
 # If lxplus is enabled, skip the rest of the script
@@ -20,7 +20,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 # Find SimGrid, Boost, and HDF5
 find_package(SimGrid REQUIRED)
 find_package(Boost REQUIRED)
-find_package(HDF5 REQUIRED COMPONENTS CXX)
 find_package(FSMOD REQUIRED)
 
 # Add json subdir
@@ -28,7 +27,7 @@ add_subdirectory(json)
 list(APPEND BUILT_PACKAGES "json")
 
 # Include directories
-include_directories(${SimGrid_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${HDF5_CXX_INCLUDE_DIRS} ${FSMOD_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/json/single_include)
+include_directories(${SimGrid_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${FSMOD_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/json/single_include)
 include_directories(include/)
 
 # Source files
@@ -45,7 +44,6 @@ add_executable(atlas-grid-simulator ${SOURCE_FILES}
 target_link_libraries(atlas-grid-simulator
         ${SimGrid_LIBRARY}
         ${Boost_LIBRARIES}
-        ${HDF5_CXX_LIBRARIES}
         ${FSMOD_LIBRARY}
 )
 

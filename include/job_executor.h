@@ -1,6 +1,9 @@
-//
-// Created by Raees Khan on 10.02.2025.
-//
+// ==============================================
+// Author: Raees Khan
+// Email: rak177@pitt.edu
+// Created Date: 2025-02-15
+// Description: Class to execute Jobs.
+// ==============================================
 
 #ifndef JOB_EXECUTOR_H
 #define JOB_EXECUTOR_H
@@ -9,41 +12,31 @@
 #include "PluginLoader.h"
 #include "job_manager.h"
 #include "actions.h"
-#include "H5Cpp.h"
-
-//Output to Save
-struct output {
-    char*                      id{};
-    float                      IO_size{};
-    float                      IO_time{};
-    float                      EXEC_time{};
-};
 
 class JOB_EXECUTOR
 {
 
 
 public:
-    JOB_EXECUTOR(const std::string& _outputFile);
+    explicit JOB_EXECUTOR(const std::string& _outputFile);
     ~JOB_EXECUTOR()= default;
 
 
-    void set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform);
+    static void set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform);
     static void update_disk_content(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::unordered_map<std::string, size_t>&  input_files, Job* j);
-    void execute_jobs(JobQueue jobs);
-    static void execute_job(Job* job);
+    static void execute_jobs(JobQueue jobs);
+    static void execute_job(Job* j);
+    void        start_job_execution(JobQueue jobs);
     static void receiver(const std::string& MQ_name);
-    void start_receivers();
-    void h5init();
+    static void start_receivers();
     static void kill_simulation();
-    static void print_output();
+    static void print_output(JobQueue jobs);
+    static void attach_callbacks();
+
 
 private:
-    std::unique_ptr<DispatcherPlugin>    dispatcher;
-    std::string                          outputFile;
-    static H5::H5File                    h5_file;
-    static H5::CompType                  datatype;
-    static std::vector<output*>          outputs;
+    static std::unique_ptr<DispatcherPlugin>    dispatcher;
+    std::string                                 outputFile;
 };
 
 #endif //JOB_EXECUTOR_H
