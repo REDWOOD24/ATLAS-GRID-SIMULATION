@@ -1,8 +1,7 @@
 #include "job_executor.h"
 
 std::unique_ptr<DispatcherPlugin>                  JOB_EXECUTOR::dispatcher;
-std::unique_ptr<sqliteSaver> JOB_EXECUTOR::saver = std::make_unique<sqliteSaver>();
-
+std::unique_ptr<sqliteSaver>                       JOB_EXECUTOR::saver = std::make_unique<sqliteSaver>();
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform)
 {
@@ -74,8 +73,7 @@ void JOB_EXECUTOR::execute_job(Job* j)
   for(const auto& inputfile: j->input_files){activities.push_back(Actions::read_file_async(fs,j->mount+inputfile.first,j));}
 
   //Compute
-  long long flops = j->flops;
-  activities.push_back(Actions::exec_task_multi_thread_async(flops,j->cores,j));
+  activities.push_back(Actions::exec_task_multi_thread_async(j->flops,j->cores,j));
 
   //Write
   for(const auto& outputfile: j->output_files){activities.push_back(Actions::write_file_async(fs,j->mount+outputfile.first,outputfile.second,j));}
