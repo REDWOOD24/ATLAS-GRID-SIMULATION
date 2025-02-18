@@ -12,9 +12,11 @@
 
 //Information needed to a specify a Job
 struct Job {
-    int                                         _id{};
-    std::string                                  id{};
-    int                                          flops{};
+    int                                        _id{};
+    std::string                                 id{};
+    std::string                                 status{};
+    int                                         error_code{};
+    int                                         flops{};
     std::unordered_map<std::string, size_t>     input_files{};
     std::unordered_map<std::string, size_t>     output_files{};
     size_t                                      input_storage{};
