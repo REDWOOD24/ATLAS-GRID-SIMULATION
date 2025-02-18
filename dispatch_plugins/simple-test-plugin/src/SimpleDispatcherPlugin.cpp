@@ -17,7 +17,7 @@ private:
 
 SimpleDispatcherPlugin::SimpleDispatcherPlugin()
 {
-  std::cout << "Setting the Job Dispatcher as Simple Dispatcher" << std::endl;
+  std::cout << "Loading the Job Dispatcher from Simple Dispatcher Plugin ...." << std::endl;
 }
 
 void SimpleDispatcherPlugin::assignResources(simgrid::s4u::NetZone* platform)
