@@ -26,7 +26,7 @@ Follow these steps to build the project locally:
 ## Run Instructions
 
    ```bash
-  ./atlas-grid-simulator  ../data/site_conn_info.json ../data/site_info.json dispatcher_plugin_path ../job_logs/log.h5
+  ./atlas-grid-simulator  -c config.json
    ```
    
 ## Platform

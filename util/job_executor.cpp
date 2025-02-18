@@ -1,8 +1,6 @@
 #include "job_executor.h"
 
-JOB_EXECUTOR::JOB_EXECUTOR(const std::string& _outputFile){outputFile = _outputFile;}
 std::unique_ptr<DispatcherPlugin>    JOB_EXECUTOR::dispatcher;
-
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform)
 {
@@ -80,16 +78,12 @@ void JOB_EXECUTOR::execute_job(Job* j)
 
 void JOB_EXECUTOR::receiver(const std::string& MQ_name)
 {
-  //sg4::Actor::self()->daemonize();
   sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(MQ_name);
   for (bool cont = true; cont;)
   {
     sg4::MessPtr mess = mqueue->get_async();
     mess->wait();
     auto* job = static_cast<Job*>(mess->get_payload());
-    //sg4::this_actor::sleep_for(0.1);
-
-    //std::cout << job->id << std::endl;
     if (job->id == "kill"){delete job; break;}
     execute_job(job);
   }

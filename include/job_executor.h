@@ -18,7 +18,7 @@ class JOB_EXECUTOR
 
 
 public:
-    explicit JOB_EXECUTOR(const std::string& _outputFile);
+     JOB_EXECUTOR(){std::cout << "Initalizing Job Executor ....." << std::endl;};
     ~JOB_EXECUTOR()= default;
 
 
@@ -36,7 +36,6 @@ public:
 
 private:
     static std::unique_ptr<DispatcherPlugin>    dispatcher;
-    std::string                                 outputFile;
 };
 
 #endif //JOB_EXECUTOR_H
