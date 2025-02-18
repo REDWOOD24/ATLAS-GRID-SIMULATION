@@ -12,6 +12,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 find_package(SimGrid REQUIRED)
 find_package(Boost REQUIRED)
 find_package(FSMOD REQUIRED)
+find_package ( SQLite3 REQUIRED )
 
 # Add json subdir
 add_subdirectory(json)
@@ -36,6 +37,7 @@ target_link_libraries(atlas-grid-simulator
         ${SimGrid_LIBRARY}
         ${Boost_LIBRARIES}
         ${FSMOD_LIBRARY}
+        SQLite::SQLite3
 )
 
 # ==============================

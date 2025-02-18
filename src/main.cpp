@@ -55,8 +55,8 @@ int main(int argc, char** argv)
    std::unique_ptr<Platform> pf = std::make_unique<Platform>();
    auto* platform = pf->create_platform(gridName);
 
-   //Initialize the Plugins used
-   pf->initialize_plugins();
+   //Initialize the SimGrid Plugins used
+   pf->initialize_simgrid_plugins();
    
    //Create the Sites
    auto sites = pf->create_sites(platform, siteNameCPUInfo);
@@ -66,6 +66,7 @@ int main(int argc, char** argv)
 
    //Create Job Executor
    std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();
+   executor->set_output(outputFile);
    executor->set_dispatcher(dispatcherPath,platform);
    executor->start_receivers();
 
@@ -73,9 +74,10 @@ int main(int argc, char** argv)
    std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
    auto jobs = jm->create_jobs(20);
 
+
    //Execute Jobs
    executor->start_job_execution(jobs);
-   executor->print_output(jobs);
+   executor->saveJobs(jobs);
 
    //Print simulator name and current version
    std::cout << "\nSimATLAS version: " << MAJOR_VERSION << "." << MINOR_VERSION << "." << BUILD_NUMBER << std::endl;

@@ -12,6 +12,7 @@
 #include "PluginLoader.h"
 #include "job_manager.h"
 #include "actions.h"
+#include "sqliteSaver.h"
 
 class JOB_EXECUTOR
 {
@@ -29,13 +30,14 @@ public:
     void        start_job_execution(JobQueue jobs);
     static void receiver(const std::string& MQ_name);
     static void start_receivers();
-    static void kill_simulation();
-    static void print_output(JobQueue jobs);
+    static void set_output(const std::string& outputFile);
+    static void saveJobs(JobQueue jobs);
     static void attach_callbacks();
 
 
 private:
     static std::unique_ptr<DispatcherPlugin>    dispatcher;
+    static std::unique_ptr<sqliteSaver>         saver;
 };
 
 #endif //JOB_EXECUTOR_H

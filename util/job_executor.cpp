@@ -1,12 +1,21 @@
 #include "job_executor.h"
 
-std::unique_ptr<DispatcherPlugin>    JOB_EXECUTOR::dispatcher;
+std::unique_ptr<DispatcherPlugin>                  JOB_EXECUTOR::dispatcher;
+std::unique_ptr<sqliteSaver> JOB_EXECUTOR::saver = std::make_unique<sqliteSaver>();
+
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform)
 {
   PluginLoader<DispatcherPlugin> plugin_loader;
   dispatcher = plugin_loader.load(dispatcherPath);
   dispatcher->assignResources(platform);
+}
+
+void JOB_EXECUTOR::set_output(const std::string& outputFile)
+{
+  std::cout << "Output Path Set To: " << outputFile << std::endl;
+  saver->setFilePath(outputFile);
+  saver->createJobsTable();
 }
 
 void JOB_EXECUTOR::start_job_execution(JobQueue jobs)
@@ -96,14 +105,6 @@ void JOB_EXECUTOR::start_receivers()
   for(const auto& host: hosts){sg4::Actor::create(host->get_name()+"-actor", host, receiver, host->get_name()+"-MQ");}
 }
 
-void JOB_EXECUTOR::kill_simulation()
-{
-  const auto* eng = sg4::Engine::get_instance();
-  auto hosts      = eng->get_all_hosts();
-  for(const auto& host: hosts){host->turn_off();}
-}
-
-
 
 void JOB_EXECUTOR::update_disk_content(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::unordered_map<std::string, size_t>&  input_files, Job* j)
 {
@@ -114,17 +115,11 @@ void JOB_EXECUTOR::update_disk_content(const std::shared_ptr<simgrid::fsmod::Fil
   for(const auto& inputfile: input_files){fs->create_file(j->mount + inputfile.first,  std::to_string(inputfile.second)+"kB");}
 }
 
-void JOB_EXECUTOR::print_output(JobQueue jobs)
+void JOB_EXECUTOR::saveJobs(JobQueue jobs)
 {
   while(!jobs.empty()) {
     Job* j = jobs.top();
-    std::cout << "-------------------------------------------" << std::endl;
-    std::cout << "Job ID: "                << j->id << std::endl;
-    std::cout << "IO size: "               << j->IO_size_performed << std::endl;
-    std::cout << "IO time: "               << j->IO_time_taken << std::endl;
-    std::cout << "Flops: "                 << j->EXEC_time_taken << std::endl;
-    std::cout << "Computation time: "      << j->EXEC_time_taken << std::endl;
-    std::cout << "-------------------------------------------" << std::endl;
+    saver->saveJob(j);
     jobs.pop();
     delete j;
   }
