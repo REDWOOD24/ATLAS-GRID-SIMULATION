@@ -26,7 +26,7 @@ Follow these steps to build the project locally:
 ## Run Instructions
 
    ```bash
-  ./atlas-grid-simulator  -c config.json
+  ./atlas-grid-simulator -c config.json
    ```
    
 ## Platform
