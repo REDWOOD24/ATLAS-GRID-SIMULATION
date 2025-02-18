@@ -16,7 +16,7 @@ struct Job {
     std::string                                 id{};
     std::string                                 status{};
     int                                         error_code{};
-    int                                         flops{};
+    long long                                   flops{};
     std::unordered_map<std::string, size_t>     input_files{};
     std::unordered_map<std::string, size_t>     output_files{};
     size_t                                      input_storage{};
