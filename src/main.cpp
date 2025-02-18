@@ -66,9 +66,8 @@ int main(int argc, char** argv)
    auto jobs = jm->create_jobs(20);
 
    //Execute Jobs
-   executor->execute_jobs(jobs);
-   executor->kill_simulation();
-   executor->print_output();
+   executor->start_job_execution(jobs);
+   executor->print_output(jobs);
 
    //Print simulator name and current version
    std::cout << "\nSimATLAS version: " << MAJOR_VERSION << "." << MINOR_VERSION << "." << BUILD_NUMBER << std::endl;

@@ -37,7 +37,7 @@ struct Host {
   int                        cores{};
   size_t                     flops_available{};
   std::vector<disk_params*>  disks{};
-  std::vector<Job*>          jobs{};
+  std::vector<std::string>   jobs{};
   bool operator<(const Host& other) const {return flops_available <= other.flops_available;}
 };
 
@@ -67,6 +67,7 @@ public:
   Host*  findBestAvailableCPU(std::vector<Host*>& cpus, Job* j);
   Job*   assignJobToResource(Job* job);
   void   printJobInfo(Job* job);
+  void   cleanup();
 
 
 private:

@@ -1,21 +1,7 @@
 #include "job_executor.h"
 
-
 JOB_EXECUTOR::JOB_EXECUTOR(const std::string& _outputFile){outputFile = _outputFile;}
-
-H5::H5File	      JOB_EXECUTOR::h5_file;
-H5::CompType	      JOB_EXECUTOR::datatype;
-std::vector<output*>  JOB_EXECUTOR::outputs;
-
-void JOB_EXECUTOR::h5init()
-{
-  h5_file = H5::H5File(this->outputFile.c_str() , H5F_ACC_TRUNC);
-  datatype = sizeof(output);                                                 
-  datatype.insertMember("ID",                  HOFFSET(output, id),                       H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
-  datatype.insertMember("FLOPS EXECUTED",      HOFFSET(output,IO_size),			  H5::PredType::NATIVE_UINT);
-  datatype.insertMember("FILES READ SIZE",     HOFFSET(output,IO_time),			  H5::PredType::NATIVE_UINT);
-  datatype.insertMember("FILES WRITTEN SIZE",  HOFFSET(output,EXEC_time),		  H5::PredType::NATIVE_UINT);
-}
+std::unique_ptr<DispatcherPlugin>    JOB_EXECUTOR::dispatcher;
 
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform)
@@ -25,80 +11,86 @@ void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZon
   dispatcher->assignResources(platform);
 }
 
+void JOB_EXECUTOR::start_job_execution(JobQueue jobs)
+{
+
+  //Execute code on Simulation Start/End
+  attach_callbacks();
+
+  //Start Simulation
+  const auto* e = sg4::Engine::get_instance();
+  auto host    = e->get_all_hosts()[0];
+  auto actor = sg4::Actor::create("JOB-EXECUTOR-actor", host, this->execute_jobs, std::move(jobs));
+  e->run();
+}
+
 void JOB_EXECUTOR::execute_jobs(JobQueue jobs)
 {
   const auto* e = sg4::Engine::get_instance();
   while (!jobs.empty())
     {
-      Job* _job = jobs.top();
-      Job* job = dispatcher->assignJob(_job);
-      std::unordered_map<std::string, size_t>  input_files   = job->input_files;
+      Job* job = dispatcher->assignJob(jobs.top());
       auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(job->comp_site)).at(job->comp_site+job->comp_host+job->disk+"filesystem");
-      update_disk_content(fs,input_files,job);
+      update_disk_content(fs,job->input_files,job);
       sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host+"-MQ");
-      mqueue->put(job);
+      sg4::MessPtr mess = mqueue->put_async(job);
+      mess->wait();
       jobs.pop();
     }
+
+  //ShutDown
+  auto hosts = e->get_all_hosts();
+  for (const auto& host : hosts)
+  {
+    Job* job = new Job;
+    job->id = "kill";
+    sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(host->get_name()+"-MQ");
+    sg4::MessPtr mess = mqueue->put_async(job);
+    mess->wait();
+  }
+
 }
 
 
-void JOB_EXECUTOR::execute_job(Job* job)
+void JOB_EXECUTOR::execute_job(Job* j)
 {
-
-  //Parse Job Info
-  std::string                              id            = job->id;
-  int                                      flops         = job->flops;
-  std::unordered_map<std::string, size_t>  input_files   = job->input_files;
-  std::unordered_map<std::string, size_t>  output_files  = job->output_files;
-  std::string				   site          = job->comp_site;
-  std::string                              read_host     = job->comp_host;
-  std::string                              comp_host     = job->comp_host;
-  std::string                              write_host    = job->comp_host;
-  std::string				   read_mount    = job->mount;
-  std::string				   write_mount   = job->mount;
-  int                                      cores         = job->cores;
-  std::string                              disk          = job->disk;
-  delete                                                   job;
-  
-  //Create Output
-  output* o;
-  outputs.push_back(o);
-  o->id        = new char[id.size() + 1];
-  o->IO_size   = 0.0;
-  o->IO_time   = 0.0;
-  o->EXEC_time = 0.0;
-  std::strcpy(o->id, id.c_str());
-	
   //Get Engine Instance
   const auto* e = sg4::Engine::get_instance();
   
   //Find FileSystem to Read and Write (same for now)
-  auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(site)).at(site+comp_host+disk+"filesystem");
-  
-  //Update output whenever an io or compute operation finishes.
-  sg4::Io::on_completion_cb([&](const simgrid::s4u::Io& io) {
-    o->IO_size     += io.get_performed_ioops();
-    o->IO_time     += io.get_start_time() - io.get_finish_time();});
+  auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(j->comp_site)).at(j->comp_site+j->comp_host+j->disk+"filesystem");
 
-  sg4::Exec::on_completion_cb([&](const simgrid::s4u::Exec& ex) {
-		o->EXEC_time     += ex.get_start_time() - ex.get_finish_time();});
-  
-  //Read, Compute, Write
-  for(const auto& inputfile: input_files){Actions::read_file_async(fs,read_mount+inputfile.first)->start();}
-  Actions::exec_task_multi_thread_async(flops,cores)->start();
-  for(const auto& outputfile: output_files){Actions::write_file_async(fs,read_mount+outputfile.first,outputfile.second)->start();}
-	
+  //Activities (Read, Compute, Write)
+  std::vector<sg4::ActivityPtr> activities;
+
+  //Read
+  for(const auto& inputfile: j->input_files){activities.push_back(Actions::read_file_async(fs,j->mount+inputfile.first,j));}
+
+  //Compute
+  activities.push_back(Actions::exec_task_multi_thread_async(j->flops,j->cores,j));
+
+  //Write
+  for(const auto& outputfile: j->output_files){activities.push_back(Actions::write_file_async(fs,j->mount+outputfile.first,outputfile.second,j));}
+
+  //Wait to finish
+  sg4::ActivitySet pending_activities(activities);
+  pending_activities.wait_all();
+
 }
 
 void JOB_EXECUTOR::receiver(const std::string& MQ_name)
 {
-
+  //sg4::Actor::self()->daemonize();
   sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(MQ_name);
   for (bool cont = true; cont;)
   {
-    Job* job;
-    sg4::MessPtr mess = mqueue->get_async<Job>(&job);
+    sg4::MessPtr mess = mqueue->get_async();
     mess->wait();
+    auto* job = static_cast<Job*>(mess->get_payload());
+    //sg4::this_actor::sleep_for(0.1);
+
+    //std::cout << job->id << std::endl;
+    if (job->id == "kill"){delete job; break;}
     execute_job(job);
   }
 }
@@ -107,21 +99,14 @@ void JOB_EXECUTOR::start_receivers()
 {
   const auto* eng = sg4::Engine::get_instance();
   auto hosts      = eng->get_all_hosts();
-  for(const auto& host: hosts)
-    {
-      sg4::Actor::create(host->get_name()+"-actor", host, this->receiver, host->get_name()+"-MQ");
-    }
-  eng->run();
+  for(const auto& host: hosts){sg4::Actor::create(host->get_name()+"-actor", host, receiver, host->get_name()+"-MQ");}
 }
 
 void JOB_EXECUTOR::kill_simulation()
 {
   const auto* eng = sg4::Engine::get_instance();
   auto hosts      = eng->get_all_hosts();
-  for(const auto& host: hosts)
-    {
-      host->turn_off();
-    }
+  for(const auto& host: hosts){host->turn_off();}
 }
 
 
@@ -135,10 +120,24 @@ void JOB_EXECUTOR::update_disk_content(const std::shared_ptr<simgrid::fsmod::Fil
   for(const auto& inputfile: input_files){fs->create_file(j->mount + inputfile.first,  std::to_string(inputfile.second)+"kB");}
 }
 
-void JOB_EXECUTOR::print_output()
+void JOB_EXECUTOR::print_output(JobQueue jobs)
 {
-for (output* o: outputs)
-  {
-    std::cout << o->IO_time << " " << o->IO_size << std::endl;
+  while(!jobs.empty()) {
+    Job* j = jobs.top();
+    std::cout << "-------------------------------------------" << std::endl;
+    std::cout << "Job ID: "                << j->id << std::endl;
+    std::cout << "IO size: "               << j->IO_size_performed << std::endl;
+    std::cout << "IO time: "               << j->IO_time_taken << std::endl;
+    std::cout << "Flops: "                 << j->EXEC_time_taken << std::endl;
+    std::cout << "Computation time: "      << j->EXEC_time_taken << std::endl;
+    std::cout << "-------------------------------------------" << std::endl;
+    jobs.pop();
+    delete j;
   }
+}
+
+void JOB_EXECUTOR::attach_callbacks()
+{
+  sg4::Engine::on_simulation_start_cb([](){std::cout << "Simulation starting .........." << std::endl;});
+  sg4::Engine::on_simulation_end_cb([](){std::cout << "Simulation finished, SIMULATED TIME: " << sg4::Engine::get_clock() << std::endl; dispatcher->onSimulationEnd();});
 }

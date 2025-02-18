@@ -10,7 +10,7 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
     Job* job = new Job();
     job->_id            = i;
     job->id             = "Job-"+std::to_string(i);
-    job->flops          = std::round(p->GaussianDistribution(1e7,10000));
+    job->flops          = std::round(p->GaussianDistribution(1e13,1000000));
     job->input_storage  = 0;
     job->output_storage = 0;
     job->priority       = 2; //p->genRandNum(1,10);
@@ -22,7 +22,7 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
 
     for(int file = 1; file <= input_files; file++){
       std::string name       = prefix + std::to_string(file)+suffix;
-      size_t      size       = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
+      size_t      size       = static_cast<size_t>(std::round(p->GaussianDistribution(1e5,10000)));
       job->input_files[name] = size;
       job->input_storage    += size;
     }
@@ -35,11 +35,17 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
 
     for(int file = 1; file <= output_files; file++){
       std::string name         = prefix + std::to_string(file)+suffix;
-      size_t      size         = static_cast<size_t>(std::round(p->GaussianDistribution(1e7,10000)));
+      size_t      size         = static_cast<size_t>(std::round(p->GaussianDistribution(1e5,10000)));
       job->output_files[name]  = size;
       job->output_storage     += size;
     }
-    
+
+    //Output metrics set to 0
+    job->IO_size_performed = 0;
+    job->IO_time_taken     = 0.0;
+    job->EXEC_time_taken   = 0.0;
+
+    //Add to list of jobs
     jobs.push(job);
   }
   

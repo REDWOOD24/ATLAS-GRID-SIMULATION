@@ -14,25 +14,21 @@
 #include <fstream>
 #include <string>
 #include <math.h>
+#include "job.h"
 #include <simgrid/s4u.hpp>
-#include "simgrid/plugins/energy.h"
+#include <simgrid/s4u/Exec.hpp>
 #include "fsmod.hpp"
 namespace sg4 = simgrid::s4u;
 
 class Actions
 {
-
-
 public:
-  Actions()= default;
- ~Actions()= default;
+     Actions() = default;
+    ~Actions() = default;
 
-  static sg4::ExecPtr  exec_task_multi_thread_async(double flops, int cores);
-  static sg4::IoPtr    read_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::string& filename);
-  static sg4::IoPtr    write_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::string& filepath, size_t file_size);
-
-
-  
+    static sg4::ActivityPtr  exec_task_multi_thread_async(double flops, int cores, Job* j);
+    static sg4::ActivityPtr  read_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::string& filename, Job* j);
+    static sg4::ActivityPtr  write_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::string& filepath, size_t file_size, Job* j);
 };
 
 #endif

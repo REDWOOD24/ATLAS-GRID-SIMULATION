@@ -20,11 +20,14 @@ public:
     // Destructor
     virtual ~DispatcherPlugin() = default;
 
-    // Pure virtual function to be implemented by derived classes to assign Jobs
+    // Pure virtual function must be implemented by derived classes to assign Jobs
     virtual Job* assignJob(Job* job) = 0;
 
-    // Pure virtual function to be implemented by derived classes to assign Resources
+    // Pure virtual function must be implemented by derived classes to assign Resources
     virtual void assignResources(simgrid::s4u::NetZone* platform) = 0;
+
+    // Pure virtual function can be implemented by derived classes if they want to execute code on simulation end
+    virtual void onSimulationEnd(){};
 
     // Delete copy constructor and copy assignment operator
     DispatcherPlugin(const DispatcherPlugin&) = delete;
