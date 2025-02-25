@@ -64,6 +64,9 @@ int main(int argc, char** argv)
    //Setup Connections between sites
    pf->initialize_site_connections(platform,siteConnInfo,sites);
 
+   //Initialize the Jobs Server
+   pf->initialize_job_server(platform,siteNameCPUInfo,sites);
+
    //Create Job Executor
    std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();
    executor->set_output(outputFile);
@@ -72,7 +75,7 @@ int main(int argc, char** argv)
 
    //Create Jobs
    std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
-   auto jobs = jm->create_jobs(20);
+   auto jobs = jm->create_jobs(10);
 
    //Execute Jobs
    executor->start_job_execution(jobs);

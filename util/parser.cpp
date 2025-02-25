@@ -94,7 +94,7 @@ std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>> Parser
     std::cout << "----------------------------------------------------"     << std::endl;
     std::cout << "\033[32m" << "Adding Site .... " << site                  << std::endl;
     std::cout << "\033[35m" << "CPUS          : "  << num_of_cpus           << std::endl;
-    std::cout << "\033[33m" << "DISK-INFO-CPU : "  <<  std::endl;
+    std::cout << "\033[33m" << "DISK-INFO-CPU : "                           <<  std::endl;
     for (const auto& d : disks) {
     std::cout << "NAME          : "         << std::setw(30)  << std::left  << d.name 
               << " : "     << std::setw(15) << std::right     << d.size     << std::endl;}
@@ -102,9 +102,9 @@ std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>> Parser
     
     for(int cpu_num = 0; cpu_num < num_of_cpus; cpu_num++){
       CPUInfo cpu;
-      cpu.cores      = 32;                  //Assumption of 32 cores in calculating cpus. 
+      cpu.cores      = 32;                                           //Assumption.
       cpu.speed      = this->genRandNum(10,20)*1e8;                  // Assumption
-      cpu.BW_CPU     = this->genRandNum(10,20)*1e11;                 // Assumption 
+      cpu.BW_CPU     = this->genRandNum(10,20)*1e10;                 // Assumption
       cpu.LAT_CPU    = 0;                                            // Assumption 
       cpu.ram        = std::to_string(this->genRandNum(8,16))+"GiB"; // Assumption
       cpu.disk_info  = disks;
@@ -122,10 +122,10 @@ std::unordered_map<std::string, std::pair<double, double>> Parser::getSiteConnIn
   auto j=json::parse(in);
 
   //Defining Latency in ms based on 'closeness' value in json file
-  std::unordered_map<int, int> closeness_latency_map = {
-        {0, 0}, {1, 10}, {2, 20}, {3, 30}, {4, 40},
-        {5, 50}, {6, 60}, {7, 70}, {8, 80}, {9, 90},
-        {10, 100}, {11, 110}, {12, 120}};
+  std::unordered_map<int, double> closeness_latency_map = {
+        {0, 0.0}, {1, 10.0}, {2, 20.0}, {3, 30.0}, {4, 40.0},
+        {5, 50.0}, {6, 60.0}, {7, 70.0}, {8, 80.0}, {9, 90.0},
+        {10, 100.0}, {11, 110.0}, {12, 120.0}};
 
   //Store Site Info
   std::unordered_map<std::string, std::pair<double, double>> siteConnInfo;
@@ -142,7 +142,7 @@ std::unordered_map<std::string, std::pair<double, double>> Parser::getSiteConnIn
       //Store if exists
       if (info_exists){
         double latency             = closeness_latency_map[j[connection]["closeness"]["latest"]];
-        double bandwidth           = j[connection]["mbps"]["dashb"]["1w"]; 
+        double bandwidth           = j[connection]["mbps"]["dashb"]["1w"];
         siteConnInfo[connection]   = std::make_pair(latency,bandwidth);}}}
  
  return siteConnInfo;

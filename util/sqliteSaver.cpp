@@ -2,13 +2,6 @@
 #include <iomanip>
 #include <set>
 
-int busy_handler(void* udp, int count ){ //Handles database locking issue when writing to file from multiple sources
-  std::cout << "Busy " << std::endl;
-  sqlite3_sleep(500); //Sleep for 0.5sec
-  return 1; //A nonzero return code indicates that the connection should continue to wait for the desired lock.
-}
-
-
 void sqliteSaver::setFilePath(const std::string & file)
 {
   file_name = file;
@@ -24,60 +17,126 @@ void sqliteSaver::initialize() {
   initialized = true;
 }
 
-void checkExitSave(int exit, char* messageError, const std::string& sql) {
-  if (exit != SQLITE_OK) {
-    std::ostringstream oss;
-    oss << "Error: " << messageError << std::endl;
-    oss << "Command was: " << sql << std::endl;
-    sqlite3_free(messageError);
-    throw std::runtime_error(oss.str());
-  }
-}
-
-int sqliteSaver::select_callback(void *p_data, int num_fields, char **p_fields, char **p_col_names)
-{
-  std::vector<std::vector<std::string>>* records = static_cast<std::vector<std::vector<std::string>>*>(p_data);
-  try {records->emplace_back(p_fields, p_fields + num_fields);}
-  catch (...) {return 1;}
-  return 0;
-}
-
-std::vector<std::vector<std::string>> sqliteSaver::select_stmt(const char* stmt)
-{
-  std::vector<std::vector<std::string>> records;
-  char *errmsg;
-  int ret = sqlite3_exec(db, stmt, this->select_callback, &records, &errmsg);
-  if (ret != SQLITE_OK){std::cerr << "Error in select statement " << stmt << "[" << errmsg << "]\n";}
-  else{}
-  sqlite3_close(db);
-  return records;
-}
-
-void sqliteSaver::sql_stmt(const char* stmt)
-{
-  char *errmsg;
-  int ret = sqlite3_exec(db, stmt, 0, 0, &errmsg);
-  if (ret != SQLITE_OK)
-  {
-    std::cerr << "Error in statement " << stmt << "[" << errmsg << "]\n";
-    exit(-1);
-  }
-}
-
 void sqliteSaver::createJobsTable()
 {
-  std::string sql_create_table = "CREATE TABLE JOBS (JOB_ID TEXT, FLOPS INT, EXECUTION_TIME FLOAT, IO_SIZE FLOAT, IO_TIME FLOAT)";
-  this->sql_stmt(sql_create_table.c_str());
+  const char* stmt =
+      "CREATE TABLE IF NOT EXISTS JOBS ("
+      "JOB_ID TEXT PRIMARY KEY, "
+      "SITE TEXT NOT NULL, "
+      "CPU TEXT NOT NULL, "
+      "STATUS TEXT NOT NULL, "
+      "MEMORY REAL NOT NULL, "
+      "CORES INTEGER NOT NULL, "
+      "FLOPS REAL NOT NULL, "
+      "EXECUTION_TIME REAL NOT NULL, "
+      "IO_SIZE REAL NOT NULL, "
+      "IO_TIME REAL NOT NULL"
+      ");";
+
+  char* errmsg = nullptr;
+  int ret = sqlite3_exec(db, stmt, nullptr, nullptr, &errmsg);
+
+  if (ret != SQLITE_OK)
+  {
+    std::cerr << "SQLite Error: Failed to create JOBS table.\n"
+              << "Statement: " << stmt << "\n"
+              << "Error: " << errmsg << "\n";
+
+    sqlite3_free(errmsg); // Free memory allocated for error message
+    throw std::runtime_error("Database table creation failed");
+  }
 }
 
 void sqliteSaver::saveJob(Job* j)
 {
-   std::string sql_insert_data = "INSERT INTO JOBS VALUES('"+j->id+"'," + std::to_string(j->flops)+ "," +std::to_string(j->EXEC_time_taken) + "," + std::to_string(j->IO_size_performed) + "," + std::to_string(j->IO_time_taken) +");";
-   this->sql_stmt(sql_insert_data.c_str());
+  if (!j)
+  {
+    std::cerr << "Error: Null job pointer provided to saveJob.\n";
+    return;
+  }
+
+  sqlite3_stmt *stmt;
+  std::string sql_insert_data =
+      "INSERT INTO JOBS (JOB_ID, SITE, CPU, STATUS, MEMORY, CORES, FLOPS, EXECUTION_TIME, IO_SIZE, IO_TIME) "
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+
+  if (sqlite3_prepare_v2(db, sql_insert_data.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+    sqlite3_bind_text(stmt, 1, j->id.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, j->comp_site.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, (j->comp_host.substr(j->comp_host.rfind('_') + 1)).c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, j->status.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 5, j->memory_usage);
+    sqlite3_bind_int(stmt, 6, j->cores);
+    sqlite3_bind_double(stmt, 7, j->flops);
+    sqlite3_bind_double(stmt, 8, j->EXEC_time_taken);
+    sqlite3_bind_double(stmt, 9, j->IO_size_performed);
+    sqlite3_bind_double(stmt, 10, j->IO_time_taken);
+
+    // Execute the statement
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+      std::cerr << "Error inserting data: " << sqlite3_errmsg(db) << std::endl;
+    }
+
+    // Finalize statement
+    sqlite3_finalize(stmt);
+  } else {
+    std::cerr << "Error preparing statement: " << sqlite3_errmsg(db) << std::endl;
+  }
+
 }
 
 void sqliteSaver::updateJob(Job* j)
 {
-  std::string sql_update_data = "UPDATE JOBS SET ;";
-  this->sql_stmt(sql_update_data.c_str());
+  if (!j)
+  {
+    std::cerr << "Error: Null job pointer provided to updateJob.\n";
+    return;
+  }
+
+  const char* sql =
+    "UPDATE JOBS SET "
+    "SITE = ?, "
+    "CPU = ?, "
+    "STATUS = ?, "
+    "MEMORY = ?, "
+    "CORES = ?, "
+    "FLOPS = ?, "
+    "EXECUTION_TIME = ?, "
+    "IO_SIZE = ?, "
+    "IO_TIME = ? "
+    "WHERE JOB_ID = ?;";
+
+  sqlite3_stmt* stmt = nullptr;
+
+  // Prepare the SQL statement
+  int ret = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+  if (ret != SQLITE_OK)
+  {
+    std::cerr << "Error preparing update statement: " << sqlite3_errmsg(db) << "\n";
+    return;
+  }
+
+  // Bind parameters using the Job object values
+  sqlite3_bind_text(stmt, 1, j->comp_site.c_str(), -1, SQLITE_STATIC);
+  sqlite3_bind_text(stmt, 2, (j->comp_host.substr(j->comp_host.rfind('_') + 1)).c_str(), -1, SQLITE_STATIC);
+  sqlite3_bind_text(stmt, 3, j->status.c_str(), -1, SQLITE_STATIC);
+  sqlite3_bind_double(stmt, 4, j->memory_usage);
+  sqlite3_bind_int(stmt, 5, j->cores);
+  sqlite3_bind_double(stmt, 6, j->flops);
+  sqlite3_bind_double(stmt, 7, j->EXEC_time_taken);
+  sqlite3_bind_double(stmt, 8, j->IO_size_performed);
+  sqlite3_bind_double(stmt, 9, j->IO_time_taken);
+  sqlite3_bind_text  (stmt, 10, j->id.c_str(), -1, SQLITE_STATIC);
+
+  // Execute the statement
+  ret = sqlite3_step(stmt);
+  if (ret != SQLITE_DONE)
+  {
+    std::cerr << "Error updating job: " << sqlite3_errmsg(db) << "\n";
+  }
+
+  // Finalize statement
+  sqlite3_finalize(stmt);
+
 }
