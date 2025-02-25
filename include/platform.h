@@ -56,6 +56,13 @@ void initialize_site_connections(sg4::NetZone* platform, std::unordered_map<std:
  * This function initializes the various simgrid plugins used in the simulation.
  */
 void initialize_simgrid_plugins();
+
+  
+/**                                                                                                                                                                   
+ *                                                                                                                                                                    
+ * This function creates the server that will send out jobs to sites.
+ */
+void initialize_job_server(sg4::NetZone* platform,  std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>& siteNameCPUInfo, std::unordered_map<std::string, sg4::NetZone*>& sites);
   
 };
 

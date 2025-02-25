@@ -1,40 +1,59 @@
 #include "actions.h"
 
-sg4::ActivityPtr Actions::exec_task_multi_thread_async(double flops, int cores, Job* j)
+void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<sqliteSaver>& saver, std::unique_ptr<DispatcherPlugin>& dispatcher)
 {
   auto host = sg4::this_actor::get_host();
-  sg4::ExecPtr exec_activity = sg4::Exec::init()->set_flops_amount(flops)->set_thread_count(cores)->set_host(host);
+  sg4::ExecPtr exec_activity = sg4::Exec::init()->set_flops_amount(j->flops)->set_thread_count(j->cores)->set_host(host);
   exec_activity->start();
-  exec_activity->on_this_completion_cb([j](simgrid::s4u::Exec const & ex) {
+  pending_activities.push(exec_activity);
+  exec_activity->on_this_completion_cb([j,&saver,&dispatcher](simgrid::s4u::Exec const & ex) {
     j->EXEC_time_taken += ex.get_finish_time() - ex.get_start_time();
+    j->status = std::string("finished");
+    saver->updateJob(j);
+    if (j->status == std::string("finished") and j->files_read == j->input_files.size()
+      and j->files_written == j->output_files.size()) {dispatcher->onJobEnd(j);}
   });
-  return exec_activity;
 }
 
-sg4::ActivityPtr Actions::read_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::string& filename, Job* j)
+void Actions::read_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<DispatcherPlugin>& dispatcher)
 {
-  auto file = fs->open(filename,"r");
-  const sg_size_t file_size = fs->file_size(filename);
-  file->seek(0);
-  auto read_activity = file->read_async(file_size);
-  read_activity->on_this_completion_cb([file,j](simgrid::s4u::Io const & io) {
-    file->close();
-    j->IO_time_taken      += io.get_finish_time() - io.get_start_time();
-    j->IO_size_performed  += io.get_performed_ioops();
-  });
-  return read_activity;
+  for (const auto& input_file: j->input_files)
+  {
+    const std::string filename = j->mount + input_file.first;
+    auto file = fs->open(filename,"r");
+    const sg_size_t filesize = fs->file_size(filename);
+    file->seek(0);
+    auto read_activity = file->read_async(filesize);
+    pending_activities.push(read_activity);
+    read_activity->on_this_completion_cb([file,j,&dispatcher](simgrid::s4u::Io const & io) {
+      file->close();
+      j->IO_time_taken      += io.get_finish_time() - io.get_start_time();
+      j->IO_size_performed  += io.get_performed_ioops();
+      j->files_read         += 1;
+      if (j->status == std::string("finished") and j->files_read == j->input_files.size()
+      and j->files_written == j->output_files.size()) {dispatcher->onJobEnd(j);}
+    });
+  };
 }
 
-sg4::ActivityPtr Actions::write_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::string& filepath, size_t file_size, Job* j)
+void Actions::write_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<DispatcherPlugin>& dispatcher)
 {
-  auto file = fs->open(filepath,"w");
-  auto write_activity = file->write_async(file_size*1000); //File size multiplied by 1000 to convert kB to B
-  write_activity->on_this_completion_cb([file,j](simgrid::s4u::Io const & io) {
-    file->close();
-    j->IO_time_taken      += io.get_finish_time() - io.get_start_time();
-    j->IO_size_performed  += io.get_performed_ioops();
-  });
-  return write_activity;
+  for (const auto& output_file: j->output_files)
+  {
+    const std::string filename = j->mount + output_file.first;
+    const std::string filesize = std::to_string(output_file.second)+"kB";
+    auto file = fs->open(filename,"w");
+    auto write_activity = file->write_async(filesize);
+    pending_activities.push(write_activity);
+    write_activity->on_this_completion_cb([file,j,&dispatcher](simgrid::s4u::Io const & io) {
+      file->close();
+      j->IO_time_taken      += io.get_finish_time() - io.get_start_time();
+      j->IO_size_performed  += io.get_performed_ioops();
+      j->files_written      += 1;
+      if (j->status == std::string("finished") and j->files_read == j->input_files.size()
+      and j->files_written == j->output_files.size()) {dispatcher->onJobEnd(j);}
+    });
+  };
 }
 
 

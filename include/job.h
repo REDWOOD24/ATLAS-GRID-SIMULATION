@@ -30,6 +30,9 @@ struct Job {
     size_t                                      IO_size_performed{};
     double                                      IO_time_taken{};
     double                                      EXEC_time_taken{};
+    int                                         files_read{};
+    int                                         files_written{};
+    double                                      memory_usage{};
     bool operator<(const Job& other) const {if(priority == other.priority){return _id > other._id;} return priority < other.priority;}
 };
 

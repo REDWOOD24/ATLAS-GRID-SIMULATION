@@ -7,7 +7,8 @@ class SimpleDispatcherPlugin:public DispatcherPlugin {
 public:
     SimpleDispatcherPlugin();
     virtual Job* assignJob(Job* job) final override;
-    virtual void assignResources(simgrid::s4u::NetZone* platform) final override;
+    virtual void getResourceInformation(simgrid::s4u::NetZone* platform) final override;
+    virtual void onJobEnd(Job* job) final override;
     virtual void onSimulationEnd() final override;
 
 private:
@@ -20,7 +21,7 @@ SimpleDispatcherPlugin::SimpleDispatcherPlugin()
   std::cout << "Loading the Job Dispatcher from Simple Dispatcher Plugin ...." << std::endl;
 }
 
-void SimpleDispatcherPlugin::assignResources(simgrid::s4u::NetZone* platform)
+void SimpleDispatcherPlugin::getResourceInformation(simgrid::s4u::NetZone* platform)
 {
   sd->setPlatform(platform);
 }
@@ -28,6 +29,11 @@ void SimpleDispatcherPlugin::assignResources(simgrid::s4u::NetZone* platform)
 Job* SimpleDispatcherPlugin::assignJob(Job* job)
 {
   return sd->assignJobToResource(job);
+}
+
+void SimpleDispatcherPlugin::onJobEnd(Job* job)
+{
+  sd->free(job);
 }
 
 void SimpleDispatcherPlugin::onSimulationEnd()

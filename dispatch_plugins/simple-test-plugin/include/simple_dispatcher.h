@@ -23,29 +23,31 @@ namespace sg4 = simgrid::s4u;
 
 
 //Need basic characterization of sites, hosts and disks to find the optimal one for each job.
-struct disk_params {
-  std::string                name{};
-  std::string                mount{};
-  size_t                     storage{};  
-  double                     read_bw{}; 
-  double                     write_bw{};
+struct Disk {
+  std::string                                    name{};
+  std::string                                    mount{};
+  size_t                                         storage{};
+  double                                         read_bw{};
+  double                                         write_bw{};
 };
 
 struct Host {
-  std::string                name{};
-  double                     speed{};
-  int                        cores{};
-  size_t                     flops_available{};
-  std::vector<disk_params*>  disks{};
-  std::vector<std::string>   jobs{};
-  bool operator<(const Host& other) const {return flops_available <= other.flops_available;}
+  std::string                                    name{};
+  double                                         speed{};
+  int                                            cores{};
+  int                                            cores_available{};
+  std::vector<Disk*>                             disks{};
+  std::unordered_map<std::string, Disk*>         disks_map{};
+  std::unordered_set<std::string>                jobs{};
+  bool operator<(const Host& other) const {return cores_available <= other.cores_available;}
 };
 
 struct Site {
-  std::string                name{};
-  int                        priority{};
-  std::vector<Host*>         cpus{};
-  int                        cpus_in_use{};
+  std::string                                    name{};
+  int                                            priority{};
+  std::vector<Host*>                             cpus{};
+  std::unordered_map<std::string, Host*>         cpus_map{};
+  int                                            cpus_in_use{};
   bool operator<(const Site& other) const {return priority <= other.priority;}
 };
 
@@ -66,14 +68,17 @@ public:
   double getTotalSize(const std::unordered_map<std::string, size_t>& files);
   Host*  findBestAvailableCPU(std::vector<Host*>& cpus, Job* j);
   Job*   assignJobToResource(Job* job);
+  void   free(Job* job);
   void   printJobInfo(Job* job);
   void   cleanup();
 
 
 private:
-  bool  use_round_robin{false};
-  std::vector<Site*>    _sites{};
-  const std::unordered_map<std::string, double> weights =
+  int                                            current_site_index{0};
+  bool                                           use_round_robin{false};
+  std::vector<Site*>                            _sites{};
+  std::unordered_map<std::string, Site*>        _sites_map{};
+  const std::unordered_map<std::string, double>  weights =
       {
         {"speed", 1.0},
         {"cores", 1.0},

@@ -10,11 +10,14 @@ JobQueue JOB_MANAGER::create_jobs(int num_of_jobs)
     Job* job = new Job();
     job->_id            = i;
     job->id             = "Job-"+std::to_string(i);
-    job->flops          = std::round(p->GaussianDistribution(1e13,1000000));
+    job->flops          = abs(std::round(p->GaussianDistribution(1e10,1e10)));
     job->input_storage  = 0;
     job->output_storage = 0;
+    job->files_read     = 0;
+    job->files_written  = 0;
     job->priority       = 2; //p->genRandNum(1,10);
-    
+    job->memory_usage   = abs(p->GaussianDistribution(100,100));
+    job->cores          = 1;
     //Random number of input files with size pulled from a Gaussian Distribution.
     std::string prefix = "user.input."+std::to_string(i)+".00000";
     std::string suffix = ".root";
