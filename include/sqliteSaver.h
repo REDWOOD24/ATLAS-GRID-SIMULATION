@@ -1,3 +1,10 @@
+// ==============================================
+// Author: Raees Khan
+// Email: rak177@pitt.edu
+// Created Date: 2025-02-15
+// Description: Class to save output jobs data.
+// ==============================================
+
 #ifndef SQLITESAVER_H
 #define SQLITESAVER_H
 
