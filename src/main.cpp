@@ -3,10 +3,7 @@
 // Email: rak177@pitt.edu
 // Created Date: 2024-08-15
 // Description: Entry point for the application.
-// Version: 1.0
 // ==============================================
-
-
 
 
 #include <iostream>
