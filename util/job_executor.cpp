@@ -68,6 +68,7 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
   auto hosts = e->get_all_hosts();
   for (const auto& host : hosts)
   {
+    if(host->get_name() == std::string("JOB-SERVER_cpu-0")) continue;
     Job* job = new Job;
     job->id = "kill";
     sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(host->get_name()+"-MQ");
@@ -114,7 +115,11 @@ void JOB_EXECUTOR::start_receivers()
 {
   const auto* eng = sg4::Engine::get_instance();
   auto hosts      = eng->get_all_hosts();
-  for(const auto& host: hosts){sg4::Actor::create(host->get_name()+"-actor", host, receiver, host->get_name()+"-MQ");}
+  for(const auto& host: hosts)
+    {
+    if(host->get_name() == std::string("JOB-SERVER_cpu-0")) continue;
+    sg4::Actor::create(host->get_name()+"-actor", host, receiver, host->get_name()+"-MQ");
+    }
 }
 
 
