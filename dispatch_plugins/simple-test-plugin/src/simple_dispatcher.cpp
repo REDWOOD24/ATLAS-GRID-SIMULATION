@@ -7,6 +7,7 @@ void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
   auto all_sites = platform->get_children();
   for(const auto& site: all_sites)
     {
+    if(site->get_name() == std::string("JOB-SERVER")) continue; //No computation on Job server
     Site* _site = new Site;
     _site->name = site->get_cname();
     for(const auto& host: site->get_all_hosts())
