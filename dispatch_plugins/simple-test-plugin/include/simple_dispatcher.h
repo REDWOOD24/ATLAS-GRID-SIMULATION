@@ -16,7 +16,8 @@
 #include <string>
 #include <math.h>
 #include <simgrid/s4u.hpp>
-#include "H5Cpp.h"
+#include <iomanip>
+// #include "H5Cpp.h"
 #include "job.h"
 #include "fsmod.hpp"
 namespace sg4 = simgrid::s4u;
@@ -71,6 +72,7 @@ public:
   void   free(Job* job);
   void   printJobInfo(Job* job);
   void   cleanup();
+  Site*  findSiteByName(std::vector<Site*>& sites, const std::string& site_name);
 
 
 private:

@@ -115,28 +115,44 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 }
 
 
+// Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
+// {
+//   Host*  best_cpu    = nullptr;
+
+//   for(int i = 0; i < _sites.size(); ++i)
+//     {
+//       current_site_index = use_round_robin ? (current_site_index + 1) % _sites.size() : current_site_index;
+//       auto site          = _sites[current_site_index];
+//       //Add new metric called Site pressure site->num_of_jobs_cores/site->num_of_cpus_cores, if pressure > 80% skip
+//       use_round_robin    = !use_round_robin && (site->cpus_in_use >= site->cpus.size() / 2);
+//       best_cpu           = findBestAvailableCPU(site->cpus, job);
+//       if(best_cpu) {site->cpus_in_use++; job->comp_site = site->name; job->status = "assigned"; break;}
+//     }
+//   if(!best_cpu){job->status = "pending";}
+//   this->printJobInfo(job);
+//   return job;
+  
+// }
+
 Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 {
   Host*  best_cpu    = nullptr;
-
-  for(int i = 0; i < _sites.size(); ++i)
-    {
-      current_site_index = use_round_robin ? (current_site_index + 1) % _sites.size() : current_site_index;
-      auto site          = _sites[current_site_index];
-      //Add new metric called Site pressure site->num_of_jobs_cores/site->num_of_cpus_cores, if pressure > 80% skip
-      use_round_robin    = !use_round_robin && (site->cpus_in_use >= site->cpus.size() / 2);
-      best_cpu           = findBestAvailableCPU(site->cpus, job);
-      if(best_cpu) {site->cpus_in_use++; job->comp_site = site->name; job->status = "assigned"; break;}
-    }
-  if(!best_cpu){job->status = "pending";}
+  std::string site_name = job->computing_site;
+  auto site = findSiteByName(_sites, site_name);
+  best_cpu           = findBestAvailableCPU(site->cpus, job);
+  if(best_cpu) {site->cpus_in_use++; job->computing_site = site->name; job->status = "assigned"; }
+  else{
+  job->status = "pending";
+  }
   this->printJobInfo(job);
   return job;
   
 }
 
+
 void SIMPLE_DISPATCHER::free(Job* job)
 {
- Host* cpu               = _sites_map.at(job->comp_site)->cpus_map.at(job->comp_host);
+ Host* cpu               = _sites_map.at(job->computing_site)->cpus_map.at(job->comp_host);
  if(cpu->jobs.count(job->id) > 0)
  {
    Disk* disk              = cpu->disks_map.at(job->disk);
@@ -144,6 +160,15 @@ void SIMPLE_DISPATCHER::free(Job* job)
    disk->storage          += (this->getTotalSize(job->input_files) + this->getTotalSize(job->output_files));
    cpu->jobs.erase(job->id);
  }
+}
+
+
+Site* SIMPLE_DISPATCHER::findSiteByName(std::vector<Site*>& sites, const std::string& site_name) {
+  auto it = std::find_if(sites.begin(), sites.end(),
+                         [&site_name](Site* site) {
+                             return site->name == site_name;
+                         });
+  return it != sites.end() ? *it : nullptr;
 }
 
 

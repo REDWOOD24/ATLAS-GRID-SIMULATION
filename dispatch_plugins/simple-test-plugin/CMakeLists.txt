@@ -17,7 +17,7 @@ add_library(SimpleDispatcherPlugin SHARED ${SOURCES})
 
 # Find SimGrid, SimATLAS, Boost, and FSMOD
 find_package(SimGrid REQUIRED)
-find_package(FSMOD REQUIRED)
+find_package(FSMod REQUIRED)
 find_package(Boost REQUIRED)
 find_package(SimATLAS REQUIRED)
 

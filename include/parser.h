@@ -14,6 +14,8 @@
 #include "nlohmann/json.hpp"
 #include <unordered_map>
 #include <random>
+#include <job.h>
+#include <queue>
 
 //Information needed to a specify a Disk                                                      
 struct DiskInfo {
@@ -35,6 +37,9 @@ struct CPUInfo {
 };
 
 
+
+
+
 using namespace nlohmann;
 
 class Parser
@@ -50,9 +55,14 @@ public:
  double                                                                    GaussianDistribution(double mean, double stddev);
  void                                                                      setSiteNames();
  void                                                                      setSiteCPUCount();
+
  std::vector<DiskInfo>                                                     getDisksInfo(const std::string site_name, int num_of_cpus);
  std::unordered_map<std::string, std::pair<double, double>>                getSiteConnInfo();
  std::unordered_map<std::string, std::unordered_map<std::string,CPUInfo>>  getSiteNameCPUInfo();
+ void                                                                      setSiteGFLOPS();
+ std::priority_queue<Job*>                                                  getJobs(long max_jobs);
+ std::unordered_map<std::string,int>                                       getSiteNameGFLOPS();
+
  
  
 private:
@@ -60,6 +70,8 @@ private:
   std::string                          siteInfoFile;
   std::set<std::string>                site_names;
   std::unordered_map<std::string,int>  siteCPUCount;
+  std::unordered_map<std::string,int>  siteNameGFLOPS;
+  std::string                          jobFile;
 };
 
 #endif

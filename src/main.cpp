@@ -40,10 +40,12 @@ int main(int argc, char** argv)
    const std::string         siteConnInfoFile  = j["Sites Connection Information"];
    const std::string         dispatcherPath    = j["Dispatcher Plugin"];
    const std::string         outputFile        = j["Output DB"];
+   const int                 num_of_jobs       = -1; // TODO move this to config
 
    std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile);
    auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
    auto                      siteConnInfo      = parser->getSiteConnInfo();
+   auto                      siteNameGLOPS     = parser->getSiteNameGFLOPS();
 
    //Initialize Simulation Engine
    sg4::Engine e(&argc, argv);
@@ -61,7 +63,7 @@ int main(int argc, char** argv)
    //Setup Connections between sites
    pf->initialize_site_connections(platform,siteConnInfo,sites);
 
-   //Initialize the Jobs Server
+   //Initialize the Jobs Server // this is more like PANDA Server
    pf->initialize_job_server(platform,siteNameCPUInfo,sites);
 
    //Create Job Executor
@@ -72,7 +74,8 @@ int main(int argc, char** argv)
 
    //Create Jobs
    std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
-   auto jobs = jm->create_jobs(10);
+   jm->set_parser(std::move(parser));
+   auto jobs = jm->get_jobs(num_of_jobs);
 
    //Execute Jobs
    executor->start_job_execution(jobs);

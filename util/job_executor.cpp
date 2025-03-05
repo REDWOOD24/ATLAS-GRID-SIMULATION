@@ -57,7 +57,7 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
       };
       if (retries > MAX_RETRIES) {jobs.pop(); continue;}
 
-      auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(job->comp_site)).at(job->comp_site+job->comp_host+job->disk+"filesystem");
+      auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(job->computing_site)).at(job->computing_site+job->comp_host+job->disk+"filesystem");
       update_disk_content(fs,job->input_files,job);
       sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host+"-MQ");
       job_activities.push(mqueue->put_async(job));
@@ -88,7 +88,7 @@ void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
   const auto* e = sg4::Engine::get_instance();
   
   //Find FileSystem to Read and Write (same for now)
-  auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(j->comp_site)).at(j->comp_site+j->comp_host+j->disk+"filesystem");
+  auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(j->computing_site)).at(j->computing_site+j->comp_host+j->disk+"filesystem");
 
   //Read, Compute, Write
   Actions::read_file_async(fs,j,pending_activities,dispatcher);
