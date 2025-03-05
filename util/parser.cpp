@@ -27,13 +27,27 @@ double Parser::GaussianDistribution(double mean, double stddev)
 
 void Parser::setSiteNames()
 {
-  std::ifstream in(siteConnInfoFile);
-  auto j=json::parse(in);
-
-  //Get all Site Names
-  for (auto it = j.begin(); it != j.end(); ++it) {
-    std::string site = it.key().substr(0, it.key().find(':'));
-    if(siteCPUCount[site] >0) site_names.insert(site);}
+    std::ifstream in(siteInfoFile);
+    if (!in.is_open()) {
+        std::cerr << "Error: Could not open file " << siteConnInfoFile << std::endl;
+        return;
+    }
+    json j;
+    try {
+        j = json::parse(in);
+    } catch (const json::parse_error& e) {
+        std::cerr << "Error parsing JSON: " << e.what() << std::endl;
+        return;
+    }
+    // Get all site names
+    for (auto it = j.begin(); it != j.end(); ++it) {
+        std::string site = it.key();
+        if (siteCPUCount[site] > 0) {
+            site_names.insert(site);
+        } else {
+            std::cout << "Site Name (invalid or no CPUs): " << site << std::endl;
+        }
+    }
 }
 
 void Parser::setSiteCPUCount()
@@ -46,6 +60,22 @@ void Parser::setSiteCPUCount()
     int cpus   =  std::round(gflops/(32*500.0));
     siteCPUCount[it.key()] =  cpus;
   }
+}
+
+void Parser::setSiteGFLOPS()
+{
+  std::ifstream in(siteInfoFile);
+  auto j=json::parse(in);
+  for (auto it = j.begin(); it != j.end(); ++it) {
+    //500 flops per core and 32 cores per host (assumption)
+    int gflops =  (j[it.key()]["GFLOPS"]).get<int>(); 
+    siteNameGFLOPS[it.key()] =  gflops;
+  }
+}
+
+std::unordered_map<std::string,int>  Parser::getSiteNameGFLOPS()
+{
+  return siteNameGFLOPS;
 }
 
 std::vector<DiskInfo> Parser::getDisksInfo(const std::string site_name, int num_of_cpus)
@@ -148,3 +178,114 @@ std::unordered_map<std::string, std::pair<double, double>> Parser::getSiteConnIn
  return siteConnInfo;
  }
 
+ std::vector<std::string> parseCSVLine(const std::string& line) {
+  std::vector<std::string> row;
+  std::string cell;
+  bool in_quotes = false;
+  for (size_t i = 0; i < line.size(); ++i) {
+      char c = line[i];
+
+      if (c == '"') {
+          in_quotes = !in_quotes; 
+      } else if (c == ',' && !in_quotes) {
+         
+          row.push_back(cell);
+          cell.clear();
+      } else {
+          cell += c;
+      }
+  }
+  row.push_back(cell);
+  for (auto& field : row) {
+      if (!field.empty() && field.front() == '"' && field.back() == '"') {
+          field = field.substr(1, field.size() - 2); 
+      }
+      field.erase (std::remove_if (field.begin(), field.end(),
+                              [](unsigned char c){
+                                  return !std::isprint(c);
+                              }),
+                              field.end());
+  }
+
+  return row;
+}
+
+std::priority_queue<Job*> Parser::getJobs(long max_jobs) {
+  std::priority_queue<Job*> jobs;
+  std::ifstream file(jobFile);
+
+  if (!file.is_open()) {
+      throw std::runtime_error("Could not open file: " + jobFile);
+  }
+
+  std::string line;
+  std::map<std::string, int> column_map;
+  bool header_parsed = false;
+
+  while (std::getline(file, line)) {
+      std::vector<std::string> row = parseCSVLine(line);
+      if (max_jobs != -1 && static_cast<long>(jobs.size()) >= max_jobs) {
+          break;
+      }
+
+      if (!header_parsed) {
+          header_parsed = true;
+          int column_index = 0;
+          for (std::string& column_name : row) {
+              std::transform(column_name.begin(), column_name.end(), column_name.begin(), ::toupper);
+              column_map.insert({column_name, column_index});
+              column_index++;
+          }
+          continue;
+      }
+
+      try {
+          Job* job = new Job();  // Allocate memory dynamically
+          job->jobid = std::stol(row[column_map.at("PANDAID")]);
+          job->creation_time = row[column_map.at("CREATIONTIME")];
+          job->job_status = row[column_map.at("JOBSTATUS")];
+          job->job_name = row[column_map.at("JOBNAME")];
+          job->cpu_consumption_time = std::stod(row[column_map.at("CPUCONSUMPTIONTIME")]);
+          job->computing_site = row[column_map.at("COMPUTINGSITE")];
+          job->destination_dataset_name = row[column_map.at("DESTINATIONDBLOCK")];
+          job->destination_SE = row[column_map.at("DESTINATIONSE")];
+          job->source_site = row[column_map.at("SOURCESITE")];
+          job->transfer_type = row[column_map.at("TRANSFERTYPE")];
+          job->core_count = row[column_map.at("CORECOUNT")].empty() ? 0 : std::stol(row[column_map.at("CORECOUNT")]);
+          job->no_of_inp_files = std::stoi(row[column_map.at("NINPUTDATAFILES")]);
+          job->inp_file_bytes = std::stod(row[column_map.at("INPUTFILEBYTES")]);
+          job->no_of_out_files = std::stoi(row[column_map.at("NOUTPUTDATAFILES")]);
+          job->out_file_bytes = std::stod(row[column_map.at("OUTPUTFILEBYTES")]);
+          job->pilot_error_code = row[column_map.at("PILOTERRORCODE")];
+          job->exe_error_code = row[column_map.at("EXEERRORCODE")];
+          job->ddm_error_code = row[column_map.at("DDMERRORCODE")];
+          job->dispatcher_error_code = row[column_map.at("JOBDISPATCHERERRORCODE")];
+          job->taskbuffer_error_code = row[column_map.at("TASKBUFFERERRORCODE")];
+          job->status = row[column_map.at("JOBSTATUS")];
+
+          std::string prefix = "/input/user.input." + std::to_string(job->jobid) + ".00000";
+          std::string suffix = ".root";
+          size_t size_per_inp_file = job->inp_file_bytes / job->no_of_inp_files;
+          for (int file = 1; file <= job->no_of_inp_files; file++) {
+              std::string name = prefix + std::to_string(file) + suffix;
+              job->input_files[name] = size_per_inp_file;
+          }
+
+          prefix = "/output/user.output." + std::to_string(job->jobid) + ".00000";
+          suffix = ".root";
+          size_t size_per_out_file = job->out_file_bytes / job->no_of_out_files;
+          for (int file = 1; file <= job->no_of_out_files; file++) {
+              std::string name = prefix + std::to_string(file) + suffix;
+              job->output_files[name] = size_per_out_file;
+          }
+
+          jobs.push(job);  // Push pointer to queue
+      } catch (const std::exception& e) {
+          std::cerr << "Skipping invalid row: " << line << "\n";
+          std::cerr << "Reason: " << e.what() << "\n";
+      }
+  }
+
+  file.close();
+  return jobs;
+}

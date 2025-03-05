@@ -9,10 +9,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 
 # Find SimGrid, Boost, and HDF5
-find_package(SimGrid REQUIRED)
+
 find_package(Boost REQUIRED)
-find_package(FSMOD REQUIRED)
-find_package ( SQLite3 REQUIRED )
+find_package(SimGrid REQUIRED)
+find_package (SQLite3 REQUIRED)
+find_package(FSMod REQUIRED)
 
 # Add json subdir
 add_subdirectory(json)

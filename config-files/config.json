@@ -1,7 +1,7 @@
 {
   "Grid name": "ATLAS-GRID",
-  "Sites Information": "/Users/raekhan/new_projects/ATLAS-GRID-SIMULATION/data/site_info.json",
-  "Sites Connection Information": "/Users/raekhan/new_projects/ATLAS-GRID-SIMULATION/data/site_conn_info.json",
-  "Dispatcher Plugin": "/Users/raekhan/new_projects/ATLAS-GRID-SIMULATION/dispatch_plugins/simple-test-plugin/build/libSimpleDispatcherPlugin.dylib",
-  "Output DB": "/Users/raekhan/new_projects/ATLAS-GRID-SIMULATION/output/output.db"
+  "Sites Information": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/site_info.json",
+  "Sites Connection Information": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/site_conn_info.json",
+  "Dispatcher Plugin": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/dispatch_plugins/simple-test-plugin/build/libSimpleDispatcherPlugin.so",
+  "Output DB": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/output.db"
 }
