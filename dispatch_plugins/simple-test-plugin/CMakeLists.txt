@@ -15,7 +15,7 @@ file(GLOB SOURCES src/*.cpp )
 # Set up the library.
 add_library(SimpleDispatcherPlugin SHARED ${SOURCES})
 
-# Find SimGrid, SimATLAS, Boost, and FSMOD
+# Find SimGrid, SimATLAS, Boost, and FSMod
 find_package(SimGrid REQUIRED)
 find_package(FSMod REQUIRED)
 find_package(Boost REQUIRED)

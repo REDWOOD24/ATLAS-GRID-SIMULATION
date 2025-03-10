@@ -48,6 +48,7 @@ class Parser
 
 public:
   Parser(const std::string& _siteConnInfoFile, const std::string& _siteInfoFile);
+  Parser(const std::string& _siteConnInfoFile, const std::string& _siteInfoFile, const std::string& _jobFile);
   Parser(){}
  ~Parser(){};
 

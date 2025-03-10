@@ -177,6 +177,30 @@ src/simple_dispatcher.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleDispatcherPlugin.dir/build.make CMakeFiles/SimpleDispatcherPlugin.dir/src/simple_dispatcher.cpp.s
 .PHONY : src/simple_dispatcher.cpp.s
 
+src/validation_dispatcher.o: src/validation_dispatcher.cpp.o
+.PHONY : src/validation_dispatcher.o
+
+# target to build an object file
+src/validation_dispatcher.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleDispatcherPlugin.dir/build.make CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o
+.PHONY : src/validation_dispatcher.cpp.o
+
+src/validation_dispatcher.i: src/validation_dispatcher.cpp.i
+.PHONY : src/validation_dispatcher.i
+
+# target to preprocess a source file
+src/validation_dispatcher.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleDispatcherPlugin.dir/build.make CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.i
+.PHONY : src/validation_dispatcher.cpp.i
+
+src/validation_dispatcher.s: src/validation_dispatcher.cpp.s
+.PHONY : src/validation_dispatcher.s
+
+# target to generate assembly for a file
+src/validation_dispatcher.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleDispatcherPlugin.dir/build.make CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.s
+.PHONY : src/validation_dispatcher.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -192,6 +216,9 @@ help:
 	@echo "... src/simple_dispatcher.o"
 	@echo "... src/simple_dispatcher.i"
 	@echo "... src/simple_dispatcher.s"
+	@echo "... src/validation_dispatcher.o"
+	@echo "... src/validation_dispatcher.i"
+	@echo "... src/validation_dispatcher.s"
 .PHONY : help
 
 

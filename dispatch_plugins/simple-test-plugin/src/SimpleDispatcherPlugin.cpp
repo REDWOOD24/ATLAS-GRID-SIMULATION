@@ -7,9 +7,11 @@ class SimpleDispatcherPlugin:public DispatcherPlugin {
 public:
     SimpleDispatcherPlugin();
     virtual Job* assignJob(Job* job) final override;
+
     virtual void getResourceInformation(simgrid::s4u::NetZone* platform) final override;
     virtual void onJobEnd(Job* job) final override;
     virtual void onSimulationEnd() final override;
+    
 
 private:
     std::unique_ptr<SIMPLE_DISPATCHER> sd = std::make_unique<SIMPLE_DISPATCHER>();
@@ -23,11 +25,13 @@ SimpleDispatcherPlugin::SimpleDispatcherPlugin()
 
 void SimpleDispatcherPlugin::getResourceInformation(simgrid::s4u::NetZone* platform)
 {
+  std::cout << " Inside the Resource information"<<std::endl;
   sd->setPlatform(platform);
 }
 
 Job* SimpleDispatcherPlugin::assignJob(Job* job)
 {
+  std::cout << " Inside the assign job"<< job->comp_site <<std::endl;
   return sd->assignJobToResource(job);
 }
 

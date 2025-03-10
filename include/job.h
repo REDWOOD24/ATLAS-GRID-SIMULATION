@@ -43,7 +43,7 @@ struct Job {
     std::string            job_status{}; // status of the job
     std::string            job_name{}; // the job name defined in prodDB
     double                 cpu_consumption_time{}; //actual execution time of the job
-    std::string            computing_site{}; //site name where the job runs
+    std::string            comp_site{}; //site name where the job runs
     std::string            destination_dataset_name{}; //name of destination dataset for the job; is used to register the outputs of an associated set of jobs as belonging to one block to be saved at an archival destination
     std::string            destination_SE{}; // destination storage element of job output files
     std::string            source_site{}; // source site (usually CE) for file transfer
@@ -59,17 +59,24 @@ struct Job {
     std::string            dispatcher_error_code{}; // jobDispatcher error code
     std::string            taskbuffer_error_code{}; // taskBuffer error code
     std::string            status{}; // taskBuffer error code
-    std::string                                 mount{};
+   
     // flops field is calculated with an approximation in PANDA_DISPATCHER::allocateResourcesToJobs
     long long                 flops{};
     // below fields will be assigned by dispatcher
-    int                                         cores{};
+    int                                         cores{}; // core_count
     std::string                                 disk{};
-    std::string                                 comp_host{};
-    // old job defination variables
+    std::string                                 comp_host{}; // cpu
+    // TODO fields moved for compatibility with base code, either merge or remove later  
+    size_t                                      IO_size_performed{}; // no_of_inp_files*inp_file_bytes +
+    double                                      IO_time_taken{};
+    double                                      EXEC_time_taken{};
+    int                                         files_read{}; //inp_file_bytes
+    int                                         files_written{};//out_file_bytes
+    double                                      memory_usage{};
+    std::string                                 mount{};
     std::string                                 id{};
-    std::unordered_map<std::string, size_t>     input_files{};
-    std::unordered_map<std::string, size_t>     output_files{};
+    std::unordered_map<std::string, size_t>     input_files{};//no_of_inp_files
+    std::unordered_map<std::string, size_t>     output_files{};//no_of_out_files
   
   
   };
