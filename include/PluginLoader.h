@@ -66,7 +66,7 @@ std::unique_ptr<Plugin> PluginLoader<Plugin>::load(const std::string & pString) 
     typedef void *(*CreationMethod) ();
     auto F = (CreationMethod) f;
     auto * factory = (Plugin *) F();
-
+    std::cout << "Created the dispatcher"<< std::endl;
     return std::unique_ptr<Plugin>(factory);
 }
 

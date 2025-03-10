@@ -3,5 +3,6 @@
   "Sites Information": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/site_info.json",
   "Sites Connection Information": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/site_conn_info.json",
   "Dispatcher Plugin": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/dispatch_plugins/simple-test-plugin/build/libSimpleDispatcherPlugin.so",
-  "Output DB": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/output.db"
+  "Output DB": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/output.db",
+  "Historical Job": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/jobs_sample.csv"
 }

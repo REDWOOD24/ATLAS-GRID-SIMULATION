@@ -62,7 +62,7 @@ void sqliteSaver::saveJob(Job* j)
 
 
   if (sqlite3_prepare_v2(db, sql_insert_data.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
-    sqlite3_bind_text(stmt, 1, j->id.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, std::to_string(j->jobid).c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 2, j->comp_site.c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 3, (j->comp_host.substr(j->comp_host.rfind('_') + 1)).c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 4, j->status.c_str(), -1, SQLITE_STATIC);

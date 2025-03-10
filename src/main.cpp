@@ -41,8 +41,9 @@ int main(int argc, char** argv)
    const std::string         dispatcherPath    = j["Dispatcher Plugin"];
    const std::string         outputFile        = j["Output DB"];
    const int                 num_of_jobs       = -1; // TODO move this to config
+   const std::string         jobFile           = j["Historical Job"]; 
 
-   std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile);
+   std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile,jobFile);
    auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
    auto                      siteConnInfo      = parser->getSiteConnInfo();
    auto                      siteNameGLOPS     = parser->getSiteNameGFLOPS();
@@ -58,7 +59,7 @@ int main(int argc, char** argv)
    pf->initialize_simgrid_plugins();
    
    //Create the Sites
-   auto sites = pf->create_sites(platform, siteNameCPUInfo);
+   auto sites = pf->create_sites(platform, siteNameCPUInfo, siteNameGLOPS);
 
    //Setup Connections between sites
    pf->initialize_site_connections(platform,siteConnInfo,sites);
@@ -75,7 +76,7 @@ int main(int argc, char** argv)
    //Create Jobs
    std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
    jm->set_parser(std::move(parser));
-   auto jobs = jm->get_jobs(num_of_jobs);
+   JobQueue jobs = jm->get_jobs(num_of_jobs);
 
    //Execute Jobs
    executor->start_job_execution(jobs);

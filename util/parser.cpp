@@ -9,6 +9,16 @@ Parser::Parser(const std::string& _siteConnInfoFile, const std::string& _siteInf
   this->setSiteNames();
 }
 
+Parser::Parser(const std::string& _siteConnInfoFile, const std::string& _siteInfoFile, const std::string& _jobInfoFile)
+{
+  siteConnInfoFile = _siteConnInfoFile;
+  siteInfoFile     = _siteInfoFile;
+  jobFile      = _jobInfoFile;
+  this->setSiteCPUCount(); //Reason this is set before site-names is because is site has 0 cpus (no info) I don't include it.
+  this->setSiteNames();
+  this->setSiteGFLOPS();
+}
+
 int Parser::genRandNum(int lower, int upper)
 {
     std::random_device rd;
@@ -246,12 +256,12 @@ std::priority_queue<Job*> Parser::getJobs(long max_jobs) {
           job->job_status = row[column_map.at("JOBSTATUS")];
           job->job_name = row[column_map.at("JOBNAME")];
           job->cpu_consumption_time = std::stod(row[column_map.at("CPUCONSUMPTIONTIME")]);
-          job->computing_site = row[column_map.at("COMPUTINGSITE")];
+          job->comp_site = row[column_map.at("COMPUTINGSITE")];
           job->destination_dataset_name = row[column_map.at("DESTINATIONDBLOCK")];
           job->destination_SE = row[column_map.at("DESTINATIONSE")];
           job->source_site = row[column_map.at("SOURCESITE")];
           job->transfer_type = row[column_map.at("TRANSFERTYPE")];
-          job->core_count = row[column_map.at("CORECOUNT")].empty() ? 0 : std::stol(row[column_map.at("CORECOUNT")]);
+          job->cores = row[column_map.at("CORECOUNT")].empty() ? 0 : std::stol(row[column_map.at("CORECOUNT")]);
           job->no_of_inp_files = std::stoi(row[column_map.at("NINPUTDATAFILES")]);
           job->inp_file_bytes = std::stod(row[column_map.at("INPUTFILEBYTES")]);
           job->no_of_out_files = std::stoi(row[column_map.at("NOUTPUTDATAFILES")]);
@@ -262,7 +272,7 @@ std::priority_queue<Job*> Parser::getJobs(long max_jobs) {
           job->dispatcher_error_code = row[column_map.at("JOBDISPATCHERERRORCODE")];
           job->taskbuffer_error_code = row[column_map.at("TASKBUFFERERRORCODE")];
           job->status = row[column_map.at("JOBSTATUS")];
-
+          
           std::string prefix = "/input/user.input." + std::to_string(job->jobid) + ".00000";
           std::string suffix = ".root";
           size_t size_per_inp_file = job->inp_file_bytes / job->no_of_inp_files;

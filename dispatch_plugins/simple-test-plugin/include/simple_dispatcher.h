@@ -49,6 +49,7 @@ struct Site {
   std::vector<Host*>                             cpus{};
   std::unordered_map<std::string, Host*>         cpus_map{};
   int                                            cpus_in_use{};
+  long long                                      gflops{};
   bool operator<(const Site& other) const {return priority <= other.priority;}
 };
 

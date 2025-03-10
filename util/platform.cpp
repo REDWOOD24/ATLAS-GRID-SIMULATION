@@ -6,12 +6,13 @@ sg4::NetZone* Platform::create_platform(const std::string& platform_name)
 return sg4::create_full_zone(platform_name);
 }
 
-sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& site_name, std::unordered_map<std::string, CPUInfo>& cpuInfo)
+sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& site_name, std::unordered_map<std::string, CPUInfo>& cpuInfo, long siteGFLOPS)
 {
   //Create the Site
   auto* site = sg4::create_star_zone(site_name);
   site->set_parent(platform);
-
+  site->set_property("gflops",std::to_string(siteGFLOPS));
+  
   //Create CPUS and Cores
   for (const auto& cpu: cpuInfo)
     {
@@ -47,17 +48,18 @@ sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& s
   return site;
 }
 
-std::unordered_map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform,  std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>& siteNameCPUInfo)
+std::unordered_map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform,  std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>& siteNameCPUInfo, std::unordered_map<std::string,int>& siteNameGFLOPS)
 {
    std::unordered_map<std::string, sg4::NetZone*> sites;
    std::cout << "Inititalizing SimGrid Platform with all Sites .......";   
    for (auto& sitePair : siteNameCPUInfo) {
      const std::string&              site_name = sitePair.first;
      std::unordered_map<std::string, CPUInfo>& cpuInfo   = sitePair.second;
-     sites[site_name] =  this->create_site(platform, site_name, cpuInfo);
-     std::cout << ".";}
+     sites[site_name] =  this->create_site(platform, site_name, cpuInfo, siteNameGFLOPS[site_name]);
+     std::cout << ".";
+    }
    std::cout << std::endl;
-
+   
    //cleanup
    siteNameCPUInfo.clear();
    std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>().swap(siteNameCPUInfo);
@@ -124,7 +126,7 @@ void Platform::initialize_job_server(sg4::NetZone* platform,  std::unordered_map
     const auto           linkname           = "link_JOB_SERVER:" + site_name;
     const std::string    latency            = "0ms";
     const double         bandwidth          = 100*1.25e+7; //Bandwidth of 100 Mbps converted into bytes/s
-    const sg4::NetZone*  site               = sites.at(sitePair.first);;
+    const sg4::NetZone*  site               = sites.at(sitePair.first);
     const sg4::Link*     server_site_link   = platform->create_link(linkname, bandwidth)->set_latency(latency)->seal();
 
     platform->add_route(JOB_SERVER_site,  site, {sg4::LinkInRoute(server_site_link)});

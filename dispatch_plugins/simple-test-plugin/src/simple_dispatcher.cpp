@@ -10,6 +10,18 @@ void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
     if(site->get_name() == std::string("JOB-SERVER")) continue; //No computation on Job server
     Site* _site = new Site;
     _site->name = site->get_cname();
+    const char* gflops_str = site->get_property("gflops");
+    if (gflops_str) { // Ensure it's not nullptr
+        try {
+            _site->gflops = std::stol(gflops_str);
+        } catch (const std::exception& e) {
+            std::cerr << "Error: Failed to convert 'gflops' to integer. Exception: " << e.what() << std::endl;
+        }
+    }
+    // auto property_map = site->get_properties();
+    // for (const auto& i : *property_map) {
+    //   std::cout << i.first << "    " << i.second << std::endl;
+    // }
     for(const auto& host: site->get_all_hosts())
       {
         Host* cpu = new Host;
@@ -37,6 +49,7 @@ void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
       }
       _site->priority    = std::round(_site->priority/_site->cpus.size()); //Normalize
       _site->cpus_in_use = 0;
+      // std::cout << "Site Glops "<< _site->gflops<<std::endl;
       site_queue.push(_site);
   	  _sites_map[_site->name] = _site;
     }
@@ -136,11 +149,21 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 
 Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 {
+  std::cout << " Waiting to assign job resources .........." << std::endl;
   Host*  best_cpu    = nullptr;
-  std::string site_name = job->computing_site;
+  std::cout << " Waiting to assign job resources .........." <<job->comp_site <<std::endl;
+  std::string site_name = job->comp_site;
+  std::cout << " Computing Site Name .........." <<site_name<< std::endl;
   auto site = findSiteByName(_sites, site_name);
+   // computing the flops with an approximation
+  std::cout << " Gflops .........." <<site->gflops<< std::endl;
+  std::cout << " Jop CPu Consumption time .........." <<job->cpu_consumption_time<< std::endl;
+  std::cout << " Jop Core count .........." <<job->cores<< std::endl;
+  job->flops = site->gflops*job->cpu_consumption_time*job->cores;
+  std::cout << " Jop gflops .........." <<job->flops<< std::endl;
+  
   best_cpu           = findBestAvailableCPU(site->cpus, job);
-  if(best_cpu) {site->cpus_in_use++; job->computing_site = site->name; job->status = "assigned"; }
+  if(best_cpu) {site->cpus_in_use++; job->comp_site = site->name; job->status = "assigned"; }
   else{
   job->status = "pending";
   }
@@ -152,7 +175,7 @@ Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 
 void SIMPLE_DISPATCHER::free(Job* job)
 {
- Host* cpu               = _sites_map.at(job->computing_site)->cpus_map.at(job->comp_host);
+ Host* cpu               = _sites_map.at(job->comp_site)->cpus_map.at(job->comp_host);
  if(cpu->jobs.count(job->id) > 0)
  {
    Disk* disk              = cpu->disks_map.at(job->disk);
