@@ -1,4 +1,0 @@
-/usr/local/include/SimATLAS/job.h
-/usr/local/include/SimATLAS/DispatcherPlugin.h
-/usr/local/share/SimATLAS/SimATLASConfig.cmake
-/usr/local/share/SimATLAS/SimATLASConfigVersion.cmake
