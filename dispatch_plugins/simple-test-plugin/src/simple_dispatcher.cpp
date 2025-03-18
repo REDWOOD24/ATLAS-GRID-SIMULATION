@@ -87,45 +87,70 @@ double SIMPLE_DISPATCHER::getTotalSize(const std::unordered_map<std::string, siz
 
 Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 {
-    Host*          best_cpu       = nullptr;
-    std::string    best_disk;
-    double         best_score     = std::numeric_limits<double>::lowest();
-    int           _search_depth   = 0;
-    
-    std::priority_queue<Host*> cpu_queue;
-    for (const auto& cpu : cpus) { cpu_queue.push(cpu);}
- 
-    while(!cpu_queue.empty())
-     {
-		Host* current_best_cpu = cpu_queue.top();
-        if(current_best_cpu->cores_available < j->cores) continue;
-        std::string current_best_disk = "";
-        double score = calculateWeightedScore(current_best_cpu, j, current_best_disk);
-        if(current_best_disk.empty()) continue; //Not enough disk space left
-        if (score > best_score)
-	  	{
-            best_score          = score;
-            best_cpu            = current_best_cpu;
-	    	best_disk           = current_best_disk;
-	    	if(_search_depth++ > 20) break; //Optimization to not loop over too many CPUs
-	  	}
-		cpu_queue.pop();
-     }
+    Host* best_cpu   = nullptr;
+    std::string best_disk;
+    double best_score = std::numeric_limits<double>::lowest();
 
-    if(best_cpu) //Found a CPU. Deduct storage from the selected disk.                                                
-      {
-	best_cpu->jobs.insert(j->id);
-	best_cpu->cores_available  -= j->cores;
-	
-	for(auto& d: best_cpu->disks)
-	  {if(d->name == best_disk){d->storage -= (this->getTotalSize(j->input_files) + this->getTotalSize(j->output_files));}}
-	
-	j->disk       =  best_disk;
-	j->comp_host  =  best_cpu->name;
-      }
-    
+    std::priority_queue<Host*> cpu_queue;
+    for (auto* cpu : cpus)
+    {
+        cpu_queue.push(cpu);
+    }
+
+    int candidatesExamined = 0;
+    const int maxCandidates = 40;
+
+    while (!cpu_queue.empty() && candidatesExamined < maxCandidates)
+    {
+        Host* current = cpu_queue.top();
+        cpu_queue.pop(); // Popping the element
+        ++candidatesExamined;
+        if (current->cores_available < j->cores)
+        {
+            continue;
+        }
+
+        // Calculate the weighted score and select a disk.
+        std::string current_disk;
+        double score = calculateWeightedScore(current, j, current_disk);
+        if (current_disk.empty()) // Not enough disk space.
+        {
+            continue;
+        }
+        if (score > best_score)
+        {
+            best_score = score;
+            best_cpu = current;
+            best_disk = current_disk;
+        }
+    }
+
+    std::cout << "Found the best CPU" << std::endl;
+
+    if (best_cpu)
+    {
+        // Deduct CPU cores and assign job.
+        best_cpu->jobs.insert(j->id);
+        best_cpu->cores_available -= j->cores;
+
+        // Deduct storage from the chosen disk.
+        const auto totalSize = getTotalSize(j->input_files) + getTotalSize(j->output_files);
+        for (auto& disk : best_cpu->disks)
+        {
+            if (disk->name == best_disk)
+            {
+                disk->storage -= totalSize;
+                break;
+            }
+        }
+
+        j->disk      = best_disk;
+        j->comp_host = best_cpu->name;
+    }
+
     return best_cpu;
 }
+
 
 
 // Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
