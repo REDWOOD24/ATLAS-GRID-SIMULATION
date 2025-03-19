@@ -131,14 +131,14 @@ std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>> Parser
     std::vector<DiskInfo> disks       = this->getDisksInfo(site,num_of_cpus);
 
     //Info Printout
-    std::cout << "----------------------------------------------------"     << std::endl;
+    // std::cout << "----------------------------------------------------"     << std::endl;
     std::cout << "\033[32m" << "Adding Site .... " << site                  << std::endl;
-    std::cout << "\033[35m" << "CPUS          : "  << num_of_cpus           << std::endl;
-    std::cout << "\033[33m" << "DISK-INFO-CPU : "                           <<  std::endl;
-    for (const auto& d : disks) {
-    std::cout << "NAME          : "         << std::setw(30)  << std::left  << d.name 
-              << " : "     << std::setw(15) << std::right     << d.size     << std::endl;}
-    std::cout << "\033[0m" << "----------------------------------------------------" << std::endl;
+    // std::cout << "\033[35m" << "CPUS          : "  << num_of_cpus           << std::endl;
+    // std::cout << "\033[33m" << "DISK-INFO-CPU : "                           <<  std::endl;
+    // for (const auto& d : disks) {
+    // std::cout << "NAME          : "         << std::setw(30)  << std::left  << d.name 
+    //           << " : "     << std::setw(15) << std::right     << d.size     << std::endl;}
+    // std::cout << "\033[0m" << "----------------------------------------------------" << std::endl;
     
     for(int cpu_num = 0; cpu_num < num_of_cpus; cpu_num++){
       CPUInfo cpu;

@@ -40,7 +40,7 @@ int main(int argc, char** argv)
    const std::string         siteConnInfoFile  = j["Sites Connection Information"];
    const std::string         dispatcherPath    = j["Dispatcher Plugin"];
    const std::string         outputFile        = j["Output DB"];
-   const int                 num_of_jobs       = -1; // TODO move this to config
+   const int                 num_of_jobs       = j["Num of Jobs"]; 
    const std::string         jobFile           = j["Historical Job"]; 
 
    std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile,jobFile);
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
    std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
    jm->set_parser(std::move(parser));
    JobQueue jobs = jm->get_jobs(num_of_jobs);
-
+   std::cout<< "Jobs to be executed" << jobs.size() <<std::endl;
    //Execute Jobs
    executor->start_job_execution(jobs);
    executor->saveJobs(jobs);

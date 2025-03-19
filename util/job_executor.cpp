@@ -1,4 +1,5 @@
 #include "job_executor.h"
+#include <chrono>
 
 std::unique_ptr<DispatcherPlugin>   JOB_EXECUTOR::dispatcher;
 std::unique_ptr<sqliteSaver>        JOB_EXECUTOR::saver = std::make_unique<sqliteSaver>();
@@ -135,13 +136,30 @@ void JOB_EXECUTOR::receiver(const std::string& MQ_name)
 
 void JOB_EXECUTOR::start_receivers()
 {
-  const auto* eng = sg4::Engine::get_instance();
-  auto hosts      = eng->get_all_hosts();
-  for(const auto& host: hosts)
+    auto start = std::chrono::high_resolution_clock::now();
+    
+    const auto* eng = sg4::Engine::get_instance();
+    auto hosts = eng->get_all_hosts();
+    
+    auto host_fetch_time = std::chrono::high_resolution_clock::now();
+    std::cout << "Time to fetch hosts: " 
+              << std::chrono::duration_cast<std::chrono::milliseconds>(host_fetch_time - start).count() 
+              << " ms" << std::endl;
+    
+    for(const auto& host: hosts)
     {
-    if(host->get_name() == std::string("JOB-SERVER_cpu-0")) continue;
-    sg4::Actor::create(host->get_name()+"-actor", host, receiver, host->get_name()+"-MQ");
+        if(host->get_name() == "JOB-SERVER_cpu-0")
+            continue;
+        sg4::Actor::create(host->get_name()+"-actor", host, receiver, host->get_name()+"-MQ");
     }
+    
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "Finished Creating the Receivers in: " 
+              << std::chrono::duration_cast<std::chrono::milliseconds>(end - host_fetch_time).count() 
+              << " ms" << std::endl;
+    std::cout << "Total time: " 
+              << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() 
+              << " ms" << std::endl;
 }
 
 
