@@ -174,16 +174,18 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 
 Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 {
-  std::cout << " Waiting to assign job resources .........." << std::endl;
+//   std::cout << " Waiting to assign job resources .........." << std::endl;
   Host*  best_cpu    = nullptr;
   std::cout << " Waiting to assign job resources .........." <<job->comp_site <<std::endl;
   std::string site_name = job->comp_site;
-  std::cout << " Computing Site Name .........." <<site_name<< std::endl;
+//   std::cout << " Computing Site Name .........." <<site_name<< std::endl;
   auto site = findSiteByName(_sites, site_name);
+
+
    // computing the flops with an approximation
-  std::cout << " Gflops .........." <<site->gflops<< std::endl;
-  std::cout << " Jop CPu Consumption time .........." <<job->cpu_consumption_time<< std::endl;
-  std::cout << " Jop Core count .........." <<job->cores<< std::endl;
+//   std::cout << " Gflops .........." <<site->gflops<< std::endl;
+//   std::cout << " Jop CPu Consumption time .........." <<job->cpu_consumption_time<< std::endl;
+//   std::cout << " Jop Core count .........." <<job->cores<< std::endl;
   job->flops = site->gflops*job->cpu_consumption_time*job->cores;
   std::cout << " Jop gflops .........." <<job->flops<< std::endl;
   
@@ -223,24 +225,24 @@ Site* SIMPLE_DISPATCHER::findSiteByName(std::vector<Site*>& sites, const std::st
 
 void SIMPLE_DISPATCHER::printJobInfo(Job* job)
 {
-      std::cout << "----------------------------------------------------------------------" << std::endl;
+      // std::cout << "----------------------------------------------------------------------" << std::endl;
       std::cout << "\033[32m" << "Submitting .. "          <<  job->id     << std::endl;
-      std::cout << "\033[37m" << "FLOPs to be executed: "  <<  job->flops  << std::endl;
-      std::cout << "\033[33m" << "Files to be read: "      <<  std::endl;
-      for(const auto& file: job->input_files){
-      std::cout << "File: " << std::setw(40) << std::left << file.first
-      << " Size: " << std::setw(10) << std::right << file.second
-      << std::endl;}
-      std::cout << "\033[36m" << "Files to be written: " <<  std::endl;
-      for(const auto& file: job->output_files){
-      std::cout << "File: " << std::setw(40) << std::left << file.first
-      << " Size: " << std::setw(10) << std::right << file.second
-      << std::endl;}
-      std::cout << "\033[35m" << "Cores Used: "  << job->cores      <<  std::endl;
-      std::cout << "\033[0m"  << "Disk Used :  " << job->disk       <<  std::endl;
-      std::cout << "\033[34m" << "Host : "       << job->comp_host  << "\033[0m" << std::endl;
+      // std::cout << "\033[37m" << "FLOPs to be executed: "  <<  job->flops  << std::endl;
+      // std::cout << "\033[33m" << "Files to be read: "      <<  std::endl;
+      // for(const auto& file: job->input_files){
+      // std::cout << "File: " << std::setw(40) << std::left << file.first
+      // << " Size: " << std::setw(10) << std::right << file.second
+      // << std::endl;}
+      // std::cout << "\033[36m" << "Files to be written: " <<  std::endl;
+      // for(const auto& file: job->output_files){
+      // std::cout << "File: " << std::setw(40) << std::left << file.first
+      // << " Size: " << std::setw(10) << std::right << file.second
+      // << std::endl;}
+      // std::cout << "\033[35m" << "Cores Used: "  << job->cores      <<  std::endl;
+      // std::cout << "\033[0m"  << "Disk Used :  " << job->disk       <<  std::endl;
+      // std::cout << "\033[34m" << "Host : "       << job->comp_host  << "\033[0m" << std::endl;
 
-      std::cout << "----------------------------------------------------------------------" << std::endl;
+      // std::cout << "----------------------------------------------------------------------" << std::endl;
 }
 
 void SIMPLE_DISPATCHER::cleanup()

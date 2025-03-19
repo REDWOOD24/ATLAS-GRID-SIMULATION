@@ -26,7 +26,9 @@ SimpleDispatcherPlugin::SimpleDispatcherPlugin()
 void SimpleDispatcherPlugin::getResourceInformation(simgrid::s4u::NetZone* platform)
 {
   std::cout << " Inside the Resource information"<<std::endl;
+  
   sd->setPlatform(platform);
+  std::cout << " Finished getting the Resource information"<<std::endl;
 }
 
 Job* SimpleDispatcherPlugin::assignJob(Job* job)
