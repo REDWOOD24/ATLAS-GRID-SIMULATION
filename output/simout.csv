@@ -1,0 +1,11 @@
+JOB_ID,SITE,CPU,STATUS,MEMORY,CORES,FLOPS,EXECUTION_TIME,IO_SIZE,IO_TIME
+,BNL,,finished,0.0,1,0.0,0.0,0.0,0.0
+,BNL,,finished,0.0,1,0.0,0.0,0.0,0.0
+,BNL,,finished,0.0,1,0.0,0.0,0.0,0.0
+,BNL,,finished,0.0,1,0.0,0.0,0.0,0.0
+,BNL,,finished,0.0,1,0.0,0.0,0.0,0.0
+,BNL,,finished,0.0,1,0.0,0.0,0.0,0.0
+,BNL,,finished,0.0,1,0.0,0.0,0.0,0.0
+,BNL,,failed,0.0,1,0.0,0.0,0.0,0.0
+,BNL,,finished,0.0,1,0.0,0.0,0.0,0.0
+,BNL,,finished,0.0,1,0.0,0.0,0.0,0.0

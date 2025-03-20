@@ -1,6 +1,8 @@
 #include "sqliteSaver.h"
 #include <iomanip>
 #include <set>
+#include <fstream>
+#include <sstream>
 
 void sqliteSaver::setFilePath(const std::string & file)
 {
@@ -19,8 +21,21 @@ void sqliteSaver::initialize() {
 
 void sqliteSaver::createJobsTable()
 {
-  const char* stmt =
-      "CREATE TABLE IF NOT EXISTS JOBS ("
+  // First, drop the table if it exists.
+  const char* drop_stmt = "DROP TABLE IF EXISTS JOBS;";
+  char* errmsg = nullptr;
+  int ret = sqlite3_exec(db, drop_stmt, nullptr, nullptr, &errmsg);
+  if (ret != SQLITE_OK)
+  {
+    std::cerr << "SQLite Error: Failed to drop JOBS table.\n"
+              << "Statement: " << drop_stmt << "\n"
+              << "Error: " << errmsg << "\n";
+    sqlite3_free(errmsg);
+    throw std::runtime_error("Failed to drop JOBS table.");
+  }
+
+  const char* create_stmt =
+      "CREATE TABLE JOBS ("
       "JOB_ID TEXT PRIMARY KEY, "
       "SITE TEXT NOT NULL, "
       "CPU TEXT NOT NULL, "
@@ -33,19 +48,17 @@ void sqliteSaver::createJobsTable()
       "IO_TIME REAL NOT NULL"
       ");";
 
-  char* errmsg = nullptr;
-  int ret = sqlite3_exec(db, stmt, nullptr, nullptr, &errmsg);
-
+  ret = sqlite3_exec(db, create_stmt, nullptr, nullptr, &errmsg);
   if (ret != SQLITE_OK)
   {
     std::cerr << "SQLite Error: Failed to create JOBS table.\n"
-              << "Statement: " << stmt << "\n"
+              << "Statement: " << create_stmt << "\n"
               << "Error: " << errmsg << "\n";
-
-    sqlite3_free(errmsg); // Free memory allocated for error message
+    sqlite3_free(errmsg);
     throw std::runtime_error("Database table creation failed");
   }
 }
+
 
 void sqliteSaver::saveJob(Job* j)
 {
@@ -140,3 +153,89 @@ void sqliteSaver::updateJob(Job* j)
   sqlite3_finalize(stmt);
 
 }
+// void sqliteSaver::deleteJobsTable()
+// {
+//   const char* sql = "DROP TABLE IF EXISTS JOBS;";
+//   char* errmsg = nullptr;
+//   int ret = sqlite3_exec(db, sql, nullptr, nullptr, &errmsg);
+//   if (ret != SQLITE_OK)
+//   {
+//     std::cerr << "Error deleting JOBS table: " << errmsg << "\n";
+//     sqlite3_free(errmsg);
+//     throw std::runtime_error("Failed to delete JOBS table.");
+//   }
+//   else
+//   {
+//     std::cout << "JOBS table deleted successfully." << std::endl;
+//   }
+// }
+
+
+
+void sqliteSaver::exportJobsToCSV(const std::string& csvFilePath)
+{
+  // Open the CSV file for writing.
+  std::ofstream csvFile(csvFilePath);
+  if (!csvFile.is_open())
+  {
+    std::cerr << "Failed to open CSV file for writing: " << csvFilePath << "\n";
+    return;
+  }
+
+  // Prepare the SQL query that selects all columns.
+  const char* sql = "SELECT * FROM JOBS;";
+  sqlite3_stmt* stmt = nullptr;
+  int ret = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+  if (ret != SQLITE_OK)
+  {
+    std::cerr << "Error preparing select statement: " << sqlite3_errmsg(db) << "\n";
+    csvFile.close();
+    return;
+  }
+
+  // Helper lambda to escape CSV fields.
+  auto escapeCSV = [](const std::string &s) -> std::string {
+    bool needQuotes = (s.find(',') != std::string::npos || s.find('"') != std::string::npos);
+    std::string escaped = s;
+    if (needQuotes)
+    {
+      // Escape existing quotes by doubling them.
+      size_t pos = 0;
+      while ((pos = escaped.find('"', pos)) != std::string::npos)
+      {
+        escaped.insert(pos, "\"");
+        pos += 2;
+      }
+      escaped = "\"" + escaped + "\"";
+    }
+    return escaped;
+  };
+
+  // Get the number of columns in the result.
+  int numCols = sqlite3_column_count(stmt);
+
+  // Write the header row by dynamically fetching column names.
+  for (int i = 0; i < numCols; ++i)
+  {
+    const char* colName = sqlite3_column_name(stmt, i);
+    csvFile << (i == 0 ? "" : ",") << escapeCSV(colName ? colName : "");
+  }
+  csvFile << "\n";
+
+  // Iterate over each row in the result.
+  while (sqlite3_step(stmt) == SQLITE_ROW)
+  {
+    for (int i = 0; i < numCols; ++i)
+    {
+      const unsigned char* colText = sqlite3_column_text(stmt, i);
+      std::string cellValue = colText ? reinterpret_cast<const char*>(colText) : "";
+      csvFile << (i == 0 ? "" : ",") << escapeCSV(cellValue);
+    }
+    csvFile << "\n";
+  }
+
+  // Finalize the statement and close the file.
+  sqlite3_finalize(stmt);
+  csvFile.close();
+}
+
