@@ -15,6 +15,7 @@ void JOB_EXECUTOR::set_output(const std::string& outputFile)
 {
   std::cout << "Output Path Set To: " << outputFile << std::endl;
   saver->setFilePath(outputFile);
+
   saver->createJobsTable();
 }
 
@@ -46,7 +47,7 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
   std::cout << " Server Started .........." << std::endl;
   while (!jobs.empty())
   {
-      // saver->saveJob(jobs.top());
+      saver->saveJob(jobs.top());
       std::cout << " Job Saved .........." << std::endl;
       
       if (dispatcher == nullptr) {
@@ -56,13 +57,13 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
       Job* topJob = jobs.top();
       std::cout << " Job top .........." <<jobs.top()->cores <<std::endl;
       Job* job = dispatcher->assignJob(topJob);
-      // saver->updateJob(job);
+      saver->updateJob(job);
       int retries = 0;
       while (job->status != std::string("assigned"))
       {
         sg4::this_actor::sleep_for(RETRY_INTERVAL);
         dispatcher->assignJob(job);
-        // saver->updateJob(job);
+        saver->updateJob(job);
         if (retries++ > MAX_RETRIES) break;
       };
       if (retries > MAX_RETRIES) {jobs.pop(); continue;}
@@ -98,7 +99,7 @@ void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
   //Set Job Status to Running
   std::cout << " Executing Job" <<std::endl;
   j->status = std::string("running");
-  // saver->updateJob(j);
+  saver->updateJob(j);
 std::cout << " Finished Executing Job" <<std::endl;
   //Get Engine Instance
   const auto* e = sg4::Engine::get_instance();
@@ -185,5 +186,9 @@ void JOB_EXECUTOR::saveJobs(JobQueue jobs)
 void JOB_EXECUTOR::attach_callbacks()
 {
   sg4::Engine::on_simulation_start_cb([](){std::cout << "Simulation starting .........." << std::endl;});
-  sg4::Engine::on_simulation_end_cb([]()  {std::cout << "Simulation finished, SIMULATED TIME: " << sg4::Engine::get_clock() << std::endl; dispatcher->onSimulationEnd();});
+  sg4::Engine::on_simulation_end_cb([]()  {
+    std::cout << "Simulation finished, SIMULATED TIME: " << sg4::Engine::get_clock() << std::endl; 
+    dispatcher->onSimulationEnd();
+    saver->exportJobsToCSV("/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/simout.csv"); // TODO: Move this to config 
+  });
 }
