@@ -62,9 +62,11 @@ void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
 double SIMPLE_DISPATCHER::calculateWeightedScore(Host* cpu, Job* j, std::string& best_disk_name)
 {
     double score = cpu->speed/1e8 * weights.at("speed") + cpu->cores * weights.at("cores");
+    // std::cout<< "CPU Speed" <<cpu->speed << std::endl;
+    // std::cout<< "CPU Core" <<cpu->cores << std::endl;
     double best_disk_score = std::numeric_limits<double>::lowest();
     size_t total_required_storage = (this->getTotalSize(j->input_files) + this->getTotalSize(j->output_files));
-
+    // std::cout<< "Total Required Size" <<total_required_storage<< std::endl;
     for (const auto& d : cpu->disks) {
         if (d->storage >= total_required_storage) {
 	  double disk_score = (d->read_bw/10) * weights.at("disk_read_bw") + (d->write_bw/10) * weights.at("disk_write_bw") + (d->storage/1e10) * weights.at("disk_storage");
@@ -74,6 +76,7 @@ double SIMPLE_DISPATCHER::calculateWeightedScore(Host* cpu, Job* j, std::string&
             }
         }
     }
+    // std::cout << "Best disk name" <<best_disk_name << std::endl;
     score += best_disk_score * weights.at("disk");
     return score;
 }
@@ -113,19 +116,22 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         // Calculate the weighted score and select a disk.
         std::string current_disk;
         double score = calculateWeightedScore(current, j, current_disk);
-        if (current_disk.empty()) // Not enough disk space.
-        {
-            continue;
-        }
+        // std::cout << "Score "<< score <<std::endl;
+        // if (current_disk.empty()) // Not enough disk space.
+        // {
+        //     continue;
+        // }
         if (score > best_score)
         {
             best_score = score;
             best_cpu = current;
-            best_disk = current_disk;
+           
         }
+        best_cpu = current;
+        best_disk = current_disk;
     }
 
-    std::cout << "Found the best CPU" << std::endl;
+    
 
     if (best_cpu)
     {
@@ -135,17 +141,18 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 
         // Deduct storage from the chosen disk.
         const auto totalSize = getTotalSize(j->input_files) + getTotalSize(j->output_files);
-        for (auto& disk : best_cpu->disks)
-        {
-            if (disk->name == best_disk)
-            {
-                disk->storage -= totalSize;
-                break;
-            }
-        }
+        // for (auto& disk : best_cpu->disks)
+        // {
+        //     if (disk->name == best_disk)
+        //     {
+        //         disk->storage -= totalSize;
+        //         break;
+        //     }
+        // }
 
         j->disk      = best_disk;
         j->comp_host = best_cpu->name;
+        std::cout << "Found the best CPU" << std::endl;
     }
 
     return best_cpu;
@@ -190,9 +197,16 @@ Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
   std::cout << " Jop gflops .........." <<job->flops<< std::endl;
   
   best_cpu           = findBestAvailableCPU(site->cpus, job);
-  if(best_cpu) {site->cpus_in_use++; job->comp_site = site->name; job->status = "assigned"; }
+  if(best_cpu) {
+    site->cpus_in_use++; 
+    job->comp_site = site->name; 
+    job->status = "assigned"; 
+    std::cout << "Job Status changed to assigned" <<std::endl;
+}
   else{
   job->status = "pending";
+  std::cout << "Job Status changed to pend" <<std::endl;
+
   }
   this->printJobInfo(job);
   return job;

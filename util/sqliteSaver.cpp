@@ -75,6 +75,18 @@ void sqliteSaver::saveJob(Job* j)
 
 
   if (sqlite3_prepare_v2(db, sql_insert_data.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+
+    // std::cout << "Saving Job Data:" << std::endl;
+    // std::cout << "Job ID: " << j->jobid << std::endl;
+    // std::cout << "Comp Site: " << j->comp_site << std::endl;
+    // std::cout << "CPU: " << j->comp_host.substr(j->comp_host.rfind('_') + 1) << std::endl;
+    // std::cout << "Status: " << j->status << std::endl;
+    // std::cout << "Memory Usage: " << j->memory_usage << std::endl;
+    // std::cout << "Cores: " << j->cores << std::endl;
+    // std::cout << "FLOPS: " << j->flops << std::endl;
+    // std::cout << "Execution Time: " << j->EXEC_time_taken << std::endl;
+    // std::cout << "IO Size: " << j->IO_size_performed << std::endl;
+    // std::cout << "IO Time: " << j->IO_time_taken << std::endl;
     sqlite3_bind_text(stmt, 1, std::to_string(j->jobid).c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 2, j->comp_site.c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 3, (j->comp_host.substr(j->comp_host.rfind('_') + 1)).c_str(), -1, SQLITE_STATIC);
@@ -129,7 +141,17 @@ void sqliteSaver::updateJob(Job* j)
     std::cerr << "Error preparing update statement: " << sqlite3_errmsg(db) << "\n";
     return;
   }
-
+  // std::cout << "Saving Job Data:" << std::endl;
+  // std::cout << "Job ID: " << j->jobid << std::endl;
+  // std::cout << "Comp Site: " << j->comp_site << std::endl;
+  // std::cout << "CPU: " << j->comp_host.substr(j->comp_host.rfind('_') + 1) << std::endl;
+  // std::cout << "Status: " << j->status << std::endl;
+  // std::cout << "Memory Usage: " << j->memory_usage << std::endl;
+  // std::cout << "Cores: " << j->cores << std::endl;
+  // std::cout << "FLOPS: " << j->flops << std::endl;
+  // std::cout << "Execution Time: " << j->EXEC_time_taken << std::endl;
+  // std::cout << "IO Size: " << j->IO_size_performed << std::endl;
+  // std::cout << "IO Time: " << j->IO_time_taken << std::endl;
   // Bind parameters using the Job object values
   sqlite3_bind_text(stmt, 1, j->comp_site.c_str(), -1, SQLITE_STATIC);
   sqlite3_bind_text(stmt, 2, (j->comp_host.substr(j->comp_host.rfind('_') + 1)).c_str(), -1, SQLITE_STATIC);
