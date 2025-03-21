@@ -66,9 +66,18 @@ int main(int argc, char** argv)
 
    //Initialize the Jobs Server // this is more like PANDA Server
    pf->initialize_job_server(platform,siteNameCPUInfo,sites);
-
+   
    //Create Job Executor
    std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();
+   const std::vector<simgrid::s4u::NetZone*>& children = platform->get_children();
+   std::cout << "Network Model" << platform->get_network_model() << std::endl;
+   if (!children.empty()) {
+       std::cout << "Children:" << std::endl;
+       for (const auto child : children) {
+         std::cout << "name:" << child->get_name() <<std::endl;
+       }
+   } 
+  
    executor->set_output(outputFile);
    executor->set_dispatcher(dispatcherPath,platform);
    executor->start_receivers();

@@ -3,6 +3,7 @@
 void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<sqliteSaver>& saver, std::unique_ptr<DispatcherPlugin>& dispatcher)
 {
   auto host = sg4::this_actor::get_host();
+  std::cout << "In exec task multi thread" <<std::endl;
   sg4::ExecPtr exec_activity = sg4::Exec::init()->set_flops_amount(j->flops)->set_thread_count(j->cores)->set_host(host);
   exec_activity->start();
   pending_activities.push(exec_activity);

@@ -1,13 +1,41 @@
 #include "job_executor.h"
 #include <chrono>
 
+// Recursive function to print a NetZone and its children.
+void printNetZone(const simgrid::s4u::NetZone* zone, int indent = 0) {
+  if (!zone)
+      return;
+
+  // Create an indentation string for readability.
+  std::string indentStr(indent, ' ');
+
+  // Print the zone's name and type.
+  std::cout << indentStr << "Zone Name: " << zone->get_name() << std::endl;
+
+  // Get the children zones.
+  const std::vector<simgrid::s4u::NetZone*>& children = zone->get_children();
+  if (!children.empty()) {
+      std::cout << indentStr << "Children:" << std::endl;
+      for (const auto child : children) {
+          printNetZone(child, indent + 2);
+      }
+  } else {
+      std::cout << indentStr << "No children." << std::endl;
+  }
+}
+
 std::unique_ptr<DispatcherPlugin>   JOB_EXECUTOR::dispatcher;
 std::unique_ptr<sqliteSaver>        JOB_EXECUTOR::saver = std::make_unique<sqliteSaver>();
+
+
+
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform)
 {
   PluginLoader<DispatcherPlugin> plugin_loader;
   dispatcher = plugin_loader.load(dispatcherPath);
+  
+  printNetZone(platform);
   dispatcher->getResourceInformation(platform);
 }
 
@@ -100,7 +128,7 @@ void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
   std::cout << " Executing Job" <<std::endl;
   j->status = std::string("running");
   saver->updateJob(j);
-std::cout << " Finished Executing Job" <<std::endl;
+
   //Get Engine Instance
   const auto* e = sg4::Engine::get_instance();
   

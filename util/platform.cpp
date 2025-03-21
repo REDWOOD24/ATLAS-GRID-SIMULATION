@@ -18,6 +18,7 @@ sg4::NetZone* Platform::create_site(sg4::NetZone* platform, const std::string& s
     {
     const auto        cpuname    = cpu.first;
     int               cores      = cpu.second.cores;
+    std::cout << "CPU host speed " << cpu.second.speed <<std::endl;
     sg4::Host*        host       = site->create_host(cpuname, cpu.second.speed);
     const auto        BW_CPU     = cpu.second.BW_CPU;
     const auto        LAT_CPU    = std::to_string(cpu.second.LAT_CPU)+"ms";
