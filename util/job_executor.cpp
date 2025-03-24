@@ -95,9 +95,14 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
         if (retries++ > MAX_RETRIES) break;
       };
       if (retries > MAX_RETRIES) {jobs.pop(); continue;}
-
+      std::cout << "Calling File System" <<std::endl;
+      std::cout << "Netzone Name" << e->netzone_by_name_or_null(job->comp_site)->get_name()<<std::endl;
+      std::cout << "File System Key" <<job->comp_site+job->comp_host+job->disk+"filesystem"<<std::endl;
+      std::cout << "Job Disk" <<job->disk<<std::endl;
       auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(e->netzone_by_name_or_null(job->comp_site)).at(job->comp_site+job->comp_host+job->disk+"filesystem");
+      std::cout << "Updating Disk Content" <<std::endl;
       update_disk_content(fs,job->input_files,job);
+      std::cout << "Creating MQ" <<jobs.top()->cores <<std::endl;
       sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host+"-MQ");
       job_activities.push(mqueue->put_async(job));
       jobs.pop();

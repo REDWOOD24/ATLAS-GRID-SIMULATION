@@ -10,7 +10,7 @@ void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_act
   exec_activity->on_this_completion_cb([j,&saver,&dispatcher](simgrid::s4u::Exec const & ex) {
     j->EXEC_time_taken += ex.get_finish_time() - ex.get_start_time();
     j->status = std::string("finished");
-    std::cout << "Finished Executing Job" <<std::endl;
+    std::cout << "Finished Executing Job" << j->EXEC_time_taken<<std::endl;
     saver->updateJob(j);
     
     if (j->status == std::string("finished") and j->files_read == j->input_files.size()
