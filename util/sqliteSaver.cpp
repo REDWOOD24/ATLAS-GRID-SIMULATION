@@ -87,10 +87,10 @@ void sqliteSaver::saveJob(Job* j)
     // std::cout << "Execution Time: " << j->EXEC_time_taken << std::endl;
     // std::cout << "IO Size: " << j->IO_size_performed << std::endl;
     // std::cout << "IO Time: " << j->IO_time_taken << std::endl;
-    sqlite3_bind_text(stmt, 1, std::to_string(j->jobid).c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, j->comp_site.c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 3, (j->comp_host.substr(j->comp_host.rfind('_') + 1)).c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 4, j->status.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, std::to_string(j->jobid).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, j->comp_site.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, (j->comp_host.substr(j->comp_host.rfind('_') + 1)).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 4, j->status.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_double(stmt, 5, j->memory_usage);
     sqlite3_bind_int(stmt, 6, j->cores);
     sqlite3_bind_double(stmt, 7, j->flops);
@@ -141,28 +141,31 @@ void sqliteSaver::updateJob(Job* j)
     std::cerr << "Error preparing update statement: " << sqlite3_errmsg(db) << "\n";
     return;
   }
-  // std::cout << "Saving Job Data:" << std::endl;
-  // std::cout << "Job ID: " << j->jobid << std::endl;
-  // std::cout << "Comp Site: " << j->comp_site << std::endl;
-  // std::cout << "CPU: " << j->comp_host.substr(j->comp_host.rfind('_') + 1) << std::endl;
-  // std::cout << "Status: " << j->status << std::endl;
-  // std::cout << "Memory Usage: " << j->memory_usage << std::endl;
-  // std::cout << "Cores: " << j->cores << std::endl;
-  // std::cout << "FLOPS: " << j->flops << std::endl;
-  // std::cout << "Execution Time: " << j->EXEC_time_taken << std::endl;
-  // std::cout << "IO Size: " << j->IO_size_performed << std::endl;
-  // std::cout << "IO Time: " << j->IO_time_taken << std::endl;
+  // if(j->status=="finished"){
+  //   std::cout << "Updating Job Data:" << std::endl;
+  //   std::cout << "Job ID: " << j->jobid << std::endl;
+  //   std::cout << "Comp Site: " << j->comp_site << std::endl;
+  //   std::cout << "CPU: " << j->comp_host.substr(j->comp_host.rfind('_') + 1) << std::endl;
+  //   std::cout << "Status: " << j->status << std::endl;
+  //   std::cout << "Memory Usage: " << j->memory_usage << std::endl;
+  //   std::cout << "Cores: " << j->cores << std::endl;
+  //   std::cout << "FLOPS: " << j->flops << std::endl;
+  //   std::cout << "Execution Time: " << j->EXEC_time_taken << std::endl;
+  //   std::cout << "IO Size: " << j->IO_size_performed << std::endl;
+  //   std::cout << "IO Time: " << j->IO_time_taken << std::endl;
+  // }
+  std::string jobIdStr = std::to_string(j->jobid);
   // Bind parameters using the Job object values
-  sqlite3_bind_text(stmt, 1, j->comp_site.c_str(), -1, SQLITE_STATIC);
-  sqlite3_bind_text(stmt, 2, (j->comp_host.substr(j->comp_host.rfind('_') + 1)).c_str(), -1, SQLITE_STATIC);
-  sqlite3_bind_text(stmt, 3, j->status.c_str(), -1, SQLITE_STATIC);
+  sqlite3_bind_text(stmt, 1, j->comp_site.c_str(), -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 2, (j->comp_host.substr(j->comp_host.rfind('_') + 1)).c_str(), -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 3, j->status.c_str(), -1, SQLITE_TRANSIENT);
   sqlite3_bind_double(stmt, 4, j->memory_usage);
   sqlite3_bind_int(stmt, 5, j->cores);
   sqlite3_bind_double(stmt, 6, j->flops);
   sqlite3_bind_double(stmt, 7, j->EXEC_time_taken);
   sqlite3_bind_double(stmt, 8, j->IO_size_performed);
   sqlite3_bind_double(stmt, 9, j->IO_time_taken);
-  sqlite3_bind_text  (stmt, 10, j->id.c_str(), -1, SQLITE_STATIC);
+  sqlite3_bind_text  (stmt, 10, jobIdStr.c_str(), -1, SQLITE_TRANSIENT);
 
   // Execute the statement
   ret = sqlite3_step(stmt);
