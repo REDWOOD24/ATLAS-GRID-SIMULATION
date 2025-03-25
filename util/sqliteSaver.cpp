@@ -45,7 +45,8 @@ void sqliteSaver::createJobsTable()
       "FLOPS REAL NOT NULL, "
       "EXECUTION_TIME REAL NOT NULL, "
       "IO_SIZE REAL NOT NULL, "
-      "IO_TIME REAL NOT NULL"
+      "IO_TIME REAL NOT NULL, "
+      "CPU_CONSUMPTION_TIME NOT NULL"
       ");";
 
   ret = sqlite3_exec(db, create_stmt, nullptr, nullptr, &errmsg);
@@ -70,8 +71,8 @@ void sqliteSaver::saveJob(Job* j)
 
   sqlite3_stmt *stmt;
   std::string sql_insert_data =
-      "INSERT INTO JOBS (JOB_ID, SITE, CPU, STATUS, MEMORY, CORES, FLOPS, EXECUTION_TIME, IO_SIZE, IO_TIME) "
-      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO JOBS (JOB_ID, SITE, CPU, STATUS, MEMORY, CORES, FLOPS, EXECUTION_TIME, IO_SIZE, IO_TIME, CPU_CONSUMPTION_TIME) "
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 
   if (sqlite3_prepare_v2(db, sql_insert_data.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
@@ -97,6 +98,7 @@ void sqliteSaver::saveJob(Job* j)
     sqlite3_bind_double(stmt, 8, j->EXEC_time_taken);
     sqlite3_bind_double(stmt, 9, j->IO_size_performed);
     sqlite3_bind_double(stmt, 10, j->IO_time_taken);
+    sqlite3_bind_double(stmt, 11, j->cpu_consumption_time);
 
     // Execute the statement
     if (sqlite3_step(stmt) != SQLITE_DONE) {
