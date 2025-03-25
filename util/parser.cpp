@@ -105,7 +105,7 @@ std::vector<DiskInfo> Parser::getDisksInfo(const std::string site_name, int num_
       disk.name        = it.key();
       disk.read_bw     = this->genRandNum(150,250)*1e8; //Assumption
       disk.write_bw    = this->genRandNum(40,120)*1e8;  //Assumption
-      disk.size        = std::to_string(std::round(1048576*1000*std::stod(j[site_name]["RSE"][it.key()].get<std::string>())/num_of_cpus*1.0)) +"kB";
+      disk.size        = std::to_string(std::round(1048576.0*1000*1000*std::stod(j[site_name]["RSE"][it.key()].get<std::string>())/num_of_cpus*1.0)) +"kB";
 
       if      (it.key().find("SCRATCH") != std::string::npos)  disk.mount = "/scratch/";
       else if (it.key().find("LOCAL")   != std::string::npos)  disk.mount = "/local/";

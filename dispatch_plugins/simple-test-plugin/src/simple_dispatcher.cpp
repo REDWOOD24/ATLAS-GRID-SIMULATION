@@ -102,13 +102,13 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         Host* current = cpu_queue.top();
         cpu_queue.pop(); // Popping the element
         ++candidatesExamined;
-        if (current->cores_available < j->cores)
+        if (current->cores_available < j->cores )
         {
             continue;
         }
 
         // Calculate the weighted score and select a disk.
-        std::string current_disk;
+        std::string current_disk = "";
         // double score = calculateWeightedScore(current, j, current_disk);
         double score = 1;
         // std::cout << "Score "<< score <<std::endl;
@@ -125,9 +125,14 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
             if (d->storage >= total_required_storage) 
             {
                 current_disk = d->name;
-                std::cout << "Assigning Current Disk "<<d->name << std::endl;
+                // std::cout << "Assigning Current Disk "<<d->name << std::endl;
 
             }
+        }
+        if (current_disk == ""){
+            continue; // unable to find a disk that meets the storage requirements of job
+        
+
         }
         if (score > best_score)
         {
@@ -206,11 +211,11 @@ Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 //   std::cout << " Jop Core count .........." <<job->cores<< std::endl;
 
   job->flops = site->gflops*job->cpu_consumption_time*job->cores;
-  std::cout << " Jop gflops .........." <<job->flops<< std::endl;
-  std::cout << " Site Gflops .........." <<site->gflops<< std::endl;
-  std::cout << " Site CPU Count .........." <<site->cpus.size()<< std::endl;
-  std::cout << " Site CPU Speed .........." <<site->cpus.at(0)->speed<< std::endl;
-  std::cout << " Site CPU Speed .........." <<site->cpus.at(1)->speed<< std::endl;
+//   std::cout << " Jop gflops .........." <<job->flops<< std::endl;
+//   std::cout << " Site Gflops .........." <<site->gflops<< std::endl;
+//   std::cout << " Site CPU Count .........." <<site->cpus.size()<< std::endl;
+//   std::cout << " Site CPU Speed .........." <<site->cpus.at(0)->speed<< std::endl;
+//   std::cout << " Site CPU Speed .........." <<site->cpus.at(1)->speed<< std::endl;
   best_cpu           = findBestAvailableCPU(site->cpus, job);
   if(best_cpu) {
     site->cpus_in_use++; 
