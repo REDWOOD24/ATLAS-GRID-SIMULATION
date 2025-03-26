@@ -31,7 +31,7 @@ public:
     void createJobsTable();
     void saveJob(Job* j);
     void updateJob(Job* j);
-    void exportJobsToCSV(const std::string& csvFilePath);
+    void exportJobsToCSV();
 
 };
 

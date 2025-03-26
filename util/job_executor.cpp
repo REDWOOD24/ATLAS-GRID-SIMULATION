@@ -222,6 +222,6 @@ void JOB_EXECUTOR::attach_callbacks()
   sg4::Engine::on_simulation_end_cb([]()  {
     std::cout << "Simulation finished, SIMULATED TIME: " << sg4::Engine::get_clock() << std::endl; 
     dispatcher->onSimulationEnd();
-    saver->exportJobsToCSV("/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/simout.csv"); // TODO: Move this to config 
+    saver->exportJobsToCSV();
   });
 }
