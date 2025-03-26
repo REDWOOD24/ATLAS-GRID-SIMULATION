@@ -46,7 +46,7 @@ void sqliteSaver::createJobsTable()
       "EXECUTION_TIME REAL NOT NULL, "
       "IO_SIZE REAL NOT NULL, "
       "IO_TIME REAL NOT NULL, "
-      "CPU_CONSUMPTION_TIME NOT NULL"
+      "CPU_CONSUMPTION_TIME NOT NULL "
       ");";
 
   ret = sqlite3_exec(db, create_stmt, nullptr, nullptr, &errmsg);
@@ -199,9 +199,15 @@ void sqliteSaver::updateJob(Job* j)
 
 
 
-void sqliteSaver::exportJobsToCSV(const std::string& csvFilePath)
+void sqliteSaver::exportJobsToCSV()
 {
-  // Open the CSV file for writing.
+  std::string csvFilePath;
+  size_t pos = file_name.rfind('.');
+  if (pos != std::string::npos) {
+      csvFilePath = file_name.substr(0, pos) + ".csv";
+  } else {
+      csvFilePath = file_name + ".csv"; // or some other fallback
+  }
   std::ofstream csvFile(csvFilePath);
   if (!csvFile.is_open())
   {
