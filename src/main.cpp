@@ -15,6 +15,7 @@
 #include <memory>
 #include <math.h>
 #include <chrono>
+#include <list>
 #include <simgrid/s4u.hpp>
 #include "parser.h"
 #include "platform.h"
@@ -35,15 +36,16 @@ int main(int argc, char** argv)
    std::ifstream in(configFile);
    auto j=json::parse(in);
 
-   const std::string         gridName          = j["Grid name"];
-   const std::string         siteInfoFile      = j["Sites Information"];
-   const std::string         siteConnInfoFile  = j["Sites Connection Information"];
-   const std::string         dispatcherPath    = j["Dispatcher Plugin"];
-   const std::string         outputFile        = j["Output DB"];
-   const int                 num_of_jobs       = j["Num of Jobs"]; 
-   const std::string         jobFile           = j["Historical Job"]; 
+   const std::string         gridName                   = j["Grid_Name"];
+   const std::string         siteInfoFile               = j["Sites_Information"];
+   const std::string         siteConnInfoFile           = j["Sites_Connection_Information"];
+   const std::string         dispatcherPath             = j["Dispatcher_Plugin"];
+   const std::string         outputFile                 = j["Output_DB"];
+   const int                 num_of_jobs                = j["Num_of_Jobs"]; 
+   const std::string         jobFile                    = j["Input_Job_CSV"]; 
+   const std::list<std::string> filteredSiteList        = j["Sites"].get<std::list<std::string>>();
 
-   std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile,jobFile);
+   std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile,jobFile,filteredSiteList);
    auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
    auto                      siteConnInfo      = parser->getSiteConnInfo();
    auto                      siteNameGLOPS     = parser->getSiteNameGFLOPS();
@@ -59,7 +61,7 @@ int main(int argc, char** argv)
    pf->initialize_simgrid_plugins();
    
    //Create the Sites
-   auto sites = pf->create_sites(platform, siteNameCPUInfo, siteNameGLOPS);
+   auto sites = pf->create_sites(platform, filteredSiteList ,siteNameCPUInfo, siteNameGLOPS);
 
    //Setup Connections between sites
    pf->initialize_site_connections(platform,siteConnInfo,sites);

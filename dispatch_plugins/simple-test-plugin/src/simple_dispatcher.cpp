@@ -117,7 +117,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         //     continue;
         // }
         size_t total_required_storage = (this->getTotalSize(j->input_files) + this->getTotalSize(j->output_files));
-        std::cout << "Total Storage Required" << total_required_storage <<std::endl;
+        // std::cout << "Total Storage Required" << total_required_storage <<std::endl;
         for (const auto& d : current->disks) {
             // std::cout << "Current Disk Name"<<d->name << std::endl;
             // std::cout << "Current Disk Storage "<<d->storage << std::endl;

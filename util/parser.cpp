@@ -1,5 +1,6 @@
 #include "parser.h"
 #include <iostream>
+#include <list>
 
 Parser::Parser(const std::string& _siteConnInfoFile, const std::string& _siteInfoFile)
 {
@@ -18,6 +19,17 @@ Parser::Parser(const std::string& _siteConnInfoFile, const std::string& _siteInf
   this->setSiteNames();
   this->setSiteGFLOPS();
 }
+
+Parser::Parser(const std::string& _siteConnInfoFile, const std::string& _siteInfoFile, const std::string& _jobInfoFile, const std::list<std::string>& filteredSiteList)
+{
+  siteConnInfoFile = _siteConnInfoFile;
+  siteInfoFile     = _siteInfoFile;
+  jobFile      = _jobInfoFile;
+  this->setSiteCPUCount(); //Reason this is set before site-names is because is site has 0 cpus (no info) I don't include it.
+  this->setSiteNames(filteredSiteList);
+  this->setSiteGFLOPS();
+}
+
 
 int Parser::genRandNum(int lower, int upper)
 {
@@ -55,7 +67,45 @@ void Parser::setSiteNames()
         if (siteCPUCount[site] > 0) {
             site_names.insert(site);
         } else {
-            std::cout << "Site Name (invalid or no CPUs): " << site << std::endl;
+            std::cout << "Site Name (invalid or no CPUs or info not available): " << site << std::endl;
+        }
+    }
+}
+
+void Parser::setSiteNames(const std::list<std::string>& filteredSiteList)
+{
+    std::ifstream in(siteInfoFile);
+    if (!in.is_open()) {
+        std::cerr << "Error: Could not open file " << siteInfoFile << std::endl;
+        return;
+    }
+    
+    json j;
+    try {
+        j = json::parse(in);
+    } catch (const json::parse_error& e) {
+        std::cerr << "Error parsing JSON: " << e.what() << std::endl;
+        return;
+    }
+    
+    // If filteredSiteList is empty, use all sites from the JSON file.
+    if (filteredSiteList.empty()) {
+        for (auto it = j.begin(); it != j.end(); ++it) {
+            std::string site = it.key();
+            if (siteCPUCount[site] > 0) {
+                site_names.insert(site);
+            } else {
+                std::cout << "Site Name (invalid or no CPUs): " << site << std::endl;
+            }
+        }
+    } else {
+        // Otherwise, add only the sites provided in filteredSiteList.
+        for (const auto& site : filteredSiteList) {
+            if (siteCPUCount[site] > 0) {
+                site_names.insert(site);
+            } else {
+                std::cout << "Site Name (invalid or no CPUs): " << site << std::endl;
+            }
         }
     }
 }
