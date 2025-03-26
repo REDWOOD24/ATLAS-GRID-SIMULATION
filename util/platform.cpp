@@ -67,6 +67,41 @@ std::unordered_map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZ
 }
 
 
+std::unordered_map<std::string, sg4::NetZone*>  Platform::create_sites(sg4::NetZone* platform, const std::list<std::string>& filteredSiteList ,std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>& siteNameCPUInfo, std::unordered_map<std::string,int>& siteNameGFLOPS)
+{
+    std::unordered_map<std::string, sg4::NetZone*> sites;
+    std::cout << "Initializing SimGrid Platform with selected Sites .......";
+
+    // If the filteredSiteList is empty, create all sites.
+    if(filteredSiteList.empty()) {
+        for (auto& sitePair : siteNameCPUInfo) {
+            const std::string& site_name = sitePair.first;
+            std::unordered_map<std::string, CPUInfo>& cpuInfo = sitePair.second;
+            sites[site_name] = this->create_site(platform, site_name, cpuInfo, siteNameGFLOPS[site_name]);
+            std::cout << ".";
+        }
+    }
+    else {
+        // Otherwise, create only the sites that appear in filteredSiteList.
+        for (auto& sitePair : siteNameCPUInfo) {
+            const std::string& site_name = sitePair.first;
+            // Check if site_name is in filteredSiteList.
+            if (std::find(filteredSiteList.begin(), filteredSiteList.end(), site_name) != filteredSiteList.end()) {
+                std::unordered_map<std::string, CPUInfo>& cpuInfo = sitePair.second;
+                sites[site_name] = this->create_site(platform, site_name, cpuInfo, siteNameGFLOPS[site_name]);
+                std::cout << ".";
+            }
+        }
+    }
+    std::cout << std::endl;
+
+    // Cleanup
+    siteNameCPUInfo.clear();
+    std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>().swap(siteNameCPUInfo);
+    
+    return sites;
+}
+
 void Platform::initialize_site_connections(sg4::NetZone* platform, std::unordered_map<std::string, std::pair<double, double>>& siteConnInfo, std::unordered_map<std::string, sg4::NetZone*>& sites)
 {
 

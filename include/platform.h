@@ -43,7 +43,11 @@ static sg4::NetZone* create_site(sg4::NetZone* platform, const std::string& site
  * This function creates a number of sites.
  */
   std::unordered_map<std::string, sg4::NetZone*>  create_sites(sg4::NetZone* platform, std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>& siteNameCPUInfo, std::unordered_map<std::string,int>& siteNameGFLOPS);
-
+/**
+ *
+ * This function creates only specified sites.
+ */
+  std::unordered_map<std::string, sg4::NetZone*>  create_sites(sg4::NetZone* platform, const std::list<std::string>& filteredSiteList, std::unordered_map<std::string, std::unordered_map<std::string, CPUInfo>>& siteNameCPUInfo, std::unordered_map<std::string,int>& siteNameGFLOPS);
 /**
  *
  * This function initializes the connection between various sites in a platform.
