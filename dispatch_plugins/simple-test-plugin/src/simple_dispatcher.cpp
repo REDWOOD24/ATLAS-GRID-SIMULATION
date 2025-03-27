@@ -1,4 +1,5 @@
 #include "simple_dispatcher.h"
+// #include "logger.h"
 
 
 void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
@@ -7,21 +8,17 @@ void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
   auto all_sites = platform->get_children();
   for(const auto& site: all_sites)
     {
-    if(site->get_name() == std::string("JOB-SERVER")) continue; //No computation on Job server
-    Site* _site = new Site;
-    _site->name = site->get_cname();
-    const char* gflops_str = site->get_property("gflops");
-    if (gflops_str) { // Ensure it's not nullptr
-        try {
-            _site->gflops = std::stol(gflops_str);
-        } catch (const std::exception& e) {
-            std::cerr << "Error: Failed to convert 'gflops' to integer. Exception: " << e.what() << std::endl;
+        if(site->get_name() == std::string("JOB-SERVER")) continue; //No computation on Job server
+        Site* _site = new Site;
+        _site->name = site->get_cname();
+        const char* gflops_str = site->get_property("gflops");
+        if (gflops_str) { // Ensure it's not nullptr
+            try {
+                _site->gflops = std::stol(gflops_str);
+            } catch (const std::exception& e) {
+                // LOG_ERROR("Error: Failed to convert 'gflops' to integer. Exception: {}", e.what());
+            }
         }
-    }
-    // auto property_map = site->get_properties();
-    // for (const auto& i : *property_map) {
-    //   std::cout << i.first << "    " << i.second << std::endl;
-    // }
         for(const auto& host: site->get_all_hosts())
         {
             Host* cpu = new Host;
@@ -46,10 +43,10 @@ void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
             //Site priority is determined by quality of cpus available
             _site->priority += cpu->speed/1e8 * this->weights.at("speed") + cpu->cores * this->weights.at("cores");
         }
-      _site->priority    = std::round(_site->priority/_site->cpus.size()); //Normalize
-      _site->cpus_in_use = 0;
-      site_queue.push(_site);
-  	  _sites_map[_site->name] = _site;
+        _site->priority    = std::round(_site->priority/_site->cpus.size()); //Normalize
+        _site->cpus_in_use = 0;
+        site_queue.push(_site);
+        _sites_map[_site->name] = _site;
     }
 
   while (!site_queue.empty()) {_sites.push_back(site_queue.top()); site_queue.pop();}
@@ -111,28 +108,19 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         std::string current_disk = "";
         // double score = calculateWeightedScore(current, j, current_disk);
         double score = 1;
-        // std::cout << "Score "<< score <<std::endl;
         // if (current_disk.empty()) // Not enough disk space.
         // {
         //     continue;
         // }
         size_t total_required_storage = (this->getTotalSize(j->input_files) + this->getTotalSize(j->output_files));
-        // std::cout << "Total Storage Required" << total_required_storage <<std::endl;
         for (const auto& d : current->disks) {
-            // std::cout << "Current Disk Name"<<d->name << std::endl;
-            // std::cout << "Current Disk Storage "<<d->storage << std::endl;
-            // std::cout << "Disk Storage > Required Storage"<<(d->storage >= total_required_storage) << std::endl;
             if (d->storage >= total_required_storage) 
             {
                 current_disk = d->name;
-                // std::cout << "Assigning Current Disk "<<d->name << std::endl;
-
             }
         }
         if (current_disk == ""){
             continue; // unable to find a disk that meets the storage requirements of job
-        
-
         }
         if (score > best_score)
         {
@@ -165,10 +153,10 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 
         j->disk      = best_disk;
         j->comp_host = best_cpu->name;
-        std::cout << "Found the best CPU" << best_cpu->name <<std::endl;
-        std::cout << "Best CPU Jobs" << best_cpu->jobs.size() <<std::endl;
-        std::cout << "Best CPU Speed" <<  best_cpu->speed <<std::endl;
-        std::cout << "Disk " <<  j->disk <<std::endl;
+        LOG_DEBUG("Found the best CPU : {}", best_cpu->name);
+        LOG_DEBUG("Best CPU Jobs : {}",best_cpu->jobs.size());
+        LOG_DEBUG("Best CPU Speed: {}",  best_cpu->speed) ;
+        LOG_DEBUG("Disk:{} ", j->disk);
     }
 
     return best_cpu;
@@ -197,35 +185,24 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 
 Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 {
-//   std::cout << " Waiting to assign job resources .........." << std::endl;
   Host*  best_cpu    = nullptr;
-  std::cout << " Waiting to assign job resources .........." <<job->comp_site <<std::endl;
+  LOG_DEBUG(" Waiting to assign job resources : {}", job->comp_site);
   std::string site_name = job->comp_site;
-//   std::cout << " Computing Site Name .........." <<site_name<< std::endl;
   auto site = findSiteByName(_sites, site_name);
 
 
-   // computing the flops with an approximation
-//   std::cout << " Gflops .........." <<site->gflops<< std::endl;
-//   std::cout << " Jop CPu Consumption time .........." <<job->cpu_consumption_time<< std::endl;
-//   std::cout << " Jop Core count .........." <<job->cores<< std::endl;
 
   job->flops = site->gflops*job->cpu_consumption_time*job->cores;
-//   std::cout << " Jop gflops .........." <<job->flops<< std::endl;
-//   std::cout << " Site Gflops .........." <<site->gflops<< std::endl;
-//   std::cout << " Site CPU Count .........." <<site->cpus.size()<< std::endl;
-//   std::cout << " Site CPU Speed .........." <<site->cpus.at(0)->speed<< std::endl;
-//   std::cout << " Site CPU Speed .........." <<site->cpus.at(1)->speed<< std::endl;
   best_cpu           = findBestAvailableCPU(site->cpus, job);
   if(best_cpu) {
     site->cpus_in_use++; 
     job->comp_site = site->name; 
     job->status = "assigned"; 
-    std::cout << "Job Status changed to assigned" <<std::endl;
+    LOG_DEBUG("Job Status changed to assigned");
 }
   else{
   job->status = "pending";
-  std::cout << "Job Status changed to pend" <<std::endl;
+  LOG_DEBUG("Job Status changed to pend");
 
   }
   this->printJobInfo(job);
@@ -259,24 +236,21 @@ Site* SIMPLE_DISPATCHER::findSiteByName(std::vector<Site*>& sites, const std::st
 
 void SIMPLE_DISPATCHER::printJobInfo(Job* job)
 {
-      // std::cout << "----------------------------------------------------------------------" << std::endl;
-      std::cout << "\033[32m" << "Submitting .. "          <<  job->id     << std::endl;
-      // std::cout << "\033[37m" << "FLOPs to be executed: "  <<  job->flops  << std::endl;
-      // std::cout << "\033[33m" << "Files to be read: "      <<  std::endl;
-      // for(const auto& file: job->input_files){
-      // std::cout << "File: " << std::setw(40) << std::left << file.first
-      // << " Size: " << std::setw(10) << std::right << file.second
-      // << std::endl;}
-      // std::cout << "\033[36m" << "Files to be written: " <<  std::endl;
-      // for(const auto& file: job->output_files){
-      // std::cout << "File: " << std::setw(40) << std::left << file.first
-      // << " Size: " << std::setw(10) << std::right << file.second
-      // << std::endl;}
-      // std::cout << "\033[35m" << "Cores Used: "  << job->cores      <<  std::endl;
-      // std::cout << "\033[0m"  << "Disk Used :  " << job->disk       <<  std::endl;
-      // std::cout << "\033[34m" << "Host : "       << job->comp_host  << "\033[0m" << std::endl;
-
-      // std::cout << "----------------------------------------------------------------------" << std::endl;
+    LOG_DEBUG("----------------------------------------------------------------------");
+    LOG_INFO("Submitting .. {}", job->id);
+    LOG_DEBUG("FLOPs to be executed: {}", job->flops);
+    LOG_DEBUG("Files to be read:");
+    for (const auto& file : job->input_files) {
+        LOG_DEBUG("File: {:<40} Size: {:>10}", file.first, file.second);
+    }
+    LOG_DEBUG("Files to be written:");
+    for (const auto& file : job->output_files) {
+        LOG_DEBUG("File: {:<40} Size: {:>10}", file.first, file.second);
+    }
+    LOG_DEBUG("Cores Used: {}", job->cores);
+    LOG_DEBUG("Disk Used: {}", job->disk);
+    LOG_DEBUG("Host: {}", job->comp_host);
+    LOG_DEBUG("----------------------------------------------------------------------");
 }
 
 void SIMPLE_DISPATCHER::cleanup()

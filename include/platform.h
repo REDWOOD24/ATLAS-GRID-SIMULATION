@@ -1,11 +1,3 @@
-// ==============================================
-// Author: Raees Khan
-// Email: rak177@pitt.edu
-// Created Date: 2024-08-15
-// Description: Class to Instantiate SimGrid Platform which simulates the ATLAS GRID.
-// ==============================================
-
-
 #ifndef PLATFORM_H
 #define PLATFORM_H
 

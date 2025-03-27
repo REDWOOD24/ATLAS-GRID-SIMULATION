@@ -1,10 +1,3 @@
-// ==============================================
-// Author: Raees Khan
-// Email: rak177@pitt.edu
-// Created Date: 2025-02-15
-// Description: Class defining basic outline of a job.
-// ==============================================
-
 #ifndef JOB_H
 #define JOB_H
 #include <string>

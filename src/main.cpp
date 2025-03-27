@@ -1,11 +1,3 @@
-// ==============================================
-// Author: Raees Khan
-// Email: rak177@pitt.edu
-// Created Date: 2024-08-15
-// Description: Entry point for the application.
-// ==============================================
-
-
 #include <iostream>
 #include <vector>
 #include <map>
@@ -13,10 +5,11 @@
 #include <fstream>
 #include <string>
 #include <memory>
-#include <math.h>
+#include <cmath>
 #include <chrono>
 #include <list>
 #include <simgrid/s4u.hpp>
+#include "logger.h"
 #include "parser.h"
 #include "platform.h"
 #include "job_manager.h"
@@ -25,76 +18,78 @@
 
 int main(int argc, char** argv)
 {
-   //Usage
-   std::string usage = std::string("usage: ") + argv[0] + " -c config.json";
-   if(argc != 3){std::cout << usage << std::endl; exit(-1);}
-   if(std::string(argv[1]) != std::string("-c")){std::cout << usage << std::endl; exit(-1);}
+    logger::init();  // Must be called before any logging
+    
+    const std::string usage = std::string("usage: ") + argv[0] + " -c config.json";
+    
+    if (argc != 3) {
+        LOG_ERROR("Invalid number of arguments.\n{}", usage);
+        return -1;
+    }
 
-   //Parse Configuration File
-   std::string configFile  = std::string(argv[2]);
-   std::cout << "Reading in Configuration From: " << configFile << std::endl;
-   std::ifstream in(configFile);
-   auto j=json::parse(in);
+    if (std::string(argv[1]) != "-c") {
+        LOG_ERROR("Missing -c option.\n{}", usage);
+        return -1;
+    }
+    
+    // Parse Configuration File
+    const std::string configFile = argv[2];
+    LOG_INFO("Reading in configuration from: {}", configFile);
 
-   const std::string         gridName                   = j["Grid_Name"];
-   const std::string         siteInfoFile               = j["Sites_Information"];
-   const std::string         siteConnInfoFile           = j["Sites_Connection_Information"];
-   const std::string         dispatcherPath             = j["Dispatcher_Plugin"];
-   const std::string         outputFile                 = j["Output_DB"];
-   const int                 num_of_jobs                = j["Num_of_Jobs"]; 
-   const std::string         jobFile                    = j["Input_Job_CSV"]; 
-   const std::list<std::string> filteredSiteList        = j["Sites"].get<std::list<std::string>>();
+    std::ifstream in(configFile);
+    if (!in.is_open()) {
+        LOG_CRITICAL("Failed to open config file: {}", configFile);
+        return -1;
+    }
 
-   std::unique_ptr<Parser>   parser            = std::make_unique<Parser>(siteConnInfoFile,siteInfoFile,jobFile,filteredSiteList);
-   auto                      siteNameCPUInfo   = parser->getSiteNameCPUInfo();
-   auto                      siteConnInfo      = parser->getSiteConnInfo();
-   auto                      siteNameGLOPS     = parser->getSiteNameGFLOPS();
+    auto j = json::parse(in);
 
-   //Initialize Simulation Engine
-   sg4::Engine e(&argc, argv);
+    const std::string gridName                = j["Grid_Name"];
+    const std::string siteInfoFile            = j["Sites_Information"];
+    const std::string siteConnInfoFile        = j["Sites_Connection_Information"];
+    const std::string dispatcherPath          = j["Dispatcher_Plugin"];
+    const std::string outputFile              = j["Output_DB"];
+    const int         num_of_jobs             = j["Num_of_Jobs"];
+    const std::string jobFile                 = j["Input_Job_CSV"];
+    const std::list<std::string> filteredSiteList = j["Sites"].get<std::list<std::string>>();
 
-   //Create the SimGrid platform
-   std::unique_ptr<Platform> pf = std::make_unique<Platform>();
-   auto* platform = pf->create_platform(gridName);
+    std::unique_ptr<Parser> parser = std::make_unique<Parser>(siteConnInfoFile, siteInfoFile, jobFile, filteredSiteList);
+    auto siteNameCPUInfo = parser->getSiteNameCPUInfo();
+    auto siteConnInfo    = parser->getSiteConnInfo();
+    auto siteNameGLOPS   = parser->getSiteNameGFLOPS();
 
-   //Initialize the SimGrid Plugins used
-   pf->initialize_simgrid_plugins();
+    // Initialize SimGrid
+    sg4::Engine e(&argc, argv);
+
+    // Create the platform
+    std::unique_ptr<Platform> pf = std::make_unique<Platform>();
+    auto* platform = pf->create_platform(gridName);
+    pf->initialize_simgrid_plugins();
    
-   //Create the Sites
-   auto sites = pf->create_sites(platform, filteredSiteList ,siteNameCPUInfo, siteNameGLOPS);
+    // Create sites and connections
+    auto sites = pf->create_sites(platform, filteredSiteList, siteNameCPUInfo, siteNameGLOPS);
+    pf->initialize_site_connections(platform, siteConnInfo, sites);
+    pf->initialize_job_server(platform, siteNameCPUInfo, sites);
+    
+    // Create and set up executor
+    std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();
+    executor->set_output(outputFile);
+    executor->set_dispatcher(dispatcherPath, platform); 
+    executor->start_receivers();
 
-   //Setup Connections between sites
-   pf->initialize_site_connections(platform,siteConnInfo,sites);
+    // Create jobs
+    std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
+    jm->set_parser(std::move(parser));
+    JobQueue jobs = jm->get_jobs(num_of_jobs);
+    LOG_INFO("Jobs to be executed: {}", jobs.size());
+    
+    // Execute jobs
+    executor->start_job_execution(jobs);
+    
+    executor->saveJobs(jobs);
 
-   //Initialize the Jobs Server // this is more like PANDA Server
-   pf->initialize_job_server(platform,siteNameCPUInfo,sites);
-   
-   //Create Job Executor
-   std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();
-   const std::vector<simgrid::s4u::NetZone*>& children = platform->get_children();
-   std::cout << "Network Model" << platform->get_network_model() << std::endl;
-   if (!children.empty()) {
-       std::cout << "Children:" << std::endl;
-       for (const auto child : children) {
-         std::cout << "name:" << child->get_name() <<std::endl;
-       }
-   } 
-  
-   executor->set_output(outputFile);
-   executor->set_dispatcher(dispatcherPath,platform);
-   executor->start_receivers();
+    // Print version
+    LOG_INFO("SimATLAS version: {}.{}.{}", MAJOR_VERSION, MINOR_VERSION, BUILD_NUMBER);
 
-   //Create Jobs
-   std::unique_ptr<JOB_MANAGER> jm = std::make_unique<JOB_MANAGER>();
-   jm->set_parser(std::move(parser));
-   JobQueue jobs = jm->get_jobs(num_of_jobs);
-   std::cout<< "Jobs to be executed" << jobs.size() <<std::endl;
-   //Execute Jobs
-   executor->start_job_execution(jobs);
-   executor->saveJobs(jobs);
-
-   //Print simulator name and current version
-   std::cout << "\nSimATLAS version: " << MAJOR_VERSION << "." << MINOR_VERSION << "." << BUILD_NUMBER << std::endl;
-
-   return 0;
+    return 0;
 }

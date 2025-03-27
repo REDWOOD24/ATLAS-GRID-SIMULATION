@@ -1,11 +1,3 @@
-// ==============================================
-// Author: Raees Khan
-// Email: rak177@pitt.edu
-// Created Date: 2024-08-27
-// Description: Class to create and manage Jobs.
-// ==============================================
-
-
 #ifndef JOB_MANAGER_H
 #define JOB_MANAGER_H
 

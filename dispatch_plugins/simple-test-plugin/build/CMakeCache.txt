@@ -240,13 +240,19 @@ SimpleDispatcherPlugin_BINARY_DIR:STATIC=/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIM
 SimpleDispatcherPlugin_IS_TOP_LEVEL:STATIC=ON
 
 //Dependencies for the target
-SimpleDispatcherPlugin_LIB_DEPENDS:STATIC=general;/usr/local/lib/libsimgrid.so;general;/usr/local/lib/libfsmod.so;
+SimpleDispatcherPlugin_LIB_DEPENDS:STATIC=general;/usr/local/lib/libsimgrid.so;general;/usr/local/lib/libfsmod.so;general;spdlog::spdlog;
 
 //Value Computed by CMake
 SimpleDispatcherPlugin_SOURCE_DIR:STATIC=/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/dispatch_plugins/simple-test-plugin
 
 //The directory containing a CMake configuration file for boost_headers.
 boost_headers_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/boost_headers-1.74.0
+
+//The directory containing a CMake configuration file for fmt.
+fmt_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/fmt
+
+//The directory containing a CMake configuration file for spdlog.
+spdlog_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/spdlog
 
 
 ########################
@@ -333,6 +339,10 @@ CMAKE_GENERATOR_INSTANCE:INTERNAL=
 CMAKE_GENERATOR_PLATFORM:INTERNAL=
 //Name of generator toolset.
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
+//Test CMAKE_HAVE_LIBC_PTHREAD
+CMAKE_HAVE_LIBC_PTHREAD:INTERNAL=1
+//Have include pthread.h
+CMAKE_HAVE_PTHREAD_H:INTERNAL=1
 //Source directory with the top level CMakeLists.txt file for this
 // project
 CMAKE_HOME_DIRECTORY:INTERNAL=/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/dispatch_plugins/simple-test-plugin
@@ -404,6 +414,8 @@ FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/lib/x86_64-linux-gnu/cmake/Boo
 FIND_PACKAGE_MESSAGE_DETAILS_FSMod:INTERNAL=[/usr/local/include][/usr/local/lib/libfsmod.so][v()]
 //Details about finding SimGrid
 FIND_PACKAGE_MESSAGE_DETAILS_SimGrid:INTERNAL=[/usr/local/include][/usr/local/lib/libsimgrid.so][v3.36.0()]
+//Details about finding Threads
+FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //ADVANCED property for variable: FSMOD_INCLUDE_DIR
 FSMOD_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: FSMOD_LIBRARY
