@@ -1,11 +1,3 @@
-// ==============================================
-// Author: Raees Khan
-// Email: rak177@pitt.edu
-// Created Date: 2024-08-15
-// Description: Class to create actions that actors (jobs) will execute.
-// ==============================================
-
-
 #ifndef ACTIONS_H
 #define ACTIONS_H
 

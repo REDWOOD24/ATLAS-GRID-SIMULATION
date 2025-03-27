@@ -868,7 +868,36 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/SimpleDispatcherPlugin.cpp.o: ../src/S
   /usr/local/include/fsmod/Storage.hpp \
   /usr/local/include/fsmod/JBODStorage.hpp \
   /usr/local/include/fsmod/Storage.hpp \
-  /usr/local/include/fsmod/OneDiskStorage.hpp
+  /usr/local/include/fsmod/OneDiskStorage.hpp \
+  ../include/logger.h \
+  /usr/include/c++/11/filesystem \
+  /usr/include/c++/11/bits/fs_fwd.h \
+  /usr/include/c++/11/bits/fs_path.h \
+  /usr/include/c++/11/codecvt \
+  /usr/include/c++/11/bits/fs_dir.h \
+  /usr/include/c++/11/bits/fs_ops.h \
+  /usr/include/spdlog/spdlog.h \
+  /usr/include/spdlog/common.h \
+  /usr/include/spdlog/tweakme.h \
+  /usr/include/spdlog/details/null_mutex.h \
+  /usr/include/spdlog/fmt/fmt.h \
+  /usr/include/fmt/core.h \
+  /usr/include/c++/11/cstring \
+  /usr/include/fmt/format.h \
+  /usr/include/fmt/core.h \
+  /usr/include/spdlog/details/registry.h \
+  /usr/include/spdlog/logger.h \
+  /usr/include/spdlog/details/log_msg.h \
+  /usr/include/spdlog/details/backtracer.h \
+  /usr/include/spdlog/details/log_msg_buffer.h \
+  /usr/include/spdlog/details/circular_q.h \
+  /usr/include/spdlog/version.h \
+  /usr/include/spdlog/details/synchronous_factory.h \
+  /usr/include/spdlog/sinks/basic_file_sink.h \
+  /usr/include/spdlog/details/file_helper.h \
+  /usr/include/spdlog/sinks/base_sink.h \
+  /usr/include/spdlog/sinks/sink.h \
+  /usr/include/spdlog/formatter.h
 
 CMakeFiles/SimpleDispatcherPlugin.dir/src/simple_dispatcher.cpp.o: ../src/simple_dispatcher.cpp \
   /usr/include/stdc-predef.h \
@@ -1735,11 +1764,59 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/simple_dispatcher.cpp.o: ../src/simple
   /usr/local/include/fsmod/Storage.hpp \
   /usr/local/include/fsmod/JBODStorage.hpp \
   /usr/local/include/fsmod/Storage.hpp \
-  /usr/local/include/fsmod/OneDiskStorage.hpp
+  /usr/local/include/fsmod/OneDiskStorage.hpp \
+  ../include/logger.h \
+  /usr/include/c++/11/filesystem \
+  /usr/include/c++/11/bits/fs_fwd.h \
+  /usr/include/c++/11/bits/fs_path.h \
+  /usr/include/c++/11/codecvt \
+  /usr/include/c++/11/bits/fs_dir.h \
+  /usr/include/c++/11/bits/fs_ops.h \
+  /usr/include/spdlog/spdlog.h \
+  /usr/include/spdlog/common.h \
+  /usr/include/spdlog/tweakme.h \
+  /usr/include/spdlog/details/null_mutex.h \
+  /usr/include/spdlog/fmt/fmt.h \
+  /usr/include/fmt/core.h \
+  /usr/include/c++/11/cstring \
+  /usr/include/fmt/format.h \
+  /usr/include/fmt/core.h \
+  /usr/include/spdlog/details/registry.h \
+  /usr/include/spdlog/logger.h \
+  /usr/include/spdlog/details/log_msg.h \
+  /usr/include/spdlog/details/backtracer.h \
+  /usr/include/spdlog/details/log_msg_buffer.h \
+  /usr/include/spdlog/details/circular_q.h \
+  /usr/include/spdlog/version.h \
+  /usr/include/spdlog/details/synchronous_factory.h \
+  /usr/include/spdlog/sinks/basic_file_sink.h \
+  /usr/include/spdlog/details/file_helper.h \
+  /usr/include/spdlog/sinks/base_sink.h \
+  /usr/include/spdlog/sinks/sink.h \
+  /usr/include/spdlog/formatter.h
 
-CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/validation_dispatcher.cpp \
-  /usr/include/stdc-predef.h
 
+/usr/include/spdlog/details/circular_q.h:
+
+/usr/include/spdlog/logger.h:
+
+/usr/include/spdlog/tweakme.h:
+
+/usr/include/spdlog/common.h:
+
+/usr/include/spdlog/spdlog.h:
+
+/usr/include/spdlog/details/log_msg_buffer.h:
+
+/usr/include/c++/11/bits/fs_dir.h:
+
+/usr/include/c++/11/bits/fs_path.h:
+
+/usr/include/c++/11/bits/fs_fwd.h:
+
+/usr/include/c++/11/filesystem:
+
+../include/logger.h:
 
 /usr/local/include/fsmod/OneDiskStorage.hpp:
 
@@ -1819,6 +1896,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/c++/11/ios:
 
+/usr/include/spdlog/version.h:
+
 /usr/include/x86_64-linux-gnu/bits/fp-fast.h:
 
 /usr/local/include/simgrid/s4u/Semaphore.hpp:
@@ -1842,6 +1921,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 /usr/local/include/simgrid/s4u/Disk.hpp:
 
 /usr/include/c++/11/bits/std_thread.h:
+
+/usr/include/c++/11/cstring:
 
 /usr/include/c++/11/bits/atomic_futex.h:
 
@@ -1904,6 +1985,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 /usr/include/boost/core/swap.hpp:
 
 /usr/include/boost/core/explicit_operator_bool.hpp:
+
+/usr/include/c++/11/bits/fs_ops.h:
 
 /usr/include/boost/optional.hpp:
 
@@ -2027,6 +2110,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/boost/mpl/aux_/iter_fold_if_impl.hpp:
 
+/usr/include/spdlog/sinks/basic_file_sink.h:
+
 /usr/include/boost/mpl/aux_/preprocessor/default_params.hpp:
 
 /usr/include/boost/mpl/always.hpp:
@@ -2105,6 +2190,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/boost/parameter/aux_/preprocessor/nullptr.hpp:
 
+/usr/include/spdlog/details/null_mutex.h:
+
 /usr/include/boost/parameter/aux_/yesno.hpp:
 
 /usr/include/boost/parameter/aux_/unwrap_cv_reference.hpp:
@@ -2116,6 +2203,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 /usr/include/boost/mpl/if.hpp:
 
 /usr/include/boost/mpl/aux_/preprocessed/gcc/template_arity.hpp:
+
+/usr/include/spdlog/sinks/base_sink.h:
 
 /usr/include/boost/mpl/identity.hpp:
 
@@ -2275,6 +2364,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/boost/config/stdlib/libstdcpp3.hpp:
 
+/usr/include/spdlog/details/file_helper.h:
+
 /usr/include/boost/type_traits/is_void.hpp:
 
 /usr/include/boost/intrusive/detail/exception_disposer.hpp:
@@ -2369,6 +2460,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/boost/mpl/arg_fwd.hpp:
 
+/usr/include/spdlog/details/backtracer.h:
+
 /usr/include/c++/11/iostream:
 
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
@@ -2401,8 +2494,6 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/x86_64-linux-gnu/bits/types/wint_t.h:
 
-../src/validation_dispatcher.cpp:
-
 /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
 
 /usr/include/boost/type_traits/conditional.hpp:
@@ -2424,6 +2515,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 /usr/include/boost/iterator/detail/config_undef.hpp:
 
 /usr/include/boost/intrusive/detail/default_header_holder.hpp:
+
+/usr/include/spdlog/details/registry.h:
 
 /usr/include/c++/11/cmath:
 
@@ -2577,6 +2670,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/boost/mpl/aux_/config/gpu.hpp:
 
+/usr/include/fmt/format.h:
+
 /usr/include/x86_64-linux-gnu/bits/wchar.h:
 
 /usr/include/c++/11/bits/exception.h:
@@ -2682,6 +2777,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 /usr/include/linux/errno.h:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h:
+
+/usr/include/spdlog/formatter.h:
 
 /usr/include/boost/preprocessor/arithmetic/dec.hpp:
 
@@ -2819,6 +2916,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/c++/11/bits/shared_ptr_base.h:
 
+/usr/include/fmt/core.h:
+
 /usr/include/boost/preprocessor/punctuation/comma_if.hpp:
 
 /usr/include/boost/config/detail/suffix.hpp:
@@ -2852,6 +2951,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 /usr/include/boost/parameter/aux_/pack/item.hpp:
 
 /usr/include/c++/11/ext/atomicity.h:
+
+/usr/include/c++/11/codecvt:
 
 /usr/include/assert.h:
 
@@ -2956,6 +3057,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 /usr/include/c++/11/bits/stream_iterator.h:
 
 /usr/include/c++/11/bits/streambuf_iterator.h:
+
+/usr/include/spdlog/fmt/fmt.h:
 
 /usr/include/c++/11/streambuf:
 
@@ -3149,6 +3252,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/boost/core/no_exceptions_support.hpp:
 
+/usr/include/spdlog/details/synchronous_factory.h:
+
 /usr/include/boost/mpl/limits/arity.hpp:
 
 /usr/include/boost/intrusive/detail/config_end.hpp:
@@ -3315,6 +3420,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 
 /usr/include/boost/mp11/detail/mp_void.hpp:
 
+/usr/include/spdlog/sinks/sink.h:
+
 /usr/include/boost/mpl/distance_fwd.hpp:
 
 /usr/include/boost/mp11/detail/mp_remove_if.hpp:
@@ -3340,6 +3447,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/validation_dispatcher.cpp.o: ../src/va
 /usr/include/boost/preprocessor/array/size.hpp:
 
 /usr/include/boost/preprocessor/repetition/enum_params.hpp:
+
+/usr/include/spdlog/details/log_msg.h:
 
 /usr/include/boost/preprocessor/facilities/intercept.hpp:
 

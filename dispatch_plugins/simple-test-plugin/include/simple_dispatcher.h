@@ -1,11 +1,3 @@
-// ==============================================
-// Author: Raees Khan
-// Email: rak177@pitt.edu
-// Created Date: 2024-08-27
-// Description: Class to distribute Jobs on grid.
-// ==============================================
-
-
 #ifndef SIMPLE_DISPATCHER_H
 #define SIMPLE_DISPATCHER_H
 
@@ -20,6 +12,7 @@
 // #include "H5Cpp.h"
 #include "job.h"
 #include "fsmod.hpp"
+#include "logger.h"
 namespace sg4 = simgrid::s4u;
 
 

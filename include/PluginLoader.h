@@ -1,9 +1,3 @@
-// ==============================================
-// Author: Raees Khan
-// Email: rak177@pitt.edu
-// Created Date: 2025-01-15
-// Description: Class to load plugins.
-// ==============================================
 #pragma once
 
 
@@ -11,6 +5,7 @@
 #include <dlfcn.h>
 #include <libgen.h>
 #include <string>
+#include "logger.h"
 
 template <class Plugin> class PluginLoader
 {
@@ -66,7 +61,7 @@ std::unique_ptr<Plugin> PluginLoader<Plugin>::load(const std::string & pString) 
     typedef void *(*CreationMethod) ();
     auto F = (CreationMethod) f;
     auto * factory = (Plugin *) F();
-    std::cout << "Created the dispatcher"<< std::endl;
+    LOG_INFO("Created the dispatcher");
     return std::unique_ptr<Plugin>(factory);
 }
 

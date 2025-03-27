@@ -1,11 +1,3 @@
-// ==============================================
-// Author: Raees Khan
-// Email: rak177@pitt.edu
-// Created Date: 2025-01-15
-// Description: Abstract class to develop job allocation plugins.
-// ==============================================
-
-
 #ifndef DISPATCHERPLUGIN_H
 #define DISPATCHERPLUGIN_H
 

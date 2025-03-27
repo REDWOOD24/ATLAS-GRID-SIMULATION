@@ -1,10 +1,3 @@
-// ==============================================
-// Author: Raees Khan
-// Email: rak177@pitt.edu
-// Created Date: 2025-02-15
-// Description: Class to execute Jobs.
-// ==============================================
-
 #ifndef JOB_EXECUTOR_H
 #define JOB_EXECUTOR_H
 
@@ -13,13 +6,14 @@
 #include "job_manager.h"
 #include "actions.h"
 #include "sqliteSaver.h"
+#include "logger.h"
 
 class JOB_EXECUTOR
 {
 
 
 public:
-     JOB_EXECUTOR(){std::cout << "Initalizing Job Executor ....." << std::endl;};
+     JOB_EXECUTOR(){LOG_INFO("Initalizing Job Executor .....");};
     ~JOB_EXECUTOR()= default;
 
 

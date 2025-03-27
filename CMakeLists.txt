@@ -14,6 +14,7 @@ find_package(Boost REQUIRED)
 find_package(SimGrid REQUIRED)
 find_package (SQLite3 REQUIRED)
 find_package(FSMod REQUIRED)
+find_package(spdlog REQUIRED)
 
 # Add json subdir
 add_subdirectory(json)
@@ -39,6 +40,7 @@ target_link_libraries(atlas-grid-simulator
         ${Boost_LIBRARIES}
         ${FSMOD_LIBRARY}
         SQLite::SQLite3
+        spdlog::spdlog
 )
 
 # ==============================
