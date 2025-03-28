@@ -81,13 +81,18 @@ double SIMPLE_DISPATCHER::getTotalSize(const std::unordered_map<std::string, siz
 
 Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 {
-    Host* best_cpu   = nullptr;
+    Host* best_cpu = nullptr;
     std::string best_disk;
     double best_score = std::numeric_limits<double>::lowest();
 
+    // Create a priority queue from the CPU candidates.
     std::priority_queue<Host*> cpu_queue;
     for (auto* cpu : cpus)
     {
+        if (!cpu) {
+            LOG_DEBUG("Warning: Encountered a null CPU pointer.");
+            continue;
+        }
         cpu_queue.push(cpu);
     }
 
@@ -97,42 +102,40 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     while (!cpu_queue.empty() && candidatesExamined < maxCandidates)
     {
         Host* current = cpu_queue.top();
-        cpu_queue.pop(); // Popping the element
+        cpu_queue.pop();
         ++candidatesExamined;
-        if (current->cores_available < j->cores )
+
+        if (current->cores_available < j->cores)
         {
             continue;
         }
 
-        // Calculate the weighted score and select a disk.
-        std::string current_disk = "";
-        // double score = calculateWeightedScore(current, j, current_disk);
+        // For now, using a dummy score.
         double score = 1;
-        // if (current_disk.empty()) // Not enough disk space.
-        // {
-        //     continue;
-        // }
-        size_t total_required_storage = (this->getTotalSize(j->input_files) + this->getTotalSize(j->output_files));
+        std::string current_disk = "";
+        size_t total_required_storage = this->getTotalSize(j->input_files) 
+                                        + this->getTotalSize(j->output_files);
+
         for (const auto& d : current->disks) {
-            if (d->storage >= total_required_storage) 
-            {
+            if (d->storage >= total_required_storage) {
                 current_disk = d->name;
+                break;
             }
         }
-        if (current_disk == ""){
-            continue; // unable to find a disk that meets the storage requirements of job
+        if (current_disk == "") {
+            continue;
         }
         if (score > best_score)
         {
             best_score = score;
             best_cpu = current;
-           
+            best_disk = current_disk;
         }
-        best_cpu = current;
-        best_disk = current_disk;
+        // NOTE: Original code had additional assignments that may be unintended;
+        // they are commented out here.
+        // best_cpu = current;
+        // best_disk = current_disk;
     }
-
-    
 
     if (best_cpu)
     {
@@ -141,7 +144,8 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         best_cpu->cores_available -= j->cores;
 
         // Deduct storage from the chosen disk.
-        const auto totalSize = getTotalSize(j->input_files) + getTotalSize(j->output_files);
+        const auto totalSize = this->getTotalSize(j->input_files) 
+                             + this->getTotalSize(j->output_files);
         for (auto& disk : best_cpu->disks)
         {
             if (disk->name == best_disk)
@@ -150,17 +154,16 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
                 break;
             }
         }
-
-        j->disk      = best_disk;
+        j->disk = best_disk;
         j->comp_host = best_cpu->name;
-        LOG_DEBUG("Found the best CPU : {}", best_cpu->name);
-        LOG_DEBUG("Best CPU Jobs : {}",best_cpu->jobs.size());
-        LOG_DEBUG("Best CPU Speed: {}",  best_cpu->speed) ;
-        LOG_DEBUG("Disk:{} ", j->disk);
+    }
+    else {
+        LOG_DEBUG("Could not find a suitable CPU for job {}", j->jobid );
     }
 
     return best_cpu;
 }
+
 
 
 
@@ -186,12 +189,20 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 {
   Host*  best_cpu    = nullptr;
+  
   LOG_DEBUG(" Waiting to assign job resources : {}", job->comp_site);
   std::string site_name = job->comp_site;
   auto site = findSiteByName(_sites, site_name);
-
-
-
+  LOG_DEBUG(" Found the site {}", job->comp_site);
+  if (job == nullptr) {
+    LOG_DEBUG("JOB pointer null");
+       
+    }
+    if (site == nullptr) {
+        job->status = "failed";
+        LOG_DEBUG("Computing Site is not found: Site pointer NULL :{}", job->comp_site);
+        return job;
+    }
   job->flops = site->gflops*job->cpu_consumption_time*job->cores;
   best_cpu           = findBestAvailableCPU(site->cpus, job);
   if(best_cpu) {
@@ -227,6 +238,7 @@ void SIMPLE_DISPATCHER::free(Job* job)
 Site* SIMPLE_DISPATCHER::findSiteByName(std::vector<Site*>& sites, const std::string& site_name) {
   auto it = std::find_if(sites.begin(), sites.end(),
                          [&site_name](Site* site) {
+
                              return site->name == site_name;
                          });
   return it != sites.end() ? *it : nullptr;

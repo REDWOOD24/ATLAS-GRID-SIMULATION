@@ -1,10 +1,10 @@
 {
   "Grid_Name": "ATLAS-GRID",
   "Sites_Information": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/site_info.json",
-  "Sites":["BNL","AGLT2", "RAL"], 
+  "Sites":[], 
   "Sites_Connection_Information": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/site_conn_info.json",
   "Dispatcher_Plugin": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/dispatch_plugins/simple-test-plugin/build/libSimpleDispatcherPlugin.so",
   "Output_DB": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/output.db",
-  "Input_Job_CSV": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/jobs_sample.csv",
-  "Num_of_Jobs": 10
+  "Input_Job_CSV": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/500_jobs_per_site.csv",
+  "Num_of_Jobs": -1
 }

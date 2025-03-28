@@ -28,7 +28,7 @@ void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZon
   PluginLoader<DispatcherPlugin> plugin_loader;
   dispatcher = plugin_loader.load(dispatcherPath);
 
-  printNetZone(platform);
+  // printNetZone(platform);
   dispatcher->getResourceInformation(platform);
 }
 
@@ -67,11 +67,12 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
   const auto* e = sg4::Engine::get_instance();
   sg4::ActivitySet job_activities;
 
-  LOG_INFO("Server started.");
+  LOG_INFO("Server started. {}", jobs.size());
   while (!jobs.empty())
-  {
+  { 
     saver->saveJob(jobs.top());
-    LOG_DEBUG("Job saved to DB: {}", jobs.top()->id);
+    
+    LOG_INFO("Job saved to DB: {}", jobs.top()->id);
 
     if (!dispatcher) {
       LOG_CRITICAL("Dispatcher is null!");
@@ -79,11 +80,13 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
     }
 
     Job* topJob = jobs.top();
-    LOG_DEBUG("Top job cores: {}", topJob->cores);
-
     Job* job = dispatcher->assignJob(topJob);
     saver->updateJob(job);
-
+    if (job->status == "failed"){
+      saver->updateJob(job);
+      jobs.pop();
+      continue;
+    }
     int retries = 0;
     while (job->status != "assigned") {
       sg4::this_actor::sleep_for(RETRY_INTERVAL);

@@ -18,7 +18,7 @@ namespace logger {
         spdlog::set_default_logger(logger_instance);
         spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e [%l] %v");  
         spdlog::set_level(spdlog::level::info);               
-        spdlog::flush_on(spdlog::level::info);
+        spdlog::flush_on(spdlog::level::debug);
     }
 
     // Returns a reference to the global logger instance.
