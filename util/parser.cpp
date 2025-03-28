@@ -6,8 +6,20 @@
 #include <iomanip>
 #include <algorithm>
 #include <nlohmann/json.hpp>
+#include <iostream>
 
 using json = nlohmann::json;
+
+static std::string joinStrings(const std::vector<std::string>& vec, const std::string& delimiter = ", ")
+{
+    std::ostringstream oss;
+    for (size_t i = 0; i < vec.size(); ++i) {
+        if (i != 0)
+            oss << delimiter;
+        oss << vec[i];
+    }
+    return oss.str();
+}
 
 Parser::Parser(const std::string& _siteConnInfoFile, const std::string& _siteInfoFile)
 {
@@ -290,6 +302,7 @@ std::priority_queue<Job*> Parser::getJobs(long max_jobs) {
             continue;
         }
         try {
+            
             Job* job = new Job();  // Allocate memory dynamically
             job->jobid = std::stol(row[column_map.at("PANDAID")]);
             job->creation_time = row[column_map.at("CREATIONTIME")];

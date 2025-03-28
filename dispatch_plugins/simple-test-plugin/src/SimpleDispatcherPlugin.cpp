@@ -32,7 +32,7 @@ void SimpleDispatcherPlugin::getResourceInformation(simgrid::s4u::NetZone* platf
 
 Job* SimpleDispatcherPlugin::assignJob(Job* job)
 {
-    // LOG_DEBUG("Inside the assign job: {}", job->comp_site);
+    LOG_DEBUG("Inside the assign job: {}", job->comp_site);
     return sd->assignJobToResource(job);
 }
 
