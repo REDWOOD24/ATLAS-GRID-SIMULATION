@@ -55,6 +55,7 @@ public:
  std::vector<DiskInfo>                                                     getDisksInfo(const std::string site_name, int num_of_cpus);
  std::unordered_map<std::string, std::pair<double, double>>                getSiteConnInfo();
  std::unordered_map<std::string, std::unordered_map<std::string,CPUInfo>>  getSiteNameCPUInfo();
+ std::unordered_map<std::string, std::unordered_map<std::string,CPUInfo>>  getSiteNameCPUInfo(int cpuMin, int cpuMax, int speedPrecision);
  void                                                                      setSiteGFLOPS();
  std::priority_queue<Job*>                                                 getJobs(long max_jobs);
  std::unordered_map<std::string,int>                                       getSiteNameGFLOPS();

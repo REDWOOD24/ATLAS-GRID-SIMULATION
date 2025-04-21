@@ -53,7 +53,14 @@ int main(int argc, char** argv)
     const std::string jobFile                 = j["Input_Job_CSV"];
     const std::list<std::string> filteredSiteList = j["Sites"].get<std::list<std::string>>();
 
+    // Calibration Parameter these will be moved to site info later
+    const int cpu_min = j["cpu_min_max"][0];
+    const int cpu_max = j["cpu_min_max"][1];
+    const int speed_precision = j["cpu_speed_precision"]; 
+
+
     std::unique_ptr<Parser> parser = std::make_unique<Parser>(siteConnInfoFile, siteInfoFile, jobFile, filteredSiteList);
+    // auto siteNameCPUInfo = parser->getSiteNameCPUInfo(cpu_min,cpu_max,speed_precision);
     auto siteNameCPUInfo = parser->getSiteNameCPUInfo();
     auto siteConnInfo    = parser->getSiteConnInfo();
     auto siteNameGLOPS   = parser->getSiteNameGFLOPS();

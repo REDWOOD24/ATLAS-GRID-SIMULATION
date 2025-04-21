@@ -97,7 +97,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     }
 
     int candidatesExamined = 0;
-    const int maxCandidates = 40;
+    const int maxCandidates = 80;
 
     while (!cpu_queue.empty() && candidatesExamined < maxCandidates)
     {

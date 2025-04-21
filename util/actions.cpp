@@ -5,10 +5,8 @@ void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_act
 {
     auto host = sg4::this_actor::get_host();
     LOG_DEBUG("In exec_task_multi_thread_async on host: {}", host->get_name());
-
     sg4::ExecPtr exec_activity = sg4::Exec::init()
         ->set_flops_amount(j->flops)
-        ->set_thread_count(j->cores)
         ->set_host(host);
 
     exec_activity->start();

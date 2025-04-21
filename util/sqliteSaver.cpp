@@ -190,22 +190,41 @@ void sqliteSaver::exportJobsToCSV()
     };
 
     int numCols = sqlite3_column_count(stmt);
+    std::vector<std::string> lines;
+    std::stringstream header;
+    // Build header line
     for (int i = 0; i < numCols; ++i) {
+        if (i > 0) {
+            header << ",";
+        }
         const char* colName = sqlite3_column_name(stmt, i);
-        csvFile << (i == 0 ? "" : ",") << escapeCSV(colName ? colName : "");
+        header << escapeCSV(colName ? colName : "");
     }
-    csvFile << "\n";
+    lines.push_back(header.str());
 
+    // Build each row and add it to our vector
     while (sqlite3_step(stmt) == SQLITE_ROW) {
+        std::stringstream row;
         for (int i = 0; i < numCols; ++i) {
+            if (i > 0) {
+                row << ",";
+            }
             const unsigned char* colText = sqlite3_column_text(stmt, i);
             std::string value = colText ? reinterpret_cast<const char*>(colText) : "";
-            csvFile << (i == 0 ? "" : ",") << escapeCSV(value);
+            row << escapeCSV(value);
         }
-        csvFile << "\n";
+        lines.push_back(row.str());
     }
-
     sqlite3_finalize(stmt);
+
+    // Write the vector lines to the file without a trailing newline at the end
+    for (size_t i = 0; i < lines.size(); ++i) {
+        csvFile << lines[i];
+        if (i != lines.size() - 1) {
+            csvFile << "\n";
+        }
+    }
     csvFile.close();
     LOG_INFO("Exported JOBS table to CSV: {}", csvFilePath);
 }
+
