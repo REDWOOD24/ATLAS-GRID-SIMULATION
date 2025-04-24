@@ -22,6 +22,7 @@ void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_act
         if (j->status == "finished" &&
             j->files_read == j->input_files.size() &&
             j->files_written == j->output_files.size()) {
+            LOG_DEBUG("All files read and written for job {}.", j->id);
             dispatcher->onJobEnd(j);
         }
     });

@@ -32,7 +32,7 @@ struct Host {
   int                                            cores_available{};
   std::vector<Disk*>                             disks{};
   std::unordered_map<std::string, Disk*>         disks_map{};
-  std::unordered_set<std::string>                jobs{};
+  std::unordered_set<long long>                jobs{};
   bool operator<(const Host& other) const {return cores_available <= other.cores_available;}
 };
 

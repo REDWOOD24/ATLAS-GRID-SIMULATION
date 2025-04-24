@@ -1,0 +1,26 @@
+{
+  
+  "BNL": { 
+    "RSE": {
+      "BNL-OSG2_DATADISK": "30209.95",
+      "BNL-OSG2_DATATAPE": 0,
+      "BNL-OSG2_DET-SLHC": 0,
+      "BNL-OSG2_LOCALGROUPDISK": "3881.65",
+      "BNL-OSG2_MCTAPE": 0,
+      "BNL-OSG2_PHYS-HI": 0,
+      "BNL-OSG2_SCRATCHDISK": "934.58"
+    },
+    "GFLOPS": 37210560
+  },
+  "BNL-ATLAS-OPP": {
+    "RSE": {
+      "BNL-ATLAS_TAPE-TEST": "300.00",
+      "BNL-OSG2_DATADISK": "30209.95",
+      "BNL-OSG2_DET-SLHC": 0,
+      "BNL-OSG2_LOCALGROUPDISK": "3881.65",
+      "BNL-OSG2_PHYS-HI": 0,
+      "BNL-OSG2_SCRATCHDISK": "934.58"
+    },
+    "GFLOPS": 3810800
+  }
+}

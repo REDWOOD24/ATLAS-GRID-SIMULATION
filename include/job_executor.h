@@ -32,8 +32,8 @@ public:
 private:
     static   std::unique_ptr<DispatcherPlugin>    dispatcher;
     static   std::unique_ptr<sqliteSaver>         saver;
-    static   constexpr int MAX_RETRIES            = 200;
-    static   constexpr int RETRY_INTERVAL         = 500; //seconds
+    static   constexpr int MAX_RETRIES            = 1000;
+    static   constexpr int RETRY_INTERVAL         = 1000000000; //seconds
 };
 
 #endif //JOB_EXECUTOR_H

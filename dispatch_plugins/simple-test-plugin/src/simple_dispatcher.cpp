@@ -97,14 +97,14 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     }
 
     int candidatesExamined = 0;
-    const int maxCandidates = 80;
+    const int maxCandidates = 1000;
 
     while (!cpu_queue.empty() && candidatesExamined < maxCandidates)
     {
         Host* current = cpu_queue.top();
         cpu_queue.pop();
         ++candidatesExamined;
-
+        std::cout << "Available Cores " << current->cores_available << std::endl;
         if (current->cores_available < j->cores)
         {
             continue;
@@ -125,7 +125,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         if (current_disk == "") {
             continue;
         }
-        if (score > best_score)
+        if (score >= best_score)
         {
             best_score = score;
             best_cpu = current;
@@ -140,7 +140,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     if (best_cpu)
     {
         // Deduct CPU cores and assign job.
-        best_cpu->jobs.insert(j->id);
+        best_cpu->jobs.insert(j->jobid);
         best_cpu->cores_available -= j->cores;
 
         // Deduct storage from the chosen disk.
@@ -159,6 +159,8 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     }
     else {
         LOG_DEBUG("Could not find a suitable CPU for job {}", j->jobid );
+        
+        std::cout << "Job " << j->jobid << " could not find cpu core" << std::endl;        
     }
 
     return best_cpu;
@@ -191,8 +193,9 @@ Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
   Host*  best_cpu    = nullptr;
   
   LOG_DEBUG(" Waiting to assign job resources : {}", job->comp_site);
-  std::string site_name = job->comp_site;
-  auto site = findSiteByName(_sites, site_name);
+//   std::string site_name = job->comp_site;
+//   auto site = findSiteByName(_sites, site_name);
+  auto site = _sites_map.at(job->comp_site);
   LOG_DEBUG(" Found the site {}", job->comp_site);
   if (job == nullptr) {
     LOG_DEBUG("JOB pointer null");
@@ -213,7 +216,7 @@ Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 }
   else{
   job->status = "pending";
-  LOG_DEBUG("Job Status changed to pend");
+  LOG_DEBUG("Job Status changed to pending");
 
   }
   this->printJobInfo(job);
@@ -225,12 +228,14 @@ Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 void SIMPLE_DISPATCHER::free(Job* job)
 {
  Host* cpu               = _sites_map.at(job->comp_site)->cpus_map.at(job->comp_host);
- if(cpu->jobs.count(job->id) > 0)
+ if(cpu->jobs.count(job->jobid) > 0)
  {
    Disk* disk              = cpu->disks_map.at(job->disk);
    cpu->cores_available   += job->cores;
    disk->storage          += (this->getTotalSize(job->input_files) + this->getTotalSize(job->output_files));
-   cpu->jobs.erase(job->id);
+   cpu->jobs.erase(job->jobid);
+   LOG_DEBUG("Job {} freed from CPU {}", job->jobid, cpu->name);
+   
  }
 }
 
@@ -249,7 +254,7 @@ Site* SIMPLE_DISPATCHER::findSiteByName(std::vector<Site*>& sites, const std::st
 void SIMPLE_DISPATCHER::printJobInfo(Job* job)
 {
     LOG_DEBUG("----------------------------------------------------------------------");
-    LOG_INFO("Submitting .. {}", job->id);
+    LOG_INFO("Submitting .. {}", job->jobid);
     LOG_DEBUG("FLOPs to be executed: {}", job->flops);
     LOG_DEBUG("Files to be read:");
     for (const auto& file : job->input_files) {

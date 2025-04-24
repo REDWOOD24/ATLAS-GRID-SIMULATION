@@ -64,69 +64,82 @@ void JOB_EXECUTOR::start_job_execution(JobQueue jobs)
 
 void JOB_EXECUTOR::start_server(JobQueue jobs)
 {
-  const auto* e = sg4::Engine::get_instance();
-  sg4::ActivitySet job_activities;
+    const auto* e = sg4::Engine::get_instance();
+    sg4::ActivitySet job_activities;
 
-  LOG_INFO("Server started. {}", jobs.size());
-  while (!jobs.empty())
-  { 
-    saver->saveJob(jobs.top());
-    
-    LOG_INFO("Job saved to DB: {}", jobs.top()->id);
+    LOG_INFO("Server started. Initial jobs count: {}", jobs.size());
 
-    if (!dispatcher) {
-      LOG_CRITICAL("Dispatcher is null!");
-      return;
+    // Transfer all jobs from the queue into a vector for central polling.
+    std::vector<Job*> pending_jobs;
+    while (!jobs.empty()) {
+        Job* job = jobs.top();
+        jobs.pop();
+        saver->saveJob(job);
+        LOG_INFO("Job saved to DB: {}", job->id);
+
+        // Attempt a one‑time assignment.
+        Job* result = dispatcher->assignJob(job);
+        saver->updateJob(result);
+        if (result->status == "assigned") {
+            // If assigned immediately, dispatch it.
+            auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(
+                          e->netzone_by_name_or_null(job->comp_site))
+                          .at(job->comp_site + job->comp_host + job->disk + "filesystem");
+            update_disk_content(fs, job->input_files, job);
+            sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host + "-MQ");
+            job_activities.push(mqueue->put_async(job));
+            LOG_DEBUG("Job {} dispatched immediately to host {}", job->id, job->comp_host);
+        } else {
+            // Set status and add to pending list.
+            job->status = "pending";
+            pending_jobs.push_back(job);
+        }
     }
 
-    Job* topJob = jobs.top();
-    Job* job = dispatcher->assignJob(topJob);
-    saver->updateJob(job);
-    if (job->status == "failed"){
-      saver->updateJob(job);
-      jobs.pop();
-      continue;
-    }
-    int retries = 0;
-    while (job->status != "assigned") {
-      sg4::this_actor::sleep_for(RETRY_INTERVAL);
-      dispatcher->assignJob(job);
-      saver->updateJob(job);
-      if (++retries > MAX_RETRIES) break;
-    }
-    if (retries > MAX_RETRIES) {
-      jobs.pop();
-      continue;
+    // Use a retry counter map for each pending job.
+    std::unordered_map<Job*, int> retry_counts;
+    for (Job* job : pending_jobs) {
+        retry_counts[job] = 0;
     }
 
-    LOG_DEBUG("Calling FileSystem for job: {}", job->id);
-    LOG_DEBUG("NetZone: {}", e->netzone_by_name_or_null(job->comp_site)->get_name());
-    LOG_DEBUG("FileSystem key: {}", job->comp_site + job->comp_host + job->disk + "filesystem");
+    // Poll the pending jobs list until none remain.
+    while (!pending_jobs.empty()) {
+        for (auto it = pending_jobs.begin(); it != pending_jobs.end(); ) {
+            Job* job = *it;
+            dispatcher->assignJob(job);
+            saver->updateJob(job);
+            retry_counts[job]++;
+            if (job->status == "assigned") {
+                auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(
+                              e->netzone_by_name_or_null(job->comp_site))
+                              .at(job->comp_site + job->comp_host + job->disk + "filesystem");
+                update_disk_content(fs, job->input_files, job);
+                sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host + "-MQ");
+                job_activities.push(mqueue->put_async(job));
+                LOG_DEBUG("Job {} dispatched after {} retries to host {}", job->id, retry_counts[job], job->comp_host);
+                it = pending_jobs.erase(it);
+            } else if (retry_counts[job] > MAX_RETRIES) {
+                LOG_DEBUG("Job {} exhausted max retries. Removing from pending jobs.", job->id);
+                it = pending_jobs.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        // Yield control so that other asynchronous events (e.g. receivers freeing resources) can occur.
+        sg4::this_actor::sleep_for(RETRY_INTERVAL);
+    }
 
-    auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(
-      e->netzone_by_name_or_null(job->comp_site)).at(job->comp_site + job->comp_host + job->disk + "filesystem");
-
-    update_disk_content(fs, job->input_files, job);
-
-    sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host + "-MQ");
-    job_activities.push(mqueue->put_async(job));
-
-    jobs.pop();
-    LOG_DEBUG("Removed job from queue: {}", job->id);
-  }
-
-  // Shutdown: send kill jobs
-  for (const auto& host : e->get_all_hosts()) {
-    if (host->get_name() == "JOB-SERVER_cpu-0") continue;
-    Job* killJob = new Job;
-    killJob->id = "kill";
-    sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(host->get_name() + "-MQ");
-    job_activities.push(mqueue->put_async(killJob));
-  }
-
-  LOG_INFO("Waiting for all job activities to complete...");
-  job_activities.wait_all();
-  LOG_INFO("All job activities completed.");
+    // Shutdown: send kill messages to all hosts (except the job server).
+    for (const auto& host : e->get_all_hosts()) {
+        if (host->get_name() == "JOB-SERVER_cpu-0") continue;
+        Job* killJob = new Job;
+        killJob->id = "kill";
+        sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(host->get_name() + "-MQ");
+        job_activities.push(mqueue->put_async(killJob));
+    }
+    LOG_INFO("Waiting for all job activities to complete...");
+    job_activities.wait_all();
+    LOG_INFO("All job activities completed.");
 }
 
 void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)

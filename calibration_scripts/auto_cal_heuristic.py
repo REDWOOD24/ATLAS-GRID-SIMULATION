@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import time
 import matplotlib.pyplot as plt
+import random
 
 def update_cfg(path, parameterValueDict):
     """
@@ -17,23 +18,37 @@ def update_cfg(path, parameterValueDict):
     with open(path, 'w') as f:
         json.dump(data, f, indent=4)
 
+def update_site_info(path, site, cpu_speed):
+    """
+    Update the site information in the JSON file.
+    """
+    with open(path, 'r') as f:
+        data = json.load(f)
+    
+    data[site]['CPUSpeed'] = cpu_speed
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=4)
+ 
 # Sites to be calibrated
 sites = ["NET2_Amherst"]
 cal_jobs = 100
 error_threshold = 15
 
 config_path = "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/config-files/config.json"
+site_info_path = "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/data/site_info_cpu.json"
 # Simulator command (ensure that the simulator uses the config file provided)
 command = "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/build/atlas-grid-simulator -c /home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/config-files/config.json"
 
 # Range of CPU speed precision values to test
-cpu_speed_precision_range = [4, 5, 6, 7, 8, 9, 10, 11]
+cpu_speed_precision_range = [5, 6, 7, 8, 9, 10, 11]
 
 # Initialize the best error values to infinity so that any valid result is lower.
 best_error_single_core = float('inf')
 best_error_multi_core = float('inf')
 best_combination_single = None
 best_combination_multi = None
+with open(site_info_path, 'r') as f:
+        site_info = json.load(f)
 
 # Loop over sites, CPU speed precision, and cpu_min_max combinations
 for site in sites:
@@ -45,7 +60,10 @@ for site in sites:
                     parameterValueDict = {}
                     parameterValueDict["Num_of_Jobs"] = 100
                     parameterValueDict["cpu_min_max"] = [i, i + 1 + j]
+                    CPUSpeed = [ random.randint(i, i + 1 + j)*10**speed_precision for _ in range(site_info[site]['CPUCount'])]
+                    print(CPUSpeed)
                     parameterValueDict["cpu_speed_precision"] = speed_precision
+                    
                     # Use a site-specific value if needed.
                     parameterValueDict["Sites"] = [f"{site}"]
                     # Note: Output_DB is now a formatted string, not a list.
@@ -54,7 +72,7 @@ for site in sites:
                     
                     # Update the configuration file
                     update_cfg(config_path, parameterValueDict)
-                    
+                    update_site_info(site_info_path, site, CPUSpeed)
                     # Run the simulator command
                     os.system(command)
                     
