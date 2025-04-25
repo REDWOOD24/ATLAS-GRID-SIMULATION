@@ -104,7 +104,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         Host* current = cpu_queue.top();
         cpu_queue.pop();
         ++candidatesExamined;
-        std::cout << "Available Cores " << current->cores_available << std::endl;
+        
         if (current->cores_available < j->cores)
         {
             continue;
@@ -159,8 +159,6 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     }
     else {
         LOG_DEBUG("Could not find a suitable CPU for job {}", j->jobid );
-        
-        std::cout << "Job " << j->jobid << " could not find cpu core" << std::endl;        
     }
 
     return best_cpu;
