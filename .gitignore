@@ -2,6 +2,7 @@ build/
 log*.txt
 *.log
 *.Zone.Identifier
+*.db
 output/
 data/
 logs/
