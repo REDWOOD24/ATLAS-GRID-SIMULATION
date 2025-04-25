@@ -10,6 +10,7 @@
 #include "simgrid/plugins/energy.h"
 #include "parser.h"
 #include "fsmod.hpp"
+#include "host_extensions.h"
 namespace sg4 = simgrid::s4u;
 
 class Platform

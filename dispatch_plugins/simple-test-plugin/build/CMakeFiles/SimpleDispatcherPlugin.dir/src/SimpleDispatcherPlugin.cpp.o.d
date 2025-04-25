@@ -783,4 +783,5 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/SimpleDispatcherPlugin.cpp.o: \
  /usr/include/spdlog/sinks/basic_file_sink.h \
  /usr/include/spdlog/details/file_helper.h \
  /usr/include/spdlog/sinks/base_sink.h /usr/include/spdlog/sinks/sink.h \
- /usr/include/spdlog/formatter.h
+ /usr/include/spdlog/formatter.h \
+ /usr/local/include/SimATLAS/host_extensions.h

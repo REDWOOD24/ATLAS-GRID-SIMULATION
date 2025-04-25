@@ -899,6 +899,7 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/SimpleDispatcherPlugin.cpp.o
  /usr/include/spdlog/sinks/base_sink.h
  /usr/include/spdlog/sinks/sink.h
  /usr/include/spdlog/formatter.h
+ /usr/local/include/SimATLAS/host_extensions.h
 
 CMakeFiles/SimpleDispatcherPlugin.dir/src/simple_dispatcher.cpp.o
  /home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/dispatch_plugins/simple-test-plugin/src/simple_dispatcher.cpp
@@ -1796,4 +1797,6 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/simple_dispatcher.cpp.o
  /usr/include/spdlog/sinks/base_sink.h
  /usr/include/spdlog/sinks/sink.h
  /usr/include/spdlog/formatter.h
+ /usr/local/include/SimATLAS/host_extensions.h
+ /usr/local/include/SimATLAS/job.h
 

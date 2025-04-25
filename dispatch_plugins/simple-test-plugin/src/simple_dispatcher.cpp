@@ -104,9 +104,12 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         Host* current = cpu_queue.top();
         cpu_queue.pop();
         ++candidatesExamined;
+        LOG_DEBUG("Available Cores {}", sg4::Host::by_name(current->name)->extension<HostExtensions>()->get_cores_available());
+        LOG_DEBUG("JOB Cores needed {}", j->cores);
+        if (sg4::Host::by_name(current->name)->extension<HostExtensions>()->get_cores_available() < j->cores)
+        {   
+            LOG_DEBUG("Cores not suffficient for job {} on CPU {}", j->jobid, current->name);
         
-        if (current->cores_available < j->cores)
-        {
             continue;
         }
 
@@ -140,6 +143,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     if (best_cpu)
     {
         // Deduct CPU cores and assign job.
+        sg4::Host::by_name(best_cpu->name)->extension<HostExtensions>()->registerJob(j); 
         best_cpu->jobs.insert(j->jobid);
         best_cpu->cores_available -= j->cores;
 

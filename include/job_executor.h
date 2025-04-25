@@ -7,6 +7,7 @@
 #include "actions.h"
 #include "sqliteSaver.h"
 #include "logger.h"
+#include "host_extensions.h"
 
 class JOB_EXECUTOR
 {

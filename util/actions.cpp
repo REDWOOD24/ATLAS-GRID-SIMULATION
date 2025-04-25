@@ -23,7 +23,8 @@ void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_act
             j->files_read == j->input_files.size() &&
             j->files_written == j->output_files.size()) {
             LOG_DEBUG("All files read and written for job {}.", j->id);
-            dispatcher->onJobEnd(j);
+            sg4::this_actor::get_host()->extension<HostExtensions>()->onJobFinish(j);
+            // dispatcher->onJobEnd(j);
         }
     });
 }
@@ -53,7 +54,8 @@ void Actions::read_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>&
             if (j->status == "finished" &&
                 j->files_read == j->input_files.size() &&
                 j->files_written == j->output_files.size()) {
-                dispatcher->onJobEnd(j);
+                sg4::this_actor::get_host()->extension<HostExtensions>()->onJobFinish(j);
+                // dispatcher->onJobEnd(j);
             }
         });
     }
@@ -83,7 +85,8 @@ void Actions::write_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>
             if (j->status == "finished" &&
                 j->files_read == j->input_files.size() &&
                 j->files_written == j->output_files.size()) {
-                dispatcher->onJobEnd(j);
+                sg4::this_actor::get_host()->extension<HostExtensions>()->onJobFinish(j);
+                // dispatcher->onJobEnd(j);
             }
         });
     }

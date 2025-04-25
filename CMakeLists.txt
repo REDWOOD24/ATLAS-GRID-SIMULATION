@@ -51,7 +51,7 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 # Install header files
-install(FILES include/job.h include/DispatcherPlugin.h
+install(FILES include/job.h include/DispatcherPlugin.h include/host_extensions.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/SimATLAS)
 
 # Install the executable

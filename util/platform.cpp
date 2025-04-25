@@ -1,6 +1,7 @@
 #include "platform.h"
 #include "logger.h"  // Add this line
 
+
 sg4::NetZone* Platform::create_platform(const std::string& platform_name)
 {
     return sg4::create_full_zone(platform_name);
@@ -118,6 +119,7 @@ void Platform::initialize_simgrid_plugins()
 {
     // Plugin initialization placeholder
     // sg_host_energy_plugin_init();
+    simatlas_host_extension_init();
     LOG_INFO("SimGrid plugins initialized (if any)");
 }
 

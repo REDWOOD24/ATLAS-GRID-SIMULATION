@@ -151,7 +151,7 @@ void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
   const auto* e = sg4::Engine::get_instance();
   auto fs = simgrid::fsmod::FileSystem::get_file_systems_by_netzone(
     e->netzone_by_name_or_null(j->comp_site)).at(j->comp_site + j->comp_host + j->disk + "filesystem");
-
+  // sg4::this_actor::get_host()->extension<HostExtensions>()->registerJob(j);  
   Actions::read_file_async(fs, j, pending_activities, dispatcher);
   Actions::exec_task_multi_thread_async(j, pending_activities, saver, dispatcher);
   Actions::write_file_async(fs, j, pending_activities, dispatcher);

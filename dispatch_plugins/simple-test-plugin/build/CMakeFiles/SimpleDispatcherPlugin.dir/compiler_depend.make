@@ -897,7 +897,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/SimpleDispatcherPlugin.cpp.o: ../src/S
   /usr/include/spdlog/details/file_helper.h \
   /usr/include/spdlog/sinks/base_sink.h \
   /usr/include/spdlog/sinks/sink.h \
-  /usr/include/spdlog/formatter.h
+  /usr/include/spdlog/formatter.h \
+  /usr/local/include/SimATLAS/host_extensions.h
 
 CMakeFiles/SimpleDispatcherPlugin.dir/src/simple_dispatcher.cpp.o: ../src/simple_dispatcher.cpp \
   /usr/include/stdc-predef.h \
@@ -1793,7 +1794,9 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/simple_dispatcher.cpp.o: ../src/simple
   /usr/include/spdlog/details/file_helper.h \
   /usr/include/spdlog/sinks/base_sink.h \
   /usr/include/spdlog/sinks/sink.h \
-  /usr/include/spdlog/formatter.h
+  /usr/include/spdlog/formatter.h \
+  /usr/local/include/SimATLAS/host_extensions.h \
+  /usr/local/include/SimATLAS/job.h
 
 
 /usr/include/spdlog/details/circular_q.h:
@@ -2635,6 +2638,8 @@ CMakeFiles/SimpleDispatcherPlugin.dir/src/simple_dispatcher.cpp.o: ../src/simple
 /usr/include/boost/preprocessor/facilities/empty.hpp:
 
 /usr/include/boost/intrusive/detail/reverse_iterator.hpp:
+
+/usr/local/include/SimATLAS/host_extensions.h:
 
 /usr/include/x86_64-linux-gnu/bits/timex.h:
 
