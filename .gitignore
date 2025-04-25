@@ -8,3 +8,4 @@ output/
 data/
 logs/
 json/
+data/*.zip
