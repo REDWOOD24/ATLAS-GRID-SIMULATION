@@ -3,6 +3,7 @@ log*.txt
 *.log
 *.Zone.Identifier
 *.db
+*.csv
 output/
 data/
 logs/
