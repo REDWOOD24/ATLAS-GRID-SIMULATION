@@ -1,5 +1,7 @@
 build/
 log*.txt
+*.log
+*.Zone.Identifier
 output/
 data/
 logs/
