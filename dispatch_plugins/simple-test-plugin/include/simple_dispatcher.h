@@ -59,6 +59,7 @@ public:
 
   //Resource Management
   void setPlatform(sg4::NetZone* platform);
+  virtual sg4::NetZone* getPlatform();
 
   //Functions needed to specify hosts for jobs
   double calculateWeightedScore(Host* cpu, Job* j, std::string& best_disk_name);
@@ -76,6 +77,8 @@ private:
   bool                                           use_round_robin{false};
   std::vector<Site*>                            _sites{};
   std::unordered_map<std::string, Site*>        _sites_map{};
+  sg4::NetZone*                                 platform;
+
   const std::unordered_map<std::string, double>  weights =
       {
         {"speed", 1.0},

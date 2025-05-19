@@ -6,12 +6,12 @@
     ],
     "Sites_Connection_Information": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/data/site_conn_info.json",
     "Dispatcher_Plugin": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/dispatch_plugins/simple-test-plugin/build/libSimpleDispatcherPlugin.so",
-    "Output_DB": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/NET2_jobs_output_base.db",
-    "Input_Job_CSV": "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/NET2_jobs_jan.csv",
-    "Num_of_Jobs": 10,
+    "Output_DB": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/NET2_Amherst_jobs_output_phase2_29.db",
+    "Input_Job_CSV": "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/data/temp_inputs/NET2_Amherst_50_xyh9x5rx.csv",
+    "Num_of_Jobs": 50,
     "cpu_min_max": [
-        1,
-        2
+        5,
+        9
     ],
-    "cpu_speed_precision": 7
+    "cpu_speed_precision": 11
 }

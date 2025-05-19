@@ -2,9 +2,16 @@
 // #include "logger.h"
 
 
+sg4::NetZone* SIMPLE_DISPATCHER::getPlatform()
+{
+  return this->platform;
+}
+
+
 void SIMPLE_DISPATCHER::setPlatform(sg4::NetZone* platform)
 {
   std::priority_queue<Site*> site_queue;
+  this->platform = platform;
   auto all_sites = platform->get_children();
   for(const auto& site: all_sites)
     {
@@ -97,15 +104,15 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     }
 
     int candidatesExamined = 0;
-    const int maxCandidates = 1000;
+    const int maxCandidates = 10000;
 
     while (!cpu_queue.empty() && candidatesExamined < maxCandidates)
     {
         Host* current = cpu_queue.top();
         cpu_queue.pop();
         ++candidatesExamined;
-        LOG_DEBUG("Available Cores {}", sg4::Host::by_name(current->name)->extension<HostExtensions>()->get_cores_available());
-        LOG_DEBUG("JOB Cores needed {}", j->cores);
+        // LOG_DEBUG("Available Cores {}", sg4::Host::by_name(current->name)->extension<HostExtensions>()->get_cores_available());
+        // LOG_DEBUG("JOB Cores needed {}", j->cores);
         if (sg4::Host::by_name(current->name)->extension<HostExtensions>()->get_cores_available() < j->cores)
         {   
             LOG_DEBUG("Cores not suffficient for job {} on CPU {}", j->jobid, current->name);
@@ -193,12 +200,19 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
 Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
 {
   Host*  best_cpu    = nullptr;
+  Site*  site        = nullptr;
   
   LOG_DEBUG(" Waiting to assign job resources : {}", job->comp_site);
 //   std::string site_name = job->comp_site;
 //   auto site = findSiteByName(_sites, site_name);
-  auto site = _sites_map.at(job->comp_site);
+try {
+  site = _sites_map.at(job->comp_site);
   LOG_DEBUG(" Found the site {}", job->comp_site);
+}
+catch (const std::out_of_range& e) {
+  LOG_DEBUG("Computing Site is not found: {}", job->comp_site);
+}
+
   if (job == nullptr) {
     LOG_DEBUG("JOB pointer null");
        

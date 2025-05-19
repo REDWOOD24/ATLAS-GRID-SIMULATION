@@ -2,7 +2,7 @@
 #include "logger.h"  // Add this include for logging
 
 void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<sqliteSaver>& saver, std::unique_ptr<DispatcherPlugin>& dispatcher)
-{
+{   // @askFred
     auto host = sg4::this_actor::get_host();
     LOG_DEBUG("In exec_task_multi_thread_async on host: {}", host->get_name());
     sg4::ExecPtr exec_activity = sg4::Exec::init()
@@ -12,21 +12,35 @@ void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_act
     exec_activity->start();
     pending_activities.push(exec_activity);
 
-    exec_activity->on_this_completion_cb([j, &saver, &dispatcher](simgrid::s4u::Exec const& ex) {
+    exec_activity->on_this_completion_cb([j, &saver, &dispatcher, host](simgrid::s4u::Exec const& ex) {
         j->EXEC_time_taken += ex.get_finish_time() - ex.get_start_time();
         j->status = "finished";
         LOG_DEBUG("Finished executing job {} | EXEC_time_taken: {}", j->id, j->EXEC_time_taken);
 
         saver->updateJob(j);
+        
 
         if (j->status == "finished" &&
             j->files_read == j->input_files.size() &&
             j->files_written == j->output_files.size()) {
             LOG_DEBUG("All files read and written for job {}.", j->id);
+            LOG_DEBUG("Finished on host: {}", host->get_name());
+
             sg4::this_actor::get_host()->extension<HostExtensions>()->onJobFinish(j);
             // dispatcher->onJobEnd(j);
         }
-    });
+
+        //  if (j->status == "finished" ) {
+        //     // LOG_DEBUG("All files read and written for job {}.", j->id);
+        //     LOG_DEBUG("Finished on host: {}", host->get_name());
+
+        //     // sg4::this_actor::get_host()->extension<HostExtensions>()->onJobFinish(j);
+        //     host->extension<HostExtensions>()->onJobFinish(j);
+        //     // dispatcher->onJobEnd(j);
+        // }
+      
+}   
+    );
 }
 
 void Actions::read_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<DispatcherPlugin>& dispatcher)

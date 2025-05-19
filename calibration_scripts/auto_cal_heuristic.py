@@ -40,7 +40,7 @@ site_info_path = "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/data/site_info_
 command = "/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/build/atlas-grid-simulator -c /home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/config-files/config.json"
 
 # Range of CPU speed precision values to test
-cpu_speed_precision_range = [5, 6, 7, 8, 9, 10, 11]
+cpu_speed_precision_range = [8]
 
 # Initialize the best error values to infinity so that any valid result is lower.
 best_error_single_core = float('inf')
@@ -58,7 +58,7 @@ for site in sites:
                 if i + 1 + j <= 9:
                     # Prepare the configuration parameters
                     parameterValueDict = {}
-                    parameterValueDict["Num_of_Jobs"] = 100
+                    parameterValueDict["Num_of_Jobs"] = 20
                     parameterValueDict["cpu_min_max"] = [i, i + 1 + j]
                     CPUSpeed = [ random.randint(i, i + 1 + j)*10**speed_precision for _ in range(site_info[site]['CPUCount'])]
                     print(CPUSpeed)
@@ -67,8 +67,8 @@ for site in sites:
                     # Use a site-specific value if needed.
                     parameterValueDict["Sites"] = [f"{site}"]
                     # Note: Output_DB is now a formatted string, not a list.
-                    parameterValueDict["Output_DB"] = f"/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/NET2_jobs_output_jan_{i}_{i+1+j}_{speed_precision}.db"
-                    parameterValueDict["Input_Job_CSV"] = "/home/sairam/ATLASGRID/ATLAS-GRID-SIMULATION/data/NET2_jobs_jan.csv"
+                    parameterValueDict["Output_DB"] = f"/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/{site}_jobs_output_jan_{i}_{i+1+j}_{speed_precision}.db"
+                    parameterValueDict["Input_Job_CSV"] = f"/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/data/jan_10k_by_{site}.csv"
                     
                     # Update the configuration file
                     update_cfg(config_path, parameterValueDict)
@@ -80,8 +80,8 @@ for site in sites:
                     time.sleep(3)
                     
                     # Define the path to the simulator output file
-                    output_file = f"/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/NET2_jobs_output_jan_{i}_{i+1+j}_{speed_precision}.db"
-                    output_file_csv =f"/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/NET2_jobs_output_jan_{i}_{i+1+j}_{speed_precision}.csv"
+                    output_file = f"/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/{site}_jobs_output_jan_{i}_{i+1+j}_{speed_precision}.db"
+                    output_file_csv =f"/home/sairam/ATLASGRIDV2/ATLAS-GRID-SIMULATION/output/{site}_jobs_output_jan_{i}_{i+1+j}_{speed_precision}.csv"
                     # Attempt to read the output file once
                     try:
                         df_raw = pd.read_csv(output_file_csv)
@@ -104,7 +104,9 @@ for site in sites:
                         
                         # Process Multi-Core (8 cores) jobs
                         df_multi = df_raw[(df_raw['STATUS'] == "finished") & (df_raw['CORES'] == 8)]
+                        print(df_multi)
                         if not df_multi.empty:
+                            
                             # Error per core is computed as the difference divided by 8
                             df_multi['error'] = (df_multi['CPU_CONSUMPTION_TIME'] - df_multi['EXECUTION_TIME']) / 8
                             df_multi['absolute_error'] = df_multi['error'].abs()

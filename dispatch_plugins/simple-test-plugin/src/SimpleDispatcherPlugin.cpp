@@ -7,7 +7,7 @@ class SimpleDispatcherPlugin : public DispatcherPlugin {
 public:
     SimpleDispatcherPlugin();
     virtual Job* assignJob(Job* job) final override;
-
+    virtual sg4::NetZone* getPlatform();
     virtual void getResourceInformation(simgrid::s4u::NetZone* platform) final override;
     virtual void onJobEnd(Job* job) final override;
     virtual void onSimulationEnd() final override;
@@ -23,11 +23,16 @@ SimpleDispatcherPlugin::SimpleDispatcherPlugin()
 
 void SimpleDispatcherPlugin::getResourceInformation(simgrid::s4u::NetZone* platform)
 {
-    // LOG_INFO("Inside the Resource information");
+    LOG_INFO("Inside the Resource information");
     
     sd->setPlatform(platform);
     
-    // LOG_INFO("Finished getting the Resource information");
+    LOG_INFO("Finished getting the Resource information");
+}
+
+sg4::NetZone* SimpleDispatcherPlugin::getPlatform()
+{
+    return sd->getPlatform();
 }
 
 Job* SimpleDispatcherPlugin::assignJob(Job* job)

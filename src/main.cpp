@@ -82,6 +82,7 @@ int main(int argc, char** argv)
     std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();
     executor->set_output(outputFile);
     executor->set_dispatcher(dispatcherPath, platform); 
+  
     executor->start_receivers();
 
     // Create jobs

@@ -15,6 +15,8 @@ public:
     // Pure virtual function must be implemented by derived classes to assign Jobs
     virtual Job* assignJob(Job* job) = 0;
 
+    //
+    virtual  simgrid::s4u::NetZone* getPlatform() = 0;
     // Pure virtual function must be implemented by derived classes to assign Resources
     virtual void getResourceInformation(simgrid::s4u::NetZone* platform) = 0;
 

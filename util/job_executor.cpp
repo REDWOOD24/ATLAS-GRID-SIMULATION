@@ -22,6 +22,8 @@ void printNetZone(const simgrid::s4u::NetZone* zone, int indent = 0) {
 
 std::unique_ptr<DispatcherPlugin> JOB_EXECUTOR::dispatcher;
 std::unique_ptr<sqliteSaver> JOB_EXECUTOR::saver = std::make_unique<sqliteSaver>();
+// std::vector<Job*> JOB_EXECUTOR::pending_jobs;
+// sg4::ActivitySet JOB_EXECUTOR::pending_activities;
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform)
 {
@@ -69,13 +71,14 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
 
     LOG_INFO("Server started. Initial jobs count: {}", jobs.size());
 
+
     // Transfer all jobs from the queue into a vector for central polling.
     std::vector<Job*> pending_jobs;
     while (!jobs.empty()) {
         Job* job = jobs.top();
         jobs.pop();
         saver->saveJob(job);
-        LOG_INFO("Job saved to DB: {}", job->id);
+        // LOG_INFO("Job saved to DB: {}", job->id);
 
         // Attempt a one‑time assignment.
         Job* result = dispatcher->assignJob(job);
@@ -91,11 +94,20 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
             LOG_DEBUG("Job {} dispatched immediately to host {}", job->id, job->comp_host);
         } else {
             // Set status and add to pending list.
+            // 
             job->status = "pending";
             pending_jobs.push_back(job);
         }
     }
+    // if (!JOB_EXECUTOR::pending_jobs.empty()) {
+    //     LOG_INFO("No Cores available. Suspending server...");
+    //     job_activities.wait_all();
+    //     JOB_EXECUTOR::suspend_server();
+    //     LOG_INFO("Server suspended. Pending jobs count: {}", JOB_EXECUTOR::pending_jobs.size());
+    // }
+    // suspend the server
 
+    std::cout << "Simulator time Before retrying pending jobs" << sg4::Engine::get_clock() << std::endl;
     // Use a retry counter map for each pending job.
     std::unordered_map<Job*, int> retry_counts;
     for (Job* job : pending_jobs) {
@@ -126,9 +138,17 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
             }
         }
         // Yield control so that other asynchronous events (e.g. receivers freeing resources) can occur.
+        // std::cout << "Simulator time Before Sleep" << sg4::Engine::get_clock() << std::endl;
         sg4::this_actor::sleep_for(RETRY_INTERVAL);
+        // if (!JOB_EXECUTOR::pending_activities.empty()) {
+        //     //  LOG_INFO("Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
+        //      JOB_EXECUTOR::pending_activities.wait_any();
+        //     // LOG_INFO("Updated Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
+        // }
+       
+        // std::cout << "Simulator time After Sleep" << sg4::Engine::get_clock() << std::endl;
     }
-
+    
     // Shutdown: send kill messages to all hosts (except the job server).
     for (const auto& host : e->get_all_hosts()) {
         if (host->get_name() == "JOB-SERVER_cpu-0") continue;
@@ -155,13 +175,15 @@ void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
   Actions::read_file_async(fs, j, pending_activities, dispatcher);
   Actions::exec_task_multi_thread_async(j, pending_activities, saver, dispatcher);
   Actions::write_file_async(fs, j, pending_activities, dispatcher);
+
+  // pending_activities.wait_all();
+  
 }
 
 void JOB_EXECUTOR::receiver(const std::string& MQ_name)
 {
   sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(MQ_name);
   sg4::ActivitySet pending_activities;
-
   while (true) {
     sg4::MessPtr mess = mqueue->get_async();
     mess->wait();

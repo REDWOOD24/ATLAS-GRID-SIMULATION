@@ -21,6 +21,8 @@ public:
     static void set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform);
     static void update_disk_content(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, const std::unordered_map<std::string, size_t>&  input_files, Job* j);
     static void start_server(JobQueue jobs);
+    // static void suspend_server();
+    // static bool is_suspended();
     static void execute_job(Job* j, sg4::ActivitySet& pending_activities);
     void        start_job_execution(JobQueue jobs);
     static void receiver(const std::string& MQ_name);
@@ -33,8 +35,12 @@ public:
 private:
     static   std::unique_ptr<DispatcherPlugin>    dispatcher;
     static   std::unique_ptr<sqliteSaver>         saver;
-    static   constexpr int MAX_RETRIES            = 1000;
+    static   constexpr int MAX_RETRIES            = 5000;
     static   constexpr int RETRY_INTERVAL         = 1000000000; //seconds
+    // static   constexpr bool suspended             = false;
+    // static   std::vector<Job*> pending_jobs;
+    // static   sg4::ActivitySet pending_activities;
+
 };
 
 #endif //JOB_EXECUTOR_H

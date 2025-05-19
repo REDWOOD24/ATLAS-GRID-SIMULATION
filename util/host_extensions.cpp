@@ -17,7 +17,7 @@ void HostExtensions::registerJob(Job* j)
     // job_ids.insert(j->id);
     // cores_used        += j->cores;
     // cores_available   -= j->cores;
-       //@AskFred
+    //    //@AskFred
     simgrid::kernel::actor::simcall_answered([this, j]
     { 
         job_ids.insert(j->id);
@@ -32,12 +32,14 @@ void HostExtensions::onJobFinish(Job* j)
 {
     // if(job_ids.find(j->id) != job_ids.end())
     // {
-    //     job_ids.erase(j->id);
-    //     cores_used        -= j->cores;
-    //     cores_available   += j->cores;
+       
     // }
+    // job_ids.erase(j->id);
+    // cores_used        -= j->cores;
+    // cores_available   += j->cores;
     
-    //@AskFred
+    // @AskFred
+    // remove this 
     simgrid::kernel::actor::simcall_answered([this, j]
     {   
         job_ids.erase(j->id);
@@ -45,7 +47,15 @@ void HostExtensions::onJobFinish(Job* j)
         cores_available   += j->cores;
     });
     LOG_DEBUG("Job {} finished on host {}. Cores used: {}. Cores available: {}.", j->id, name, cores_used, cores_available);
+    // auto all_sites = dispatcher->getPlatform()->get_children();
+    // for(const auto& site: all_sites)
+    // {
+    //     if(site->get_name() == std::string("JOB-SERVER")){
+    //         LOG_DEBUG( "Job server needs to be resumed ");
+            
+    //     }
 
+    // }
 }
 
 void simatlas_host_extension_init()
