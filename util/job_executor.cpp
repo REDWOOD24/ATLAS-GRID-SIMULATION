@@ -23,7 +23,7 @@ void printNetZone(const simgrid::s4u::NetZone* zone, int indent = 0) {
 std::unique_ptr<DispatcherPlugin> JOB_EXECUTOR::dispatcher;
 std::unique_ptr<sqliteSaver> JOB_EXECUTOR::saver = std::make_unique<sqliteSaver>();
 // std::vector<Job*> JOB_EXECUTOR::pending_jobs;
-// sg4::ActivitySet JOB_EXECUTOR::pending_activities;
+sg4::ActivitySet JOB_EXECUTOR::pending_activities;
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform)
 {
@@ -130,22 +130,26 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
                 job_activities.push(mqueue->put_async(job));
                 LOG_DEBUG("Job {} dispatched after {} retries to host {}", job->id, retry_counts[job], job->comp_host);
                 it = pending_jobs.erase(it);
-            } else if (retry_counts[job] > MAX_RETRIES) {
-                LOG_DEBUG("Job {} exhausted max retries. Removing from pending jobs.", job->id);
-                it = pending_jobs.erase(it);
-            } else {
+            }
+            //  else if (retry_counts[job] > MAX_RETRIES) {
+            //     LOG_DEBUG("Job {} exhausted max retries. Removing from pending jobs.", job->id);
+            //     it = pending_jobs.erase(it);
+            // } 
+            else {
                 ++it;
             }
         }
         // Yield control so that other asynchronous events (e.g. receivers freeing resources) can occur.
         // std::cout << "Simulator time Before Sleep" << sg4::Engine::get_clock() << std::endl;
-        sg4::this_actor::sleep_for(RETRY_INTERVAL);
-        // if (!JOB_EXECUTOR::pending_activities.empty()) {
-        //     //  LOG_INFO("Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
-        //      JOB_EXECUTOR::pending_activities.wait_any();
-        //     // LOG_INFO("Updated Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
-        // }
-       
+        // sg4::this_actor::sleep_for(RETRY_INTERVAL);
+        if (!JOB_EXECUTOR::pending_activities.empty()) {
+              LOG_INFO("Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
+              
+              sg4::ActivityPtr activityPtr =  JOB_EXECUTOR::pending_activities.wait_any();
+              LOG_INFO("Updated Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
+              LOG_INFO("Activity completed: {}", activityPtr->get_name());
+        }
+        LOG_INFO("Pending jobs count: {}", pending_jobs.size());
         // std::cout << "Simulator time After Sleep" << sg4::Engine::get_clock() << std::endl;
     }
     
@@ -158,6 +162,12 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
         job_activities.push(mqueue->put_async(killJob));
     }
     LOG_INFO("Waiting for all job activities to complete...");
+    // while(){
+
+
+    // }
+    // JOB_EXECUTOR::pending_activities.wait_all();
+    // LOG_INFO("All pending job activities completed. Exiting server.");
     job_activities.wait_all();
     LOG_INFO("All job activities completed.");
 }
@@ -183,7 +193,7 @@ void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
 void JOB_EXECUTOR::receiver(const std::string& MQ_name)
 {
   sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(MQ_name);
-  sg4::ActivitySet pending_activities;
+  // sg4::ActivitySet pending_activities;
   while (true) {
     sg4::MessPtr mess = mqueue->get_async();
     mess->wait();
@@ -191,12 +201,12 @@ void JOB_EXECUTOR::receiver(const std::string& MQ_name)
 
     if (job->id == "kill") {
       delete job;
-      pending_activities.wait_all();
+      JOB_EXECUTOR::pending_activities.wait_all();
       break;
     }
 
     LOG_DEBUG("Received job on queue {}: {}", MQ_name, job->id);
-    execute_job(job, pending_activities);
+    execute_job(job, JOB_EXECUTOR::pending_activities);
   }
 }
 

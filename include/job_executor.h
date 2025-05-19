@@ -35,11 +35,11 @@ public:
 private:
     static   std::unique_ptr<DispatcherPlugin>    dispatcher;
     static   std::unique_ptr<sqliteSaver>         saver;
-    static   constexpr int MAX_RETRIES            = 5000;
+    static   constexpr int MAX_RETRIES            = 300;
     static   constexpr int RETRY_INTERVAL         = 1000000000; //seconds
     // static   constexpr bool suspended             = false;
     // static   std::vector<Job*> pending_jobs;
-    // static   sg4::ActivitySet pending_activities;
+    static   sg4::ActivitySet pending_activities;
 
 };
 
