@@ -1,5 +1,5 @@
 # Set up the project.
-cmake_minimum_required( VERSION 3.2 )
+cmake_minimum_required(VERSION 3.12)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project( "SimpleDispatcherPlugin" )
@@ -23,6 +23,6 @@ find_package(SimATLAS REQUIRED)
 find_package(spdlog REQUIRED)
 
 #Link libraries and Include Directories
-target_link_libraries ( SimpleDispatcherPlugin PUBLIC ${SimGrid_LIBRARY} ${Boost_LIBRARIES} ${FSMOD_LIBRARY} spdlog::spdlog)
+target_link_libraries ( SimpleDispatcherPlugin PUBLIC ${SimGrid_LIBRARY} ${Boost_LIBRARIES} ${FSMOD_LIBRARY} spdlog::spdlog SimATLAS::SimATLAS)
 target_include_directories( SimpleDispatcherPlugin PUBLIC ${SimGrid_INCLUDE_DIR} ${SimATLAS_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${FSMOD_INCLUDE_DIR})
 

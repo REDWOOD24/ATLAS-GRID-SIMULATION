@@ -1,20 +1,19 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.12)
 
 message(STATUS "Cmake version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
-project(SimATLAS VERSION 1.0)
+project(SimATLAS VERSION 1.1)
 
 # Disable annoying warnings
 add_definitions("-DBOOST_ALLOW_DEPRECATED_HEADERS")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 
-# Find SimGrid, Boost, and HDF5
-
-find_package(Boost REQUIRED)
-find_package(SimGrid REQUIRED)
-find_package (SQLite3 REQUIRED)
-find_package(FSMod REQUIRED)
-find_package(spdlog REQUIRED)
+# Find required packages
+find_package(Boost     REQUIRED)
+find_package(SimGrid   REQUIRED)
+find_package(SQLite3   REQUIRED)
+find_package(FSMod     REQUIRED)
+find_package(spdlog    REQUIRED)
 
 # Add json subdir
 add_subdirectory(json)
@@ -30,10 +29,11 @@ file(GLOB_RECURSE SOURCE_FILES
         "util/*.cpp"
 )
 
+# Build the library
+add_library(SimATLAS ${SOURCE_FILES})
+
 # Generating the executable
-add_executable(atlas-grid-simulator ${SOURCE_FILES}
-        include/job_executor.h
-        util/job_executor.cpp)
+add_executable(atlas-grid-simulator ${SOURCE_FILES})
 
 target_link_libraries(atlas-grid-simulator
         ${SimGrid_LIBRARY}
@@ -50,23 +50,37 @@ target_link_libraries(atlas-grid-simulator
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
+
+# Install Library
+install(TARGETS SimATLAS
+    EXPORT SimATLASTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
 # Install header files
 install(FILES include/job.h include/DispatcherPlugin.h include/host_extensions.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/SimATLAS)
 
 # Install the executable
-#install(TARGETS atlas-grid-simulator
-#        DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS atlas-grid-simulator
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+# Export targets to a file
+install(EXPORT SimATLASTargets
+	NAMESPACE SimATLAS::
+    	FILE SimATLASTargets.cmake
+    	DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/SimATLAS
+)
 
 # Create a package configuration file
 configure_package_config_file(
         "${CMAKE_SOURCE_DIR}/cmake/SimATLASConfig.cmake.in"
         "${CMAKE_BINARY_DIR}/SimATLASConfig.cmake"
-        INSTALL_DESTINATION "${CMAKE_INSTALL_DATADIR}/SimATLAS"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/cmake/SimATLAS"
 )
 
 install(FILES "${CMAKE_BINARY_DIR}/SimATLASConfig.cmake"
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/SimATLAS)
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/SimATLAS)
 
 # Generate a version file
 write_basic_package_version_file(
@@ -76,6 +90,5 @@ write_basic_package_version_file(
 )
 
 install(FILES "${CMAKE_BINARY_DIR}/SimATLASConfigVersion.cmake"
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/SimATLAS)
-
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/SimATLAS)
 
