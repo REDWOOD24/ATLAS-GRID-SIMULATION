@@ -67,7 +67,7 @@ void JOB_EXECUTOR::start_job_execution(JobQueue jobs)
 void JOB_EXECUTOR::start_server(JobQueue jobs)
 {
     const auto* e = sg4::Engine::get_instance();
-    sg4::ActivitySet job_activities;
+    //sg4::ActivitySet job_activities;
 
     LOG_INFO("Server started. Initial jobs count: {}", jobs.size());
 
@@ -90,24 +90,15 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
                           .at(job->comp_site + job->comp_host + job->disk + "filesystem");
             update_disk_content(fs, job->input_files, job);
             sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host + "-MQ");
-            job_activities.push(mqueue->put_async(job));
+            pending_activities.push(mqueue->put_async(job)->set_name("Comm_Job_" + job->id + "_on_" + job->comp_host));
             LOG_DEBUG("Job {} dispatched immediately to host {}", job->id, job->comp_host);
         } else {
             // Set status and add to pending list.
-            // 
-            job->status = "pending";
-            pending_jobs.push_back(job);
+            if(result->status != "failed"){job->status = "pending"; pending_jobs.push_back(job);}
         }
     }
-    // if (!JOB_EXECUTOR::pending_jobs.empty()) {
-    //     LOG_INFO("No Cores available. Suspending server...");
-    //     job_activities.wait_all();
-    //     JOB_EXECUTOR::suspend_server();
-    //     LOG_INFO("Server suspended. Pending jobs count: {}", JOB_EXECUTOR::pending_jobs.size());
-    // }
-    // suspend the server
 
-    std::cout << "Simulator time Before retrying pending jobs" << sg4::Engine::get_clock() << std::endl;
+    //std::cout << "Simulator time Before retrying pending jobs: " << sg4::Engine::get_clock() << std::endl;
     // Use a retry counter map for each pending job.
     std::unordered_map<Job*, int> retry_counts;
     for (Job* job : pending_jobs) {
@@ -127,49 +118,36 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
                               .at(job->comp_site + job->comp_host + job->disk + "filesystem");
                 update_disk_content(fs, job->input_files, job);
                 sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(job->comp_host + "-MQ");
-                job_activities.push(mqueue->put_async(job));
+                pending_activities.push(mqueue->put_async(job)->set_name("Comm_Job_" + job->id + "_on_" + job->comp_host));
                 LOG_DEBUG("Job {} dispatched after {} retries to host {}", job->id, retry_counts[job], job->comp_host);
                 it = pending_jobs.erase(it);
             }
-            //  else if (retry_counts[job] > MAX_RETRIES) {
-            //     LOG_DEBUG("Job {} exhausted max retries. Removing from pending jobs.", job->id);
-            //     it = pending_jobs.erase(it);
-            // } 
+
             else {
                 ++it;
             }
         }
-        // Yield control so that other asynchronous events (e.g. receivers freeing resources) can occur.
-        // std::cout << "Simulator time Before Sleep" << sg4::Engine::get_clock() << std::endl;
-        // sg4::this_actor::sleep_for(RETRY_INTERVAL);
-        if (!JOB_EXECUTOR::pending_activities.empty()) {
+        if (!pending_activities.empty()) {
               LOG_INFO("Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
-              
-              sg4::ActivityPtr activityPtr =  JOB_EXECUTOR::pending_activities.wait_any();
+              sg4::ActivityPtr activityPtr =  nullptr;
+              while (!boost:: dynamic_pointer_cast<sg4::Exec>(activityPtr))
+                activityPtr = pending_activities.wait_any();
               LOG_INFO("Updated Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
               LOG_INFO("Activity completed: {}", activityPtr->get_name());
         }
         LOG_INFO("Pending jobs count: {}", pending_jobs.size());
-        // std::cout << "Simulator time After Sleep" << sg4::Engine::get_clock() << std::endl;
     }
-    
-    // Shutdown: send kill messages to all hosts (except the job server).
-    for (const auto& host : e->get_all_hosts()) {
-        if (host->get_name() == "JOB-SERVER_cpu-0") continue;
-        Job* killJob = new Job;
-        killJob->id = "kill";
-        sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(host->get_name() + "-MQ");
-        job_activities.push(mqueue->put_async(killJob));
-    }
-    LOG_INFO("Waiting for all job activities to complete...");
-    // while(){
 
 
-    // }
-    // JOB_EXECUTOR::pending_activities.wait_all();
-    // LOG_INFO("All pending job activities completed. Exiting server.");
-    job_activities.wait_all();
-    LOG_INFO("All job activities completed.");
+    while (!pending_activities.empty())
+      {
+      std::cout << pending_activities.size() << std::endl;
+      std::cout << pending_activities.wait_any()->get_name() << std::endl;
+      std::cout << pending_activities.size() << std::endl;
+      }
+  LOG_DEBUG("Finished All Pending Activities");
+  //pending_activities.wait_all();
+
 }
 
 void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
@@ -185,37 +163,30 @@ void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
   Actions::read_file_async(fs, j, pending_activities, dispatcher);
   Actions::exec_task_multi_thread_async(j, pending_activities, saver, dispatcher);
   Actions::write_file_async(fs, j, pending_activities, dispatcher);
+  LOG_DEBUG("Activities added for job: {}", j->job_name);
 
-  // pending_activities.wait_all();
-  
 }
 
 void JOB_EXECUTOR::receiver(const std::string& MQ_name)
 {
+  sg4::Actor::self()->daemonize();
   sg4::MessageQueue* mqueue = sg4::MessageQueue::by_name(MQ_name);
-  // sg4::ActivitySet pending_activities;
-  while (true) {
+
+  while (sg4::this_actor::get_host()->is_on())
+    {
     sg4::MessPtr mess = mqueue->get_async();
     mess->wait();
     auto* job = static_cast<Job*>(mess->get_payload());
-
-    if (job->id == "kill") {
-      delete job;
-      JOB_EXECUTOR::pending_activities.wait_all();
-      break;
-    }
-
     LOG_DEBUG("Received job on queue {}: {}", MQ_name, job->id);
     execute_job(job, JOB_EXECUTOR::pending_activities);
-  }
+    }
 }
 
 void JOB_EXECUTOR::start_receivers()
 {
-  auto start = std::chrono::high_resolution_clock::now();
-
-  const auto* eng = sg4::Engine::get_instance();
-  auto hosts = eng->get_all_hosts();
+  auto         start  = std::chrono::high_resolution_clock::now();
+  const auto*  eng    = sg4::Engine::get_instance();
+  auto         hosts  = eng->get_all_hosts();
 
   auto host_fetch_time = std::chrono::high_resolution_clock::now();
   LOG_INFO("Time to fetch hosts: {} ms",

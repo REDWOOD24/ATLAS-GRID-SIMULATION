@@ -8,7 +8,7 @@ void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_act
     sg4::ExecPtr exec_activity = sg4::Exec::init()
         ->set_flops_amount(j->flops)
         ->set_host(host)
-        ->set_name("Exec_Job_" + j->id + "_on_" + host->get_name());
+        ->set_name("Exec_Job_" + j->job_name + "_on_" + host->get_name());
 
     exec_activity->start();
     pending_activities.push(exec_activity);
@@ -36,7 +36,7 @@ void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_act
             LOG_DEBUG("Finished on host: {}", host->get_name());
 
             // sg4::this_actor::get_host()->extension<HostExtensions>()->onJobFinish(j);
-            // host->extension<HostExtensions>()->onJobFinish(j);
+             host->extension<HostExtensions>()->onJobFinish(j);
             // dispatcher->onJobEnd(j);
         }
       
@@ -54,7 +54,7 @@ void Actions::read_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>&
         file->seek(0);
 
         auto read_activity = file->read_async(filesize);
-        read_activity->set_name("Read_" + filename + "_for_Job_" +j->id); 
+        read_activity->set_name("Read_" + filename + "_for_Job_" +j->job_name);
         
         
         pending_activities.push(read_activity);
@@ -89,13 +89,13 @@ void Actions::write_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>
 
         auto file = fs->open(filename, "w");
         auto write_activity = file->write_async(filesize);
-        write_activity->set_name("Write_" + filename + "_for_Job_" + j->id);
+        write_activity->set_name("Write_" + filename + "_for_Job_" + j->job_name);
         pending_activities.push(write_activity);
 
         LOG_DEBUG("Writing file asynchronously: {} ({} kB)", filename, output_file.second);
 
         write_activity->on_this_completion_cb([file, j, &dispatcher, host](simgrid::s4u::Io const& io) {
-            file->close();
+	  file->close();
             j->IO_time_taken += io.get_finish_time() - io.get_start_time();
             j->IO_size_performed += io.get_performed_ioops();
             j->files_written += 1;
@@ -107,7 +107,7 @@ void Actions::write_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>
                 LOG_DEBUG("Files write equal to write file size",(j->files_written == j->output_files.size()));
             //     j->files_written == j->output_files.size()
                 // sg4::this_actor::get_host()->extension<HostExtensions>()->onJobFinish(j);
-                host->extension<HostExtensions>()->onJobFinish(j);
+                //host->extension<HostExtensions>()->onJobFinish(j);
                 // dispatcher->onJobEnd(j);
             }
         });
