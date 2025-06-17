@@ -139,14 +139,15 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
     }
 
 
-    while (!pending_activities.empty())
+    /*while (!pending_activities.empty())
       {
       std::cout << pending_activities.size() << std::endl;
       std::cout << pending_activities.wait_any()->get_name() << std::endl;
       std::cout << pending_activities.size() << std::endl;
-      }
+      }*/
+
+  pending_activities.wait_all();
   LOG_DEBUG("Finished All Pending Activities");
-  //pending_activities.wait_all();
 
 }
 
