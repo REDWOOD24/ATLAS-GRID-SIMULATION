@@ -1,7 +1,7 @@
 #include "actions.h"
 #include "logger.h"  // Add this include for logging
 
-void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<sqliteSaver>& saver, std::unique_ptr<DispatcherPlugin>& dispatcher)
+void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_activities, sg4::ActivitySet& exec_activities, std::unique_ptr<sqliteSaver>& saver, std::unique_ptr<DispatcherPlugin>& dispatcher)
 {   // @askFred
     auto host = sg4::this_actor::get_host();
     LOG_DEBUG("In exec_task_multi_thread_async on host: {}", host->get_name());
@@ -12,6 +12,7 @@ void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_act
 
     exec_activity->start();
     pending_activities.push(exec_activity);
+    exec_activities.push(exec_activity);
 
     exec_activity->on_this_completion_cb([j, &saver, &dispatcher, host](simgrid::s4u::Exec const& ex) {
         j->EXEC_time_taken += ex.get_finish_time() - ex.get_start_time();

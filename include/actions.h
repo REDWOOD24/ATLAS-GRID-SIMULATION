@@ -22,7 +22,7 @@ public:
      Actions() = default;
     ~Actions() = default;
 
-    static void  exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<sqliteSaver>& saver, std::unique_ptr<DispatcherPlugin>& dispatcher);
+    static void  exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_activities, sg4::ActivitySet& exec_activities, std::unique_ptr<sqliteSaver>& saver, std::unique_ptr<DispatcherPlugin>& dispatcher);
     static void  read_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<DispatcherPlugin>& dispatcher);
     static void  write_file_async(const std::shared_ptr<simgrid::fsmod::FileSystem>& fs, Job* j, sg4::ActivitySet& pending_activities, std::unique_ptr<DispatcherPlugin>& dispatcher);
 

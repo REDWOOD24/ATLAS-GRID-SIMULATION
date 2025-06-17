@@ -24,6 +24,8 @@ std::unique_ptr<DispatcherPlugin> JOB_EXECUTOR::dispatcher;
 std::unique_ptr<sqliteSaver> JOB_EXECUTOR::saver = std::make_unique<sqliteSaver>();
 // std::vector<Job*> JOB_EXECUTOR::pending_jobs;
 sg4::ActivitySet JOB_EXECUTOR::pending_activities;
+sg4::ActivitySet JOB_EXECUTOR::exec_activities;
+
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform)
 {
@@ -139,15 +141,10 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
                 ++it;
             }
         }
-        // Yield control so that other asynchronous events (e.g. receivers freeing resources) can occur.
-        // std::cout << "Simulator time Before Sleep" << sg4::Engine::get_clock() << std::endl;
-        // sg4::this_actor::sleep_for(RETRY_INTERVAL);
-        if (!JOB_EXECUTOR::pending_activities.empty()) {
-              LOG_INFO("Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
-              
-              sg4::ActivityPtr activityPtr =  JOB_EXECUTOR::pending_activities.wait_any();
-              LOG_INFO("Updated Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
-              LOG_INFO("Activity completed: {}", activityPtr->get_name());
+        if (!exec_activities.empty()) {
+          auto activityPtr = exec_activities.wait_any();
+          LOG_INFO("Updated Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
+          LOG_INFO("Activity completed: {}", activityPtr->get_name());
         }
         LOG_INFO("Pending jobs count: {}", pending_jobs.size());
         // std::cout << "Simulator time After Sleep" << sg4::Engine::get_clock() << std::endl;
@@ -172,7 +169,7 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
     LOG_INFO("All job activities completed.");
 }
 
-void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
+void JOB_EXECUTOR::execute_job(Job* j)
 {
   LOG_DEBUG("Executing job: {}", j->id);
   j->status = "running";
@@ -183,7 +180,7 @@ void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
     e->netzone_by_name_or_null(j->comp_site)).at(j->comp_site + j->comp_host + j->disk + "filesystem");
   // sg4::this_actor::get_host()->extension<HostExtensions>()->registerJob(j);  
   Actions::read_file_async(fs, j, pending_activities, dispatcher);
-  Actions::exec_task_multi_thread_async(j, pending_activities, saver, dispatcher);
+  Actions::exec_task_multi_thread_async(j, pending_activities, exec_activities, saver, dispatcher);
   Actions::write_file_async(fs, j, pending_activities, dispatcher);
 
   // pending_activities.wait_all();
@@ -206,8 +203,8 @@ void JOB_EXECUTOR::receiver(const std::string& MQ_name)
     }
 
     LOG_DEBUG("Received job on queue {}: {}", MQ_name, job->id);
-    execute_job(job, JOB_EXECUTOR::pending_activities);
-  }
+    execute_job(job);
+    }
 }
 
 void JOB_EXECUTOR::start_receivers()
