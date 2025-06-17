@@ -24,6 +24,8 @@ std::unique_ptr<DispatcherPlugin> JOB_EXECUTOR::dispatcher;
 std::unique_ptr<sqliteSaver> JOB_EXECUTOR::saver = std::make_unique<sqliteSaver>();
 // std::vector<Job*> JOB_EXECUTOR::pending_jobs;
 sg4::ActivitySet JOB_EXECUTOR::pending_activities;
+sg4::ActivitySet JOB_EXECUTOR::exec_activities;
+
 
 void JOB_EXECUTOR::set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform)
 {
@@ -127,13 +129,10 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
                 ++it;
             }
         }
-        if (!pending_activities.empty()) {
-              LOG_INFO("Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
-              sg4::ActivityPtr activityPtr =  nullptr;
-              while (!boost:: dynamic_pointer_cast<sg4::Exec>(activityPtr))
-                activityPtr = pending_activities.wait_any();
-              LOG_INFO("Updated Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
-              LOG_INFO("Activity completed: {}", activityPtr->get_name());
+        if (!exec_activities.empty()) {
+          auto activityPtr = exec_activities.wait_any();
+          LOG_INFO("Updated Pending Activities count: {}", JOB_EXECUTOR::pending_activities.size());
+          LOG_INFO("Activity completed: {}", activityPtr->get_name());
         }
         LOG_INFO("Pending jobs count: {}", pending_jobs.size());
     }
@@ -151,7 +150,7 @@ void JOB_EXECUTOR::start_server(JobQueue jobs)
 
 }
 
-void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
+void JOB_EXECUTOR::execute_job(Job* j)
 {
   LOG_DEBUG("Executing job: {}", j->id);
   j->status = "running";
@@ -162,7 +161,7 @@ void JOB_EXECUTOR::execute_job(Job* j, sg4::ActivitySet& pending_activities)
     e->netzone_by_name_or_null(j->comp_site)).at(j->comp_site + j->comp_host + j->disk + "filesystem");
   // sg4::this_actor::get_host()->extension<HostExtensions>()->registerJob(j);  
   Actions::read_file_async(fs, j, pending_activities, dispatcher);
-  Actions::exec_task_multi_thread_async(j, pending_activities, saver, dispatcher);
+  Actions::exec_task_multi_thread_async(j, pending_activities, exec_activities, saver, dispatcher);
   Actions::write_file_async(fs, j, pending_activities, dispatcher);
   LOG_DEBUG("Activities added for job: {}", j->job_name);
 
@@ -179,7 +178,7 @@ void JOB_EXECUTOR::receiver(const std::string& MQ_name)
     mess->wait();
     auto* job = static_cast<Job*>(mess->get_payload());
     LOG_DEBUG("Received job on queue {}: {}", MQ_name, job->id);
-    execute_job(job, JOB_EXECUTOR::pending_activities);
+    execute_job(job);
     }
 }
 

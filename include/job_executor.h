@@ -23,7 +23,7 @@ public:
     static void start_server(JobQueue jobs);
     // static void suspend_server();
     // static bool is_suspended();
-    static void execute_job(Job* j, sg4::ActivitySet& pending_activities);
+    static void execute_job(Job* j);
     void        start_job_execution(JobQueue jobs);
     static void receiver(const std::string& MQ_name);
     static void start_receivers();
@@ -40,6 +40,8 @@ private:
     // static   constexpr bool suspended             = false;
     // static   std::vector<Job*> pending_jobs;
     static   sg4::ActivitySet pending_activities;
+    static   sg4::ActivitySet exec_activities;
+
 
 };
 
