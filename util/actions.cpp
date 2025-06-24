@@ -10,9 +10,12 @@ void Actions::exec_task_multi_thread_async(Job* j, sg4::ActivitySet& pending_act
         ->set_host(host)
         ->set_name("Exec_Job_" + j->job_name + "_on_" + host->get_name());
 
-    exec_activity->start();
-    pending_activities.push(exec_activity);
+    LOG_DEBUG("Exec activity added for Job {} ", j->job_name);
     exec_activities.push(exec_activity);
+    //pending_activities.push(exec_activity);
+
+    exec_activity->start();
+
 
     exec_activity->on_this_completion_cb([j, &saver, &dispatcher, host](simgrid::s4u::Exec const& ex) {
         j->EXEC_time_taken += ex.get_finish_time() - ex.get_start_time();
