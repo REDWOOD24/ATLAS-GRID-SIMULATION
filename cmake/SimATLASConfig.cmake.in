@@ -1,8 +1,5 @@
 @PACKAGE_INIT@
 
-# Import targets from the install location
-include("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATAROOTDIR@/cmake/SimATLAS/SimATLASTargets.cmake")
-
 # Define include directory
 set(SimATLAS_INCLUDE_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@/SimATLAS")
 
