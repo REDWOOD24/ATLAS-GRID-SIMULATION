@@ -8,14 +8,14 @@
 #include "sqliteSaver.h"
 #include "logger.h"
 #include "host_extensions.h"
+#include "job_stats.h"
 
 class JOB_EXECUTOR
 {
-
-
 public:
      JOB_EXECUTOR(){LOG_INFO("Initalizing Job Executor .....");};
     ~JOB_EXECUTOR()= default;
+
 
 
     static void set_dispatcher(const std::string& dispatcherPath, sg4::NetZone* platform);
@@ -30,8 +30,9 @@ public:
     static void set_output(const std::string& outputFile);
     static void saveJobs(JobQueue jobs);
     static void attach_callbacks();
-
-
+    static void on_job_finished(Job* j);
+    static std::string get_job_time_stamp(std::string jobCreationTime, double simgrid_clock);
+    static double get_job_queue_time(std::string jobCreationTime, std::string jobStartTime);
 private:
     static   std::unique_ptr<DispatcherPlugin>    dispatcher;
     static   std::unique_ptr<sqliteSaver>         saver;
@@ -41,8 +42,8 @@ private:
     // static   std::vector<Job*> pending_jobs;
     static   sg4::ActivitySet pending_activities;
     static   sg4::ActivitySet exec_activities;
-
-
+    static sg4::NetZone*      platform;
+    static std::unordered_map<std::string, JobSiteStats> site_statistics;
 };
 
 #endif //JOB_EXECUTOR_H

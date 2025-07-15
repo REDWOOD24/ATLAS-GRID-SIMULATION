@@ -69,4 +69,3 @@ JobQueue JOB_MANAGER::get_jobs(int num_of_jobs)
 JobQueue jobs = p->getJobs(num_of_jobs);
 return jobs;
 }
-

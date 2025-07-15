@@ -91,20 +91,31 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     Host* best_cpu = nullptr;
     std::string best_disk;
     double best_score = std::numeric_limits<double>::lowest();
+    int total_available_site_cores = 0;
+    int total_available_site_cpus = 0;
+
 
     // Create a priority queue from the CPU candidates.
     std::priority_queue<Host*> cpu_queue;
     for (auto* cpu : cpus)
     {
+        int cpu_cores_available = sg4::Host::by_name(cpu->name)->extension<HostExtensions>()->get_cores_available();
         if (!cpu) {
             LOG_DEBUG("Warning: Encountered a null CPU pointer.");
             continue;
+        }
+
+        total_available_site_cores += cpu_cores_available;
+        if (cpu_cores_available > 0) {
+            total_available_site_cpus++;
+        } else {
+            LOG_DEBUG("CPU {} has no available cores.", cpu->name);
         }
         cpu_queue.push(cpu);
     }
 
     int candidatesExamined = 0;
-    const int maxCandidates = 10000;
+    const int maxCandidates = 10;
 
     while (!cpu_queue.empty() && candidatesExamined < maxCandidates)
     {
@@ -167,11 +178,13 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         }
         j->disk = best_disk;
         j->comp_host = best_cpu->name;
+        best_cpu->available_site_cores = total_available_site_cores;
+        best_cpu->available_site_cpus = total_available_site_cpus;
     }
     else {
         LOG_DEBUG("Could not find a suitable CPU for job {}", j->jobid );
-    }
 
+    }
     return best_cpu;
 }
 
@@ -227,7 +240,10 @@ catch (const std::out_of_range& e) {
   if(best_cpu) {
     site->cpus_in_use++; 
     job->comp_site = site->name; 
-    job->status = "assigned"; 
+    job->status = "assigned";
+    job->available_site_cores = best_cpu->available_site_cores;
+    job->available_site_cpus = best_cpu->available_site_cpus; 
+    
     LOG_DEBUG("Job Status changed to assigned");
 }
   else{

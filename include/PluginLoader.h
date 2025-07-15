@@ -64,4 +64,3 @@ std::unique_ptr<Plugin> PluginLoader<Plugin>::load(const std::string & pString) 
     LOG_INFO("Created the dispatcher");
     return std::unique_ptr<Plugin>(factory);
 }
-

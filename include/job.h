@@ -52,6 +52,11 @@ struct Job {
     std::string            dispatcher_error_code{}; // jobDispatcher error code
     std::string            taskbuffer_error_code{}; // taskBuffer error code
     std::string            status{}; // taskBuffer error code
+    // Adding more fields to track the job events for ML surrogate model dataset preparation
+    long long              queue_time{}; // time spent in the queue
+    std::string            start_time{}; // time when the job started execution
+    std::string            end_time{}; // time when the job finished execution
+
    
     // flops field is calculated with an approximation in PANDA_DISPATCHER::allocateResourcesToJobs
     long long                 flops{};
@@ -70,8 +75,12 @@ struct Job {
     std::string                                 id{};
     std::unordered_map<std::string, size_t>     input_files{};//no_of_inp_files
     std::unordered_map<std::string, size_t>     output_files{};//no_of_out_files
-  
-  
+    // below fields are used for tracking the job execution
+    double available_site_cores{}; // number of available cores
+	  double available_site_cpus{}; // number of available CPUs
+	  double site_cpus{}; // total number of CPUs at the site
+	  int site_cores{}; // total number of cores at the site
+    std::string lastUpdatedTimeStamp; // site where the job is running
   };
 
 

@@ -64,4 +64,3 @@ void initialize_job_server(sg4::NetZone* platform,  std::unordered_map<std::stri
 };
 
 #endif
-

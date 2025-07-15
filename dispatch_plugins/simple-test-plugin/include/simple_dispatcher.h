@@ -34,7 +34,9 @@ struct Host {
   int                                            cores_available{};
   std::vector<Disk*>                             disks{};
   std::unordered_map<std::string, Disk*>         disks_map{};
-  std::unordered_set<long long>                jobs{};
+  std::unordered_set<long long>                  jobs{};
+  double available_site_cores{};
+	double available_site_cpus{}; 
   bool operator<(const Host& other) const {return cores_available <= other.cores_available;}
 };
 
@@ -45,6 +47,7 @@ struct Site {
   std::unordered_map<std::string, Host*>         cpus_map{};
   int                                            cpus_in_use{};
   long long                                      gflops{};
+  int                                            total_cores{};
   bool operator<(const Site& other) const {return priority <= other.priority;}
 };
 

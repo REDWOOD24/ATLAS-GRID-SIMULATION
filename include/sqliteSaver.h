@@ -8,6 +8,7 @@
 #include <vector>
 #include <sstream>
 #include "job.h"
+#include "job_stats.h"
 
 
 class sqliteSaver {
@@ -21,10 +22,12 @@ public:
     ~sqliteSaver() { sqlite3_close_v2(db); }
 
     void setFilePath(const std::string& file);
+    void createStateTable();
     void createJobsTable();
     void saveJob(Job* j);
+    void saveState(Job* j, const JobSiteStats& site_stats);
     void updateJob(Job* j);
-    void exportJobsToCSV();
+    void exportDBTableToCSV(std::string tableName);
 
 };
 

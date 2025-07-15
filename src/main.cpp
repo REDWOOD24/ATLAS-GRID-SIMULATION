@@ -44,14 +44,14 @@ int main(int argc, char** argv)
 
     auto j = json::parse(in);
 
-    const std::string gridName                = j["Grid_Name"];
-    const std::string siteInfoFile            = j["Sites_Information"];
-    const std::string siteConnInfoFile        = j["Sites_Connection_Information"];
-    const std::string dispatcherPath          = j["Dispatcher_Plugin"];
-    const std::string outputFile              = j["Output_DB"];
-    const int         num_of_jobs             = j["Num_of_Jobs"];
-    const std::string jobFile                 = j["Input_Job_CSV"];
-    const std::list<std::string> filteredSiteList = j["Sites"].get<std::list<std::string>>();
+    const std::string gridName                     = j["Grid_Name"];
+    const std::string siteInfoFile                 = j["Sites_Information"];
+    const std::string siteConnInfoFile             = j["Sites_Connection_Information"];
+    const std::string dispatcherPath               = j["Dispatcher_Plugin"];
+    const std::string outputFile                   = j["Output_DB"];
+    const int         num_of_jobs                  = j["Num_of_Jobs"];
+    const std::string jobFile                      = j["Input_Job_CSV"];
+    const std::list<std::string> filteredSiteList  = j["Sites"].get<std::list<std::string>>();
 
     // Calibration Parameter these will be moved to site info later
     // const int cpu_min = j["cpu_min_max"][0];
@@ -81,8 +81,7 @@ int main(int argc, char** argv)
     // Create and set up executor
     std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();
     executor->set_output(outputFile);
-    executor->set_dispatcher(dispatcherPath, platform); 
-  
+    executor->set_dispatcher(dispatcherPath, platform);
     executor->start_receivers();
 
     // Create jobs

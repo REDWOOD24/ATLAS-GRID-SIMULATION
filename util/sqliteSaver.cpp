@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 
+
 void sqliteSaver::setFilePath(const std::string& file)
 {
     file_name = file;
@@ -25,6 +26,51 @@ void sqliteSaver::initialize()
 
     initialized = true;
     LOG_INFO("Initialized SQLite database: {}", file_name);
+}
+
+void sqliteSaver::createStateTable()
+{
+    const char* drop_stmt = "DROP TABLE IF EXISTS STATE;";
+    char* errmsg = nullptr;
+    int ret = sqlite3_exec(db, drop_stmt, nullptr, nullptr, &errmsg);
+
+    if (ret != SQLITE_OK) {
+        LOG_ERROR("Failed to drop STATE table.\nStatement: {}\nError: {}", drop_stmt, errmsg);
+        sqlite3_free(errmsg);
+        throw std::runtime_error("Failed to drop STATE table.");
+    }
+
+    const char* create_stmt =
+        "CREATE TABLE STATE ("
+        "ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "JOB_ID TEXT NOT NULL, "
+        "CPU_NAME TEXT NOT NULL, "
+        "STATE TEXT NOT NULL, "
+        "TIMESTAMP TEXT NOT NULL, "
+        "SITE TEXT NOT NULL, "
+        "AVAILABLE_SITE_CORES INTEGER NOT NULL, "
+        "AVAILABLE_SITE_CPUS INTEGER NOT NULL, "
+        "TOTAL_SITE_CPUS REAL NOT NULL, "
+        "TOTAL_SITE_CORES INTEGER NOT NULL, "
+        "WORKLOAD REAL NOT NULL, "
+        "NINPUT_FILES INTEGER NOT NULL, "
+        "NOUTPUT_FILES INTEGER NOT NULL, "
+        "INPUT_FILE_BYTES REAL NOT NULL, "
+        "OUTPUT_FILE_BYTES REAL NOT NULL, "
+        "SITE_PENDING_JOBS REAL NOT NULL, "
+        "SITE_ASSIGNED_JOBS REAL NOT NULL, "
+        "SITE_FINISHED_JOBS REAL NOT NULL, "
+        "SITE_FAILED_JOBS REAL NOT NULL"
+        ");";
+
+    ret = sqlite3_exec(db, create_stmt, nullptr, nullptr, &errmsg);
+    if (ret != SQLITE_OK) {
+        LOG_ERROR("Failed to create STATE table.\nStatement: {}\nError: {}", create_stmt, errmsg);
+        sqlite3_free(errmsg);
+        throw std::runtime_error("Database table creation failed");
+    }
+
+    LOG_INFO("STATE table created successfully.");
 }
 
 void sqliteSaver::createJobsTable()
@@ -51,7 +97,11 @@ void sqliteSaver::createJobsTable()
         "EXECUTION_TIME REAL NOT NULL, "
         "IO_SIZE REAL NOT NULL, "
         "IO_TIME REAL NOT NULL, "
-        "CPU_CONSUMPTION_TIME NOT NULL "
+        "CPU_CONSUMPTION_TIME NOT NULL, "
+        "CREATION_TIME TEXT NOT NULL, "
+        "START_TIME TEXT NOT NULL, "
+        "END_TIME TEXT NOT NULL,"
+        "QUEUE_TIME REAL NOT NULL"
         ");";
 
     ret = sqlite3_exec(db, create_stmt, nullptr, nullptr, &errmsg);
@@ -64,6 +114,53 @@ void sqliteSaver::createJobsTable()
     LOG_INFO("JOBS table created successfully.");
 }
 
+
+void sqliteSaver::saveState(Job* j, const JobSiteStats& site_stats)
+{
+    if (!j) {
+        LOG_ERROR("Null job pointer provided to saveState.");
+        return;
+    }
+    sqlite3_stmt* stmt;
+    std::string sql_insert =
+    "INSERT INTO STATE (JOB_ID, CPU_NAME, STATE, TIMESTAMP, SITE, AVAILABLE_SITE_CORES, "
+    "AVAILABLE_SITE_CPUS, TOTAL_SITE_CPUS, TOTAL_SITE_CORES, WORKLOAD, NINPUT_FILES, NOUTPUT_FILES, "
+    "INPUT_FILE_BYTES, OUTPUT_FILE_BYTES, SITE_PENDING_JOBS, SITE_ASSIGNED_JOBS, "
+    "SITE_FINISHED_JOBS, SITE_FAILED_JOBS) "
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    if (sqlite3_prepare_v2(db, sql_insert.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, std::to_string(j->jobid).c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, j->comp_host.substr(j->comp_host.rfind('_') + 1).c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, j->status.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, j->lastUpdatedTimeStamp.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, j->comp_site.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 6, j->available_site_cores);
+        sqlite3_bind_double(stmt, 7, j->available_site_cpus);
+        sqlite3_bind_double(stmt, 8, j->site_cpus);
+        sqlite3_bind_int(stmt, 9, j->site_cores);
+        sqlite3_bind_double(stmt, 10, j->flops);
+        sqlite3_bind_int(stmt, 11, j->no_of_inp_files);
+        sqlite3_bind_int(stmt, 12, j->no_of_out_files);
+        sqlite3_bind_double(stmt, 13, j->inp_file_bytes);
+        sqlite3_bind_double(stmt, 14, j->out_file_bytes);  
+        
+        sqlite3_bind_double(stmt, 15, site_stats.pending);
+        sqlite3_bind_double(stmt, 16, site_stats.assigned);
+        sqlite3_bind_double(stmt, 17, site_stats.finished);
+        sqlite3_bind_double(stmt, 18, site_stats.failed);
+    
+        if (sqlite3_step(stmt) != SQLITE_DONE) {
+            LOG_ERROR("Error inserting state for job {}: {}", j->jobid, sqlite3_errmsg(db));
+        } else {
+            LOG_DEBUG("Inserted state for job {} into RUNTIME table", j->jobid);
+        }
+        sqlite3_finalize(stmt);
+    } else {
+        LOG_ERROR("Error preparing insert statement for state: {}", sqlite3_errmsg(db));
+    }
+}
+
+
 void sqliteSaver::saveJob(Job* j)
 {
     if (!j) {
@@ -73,8 +170,8 @@ void sqliteSaver::saveJob(Job* j)
 
     sqlite3_stmt* stmt;
     std::string sql_insert =
-        "INSERT INTO JOBS (JOB_ID, SITE, CPU, STATUS, MEMORY, CORES, FLOPS, EXECUTION_TIME, IO_SIZE, IO_TIME, CPU_CONSUMPTION_TIME) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO JOBS (JOB_ID, SITE, CPU, STATUS, MEMORY, CORES, FLOPS, EXECUTION_TIME, IO_SIZE, IO_TIME, CPU_CONSUMPTION_TIME, CREATION_TIME, START_TIME, END_TIME, QUEUE_TIME) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     if (sqlite3_prepare_v2(db, sql_insert.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
         sqlite3_bind_text(stmt, 1, std::to_string(j->jobid).c_str(), -1, SQLITE_TRANSIENT);
@@ -88,6 +185,10 @@ void sqliteSaver::saveJob(Job* j)
         sqlite3_bind_double(stmt, 9, j->IO_size_performed);
         sqlite3_bind_double(stmt, 10, j->IO_time_taken);
         sqlite3_bind_double(stmt, 11, j->cpu_consumption_time);
+        sqlite3_bind_text(stmt, 12, j->creation_time.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 13, j->start_time.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 14, j->end_time.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_double(stmt, 15, j->queue_time);
 
         if (sqlite3_step(stmt) != SQLITE_DONE) {
             LOG_ERROR("Error inserting job {}: {}", j->jobid, sqlite3_errmsg(db));
@@ -118,7 +219,11 @@ void sqliteSaver::updateJob(Job* j)
         "FLOPS = ?, "
         "EXECUTION_TIME = ?, "
         "IO_SIZE = ?, "
-        "IO_TIME = ? "
+        "IO_TIME = ?, "
+        "CREATION_TIME = ?,"
+        "START_TIME = ?, "
+        "END_TIME = ? ,"
+        "QUEUE_TIME = ? "
         "WHERE JOB_ID = ?;";
 
     sqlite3_stmt* stmt = nullptr;
@@ -130,8 +235,8 @@ void sqliteSaver::updateJob(Job* j)
 
     if (j->status == "finished") {
         LOG_INFO("Updating finished job ID: {}", j->jobid);
-        LOG_DEBUG("Status: {}, Memory: {}, Cores: {}, FLOPS: {}, Exec Time: {}, IO Size: {}, IO Time: {}",
-            j->status, j->memory_usage, j->cores, j->flops, j->EXEC_time_taken, j->IO_size_performed, j->IO_time_taken);
+        LOG_DEBUG("Status: {}, Memory: {}, Cores: {}, FLOPS: {}, Exec Time: {}, IO Size: {}, IO Time: {}, Creation Time: {}, Start Time: {}, End Time: {}, Queue Time: {}",
+            j->status, j->memory_usage, j->cores, j->flops, j->EXEC_time_taken, j->IO_size_performed, j->IO_time_taken, j->creation_time, j->start_time, j->end_time, j->queue_time);
     }
 
     std::string jobIdStr = std::to_string(j->jobid);
@@ -144,7 +249,12 @@ void sqliteSaver::updateJob(Job* j)
     sqlite3_bind_double(stmt, 7, j->EXEC_time_taken);
     sqlite3_bind_double(stmt, 8, j->IO_size_performed);
     sqlite3_bind_double(stmt, 9, j->IO_time_taken);
-    sqlite3_bind_text(stmt, 10, jobIdStr.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 10, j->creation_time.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 11, j->start_time.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 12, j->end_time.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_double(stmt, 13, j->queue_time);
+    sqlite3_bind_text(stmt, 14, jobIdStr.c_str(), -1, SQLITE_TRANSIENT);
+  
 
     ret = sqlite3_step(stmt);
     if (ret != SQLITE_DONE) {
@@ -154,21 +264,23 @@ void sqliteSaver::updateJob(Job* j)
     sqlite3_finalize(stmt);
 }
 
-void sqliteSaver::exportJobsToCSV()
+void sqliteSaver::exportDBTableToCSV(std::string tableName)
 {
     std::string csvFilePath;
     size_t pos = file_name.rfind('.');
-    csvFilePath = (pos != std::string::npos) ? file_name.substr(0, pos) + ".csv" : file_name + ".csv";
+    csvFilePath = (pos != std::string::npos) ? file_name.substr(0, pos)+"_"+tableName+ ".csv" : file_name + ".csv";
 
     std::ofstream csvFile(csvFilePath);
     if (!csvFile.is_open()) {
         LOG_ERROR("Failed to open CSV file for writing: {}", csvFilePath);
         return;
     }
+    std::string sql = "SELECT * FROM " + tableName + ";";
 
-    const char* sql = "SELECT * FROM JOBS;";
+    const char* sql_cstr = sql.c_str();
+   
     sqlite3_stmt* stmt = nullptr;
-    int ret = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+    int ret = sqlite3_prepare_v2(db, sql_cstr, -1, &stmt, nullptr);
     if (ret != SQLITE_OK) {
         LOG_ERROR("Error preparing select statement: {}", sqlite3_errmsg(db));
         csvFile.close();
@@ -227,4 +339,3 @@ void sqliteSaver::exportJobsToCSV()
     csvFile.close();
     LOG_INFO("Exported JOBS table to CSV: {}", csvFilePath);
 }
-

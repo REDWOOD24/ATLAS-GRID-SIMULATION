@@ -7,7 +7,7 @@ class SimpleDispatcherPlugin : public DispatcherPlugin {
 public:
     SimpleDispatcherPlugin();
     virtual Job* assignJob(Job* job) final override;
-    virtual sg4::NetZone* getPlatform();
+    virtual sg4::NetZone* getPlatform() final override;
     virtual void getResourceInformation(simgrid::s4u::NetZone* platform) final override;
     virtual void onJobEnd(Job* job) final override;
     virtual void onSimulationEnd() final override;
