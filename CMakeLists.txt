@@ -4,7 +4,7 @@ message(STATUS "Cmake version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CM
 project(SimATLAS VERSION 1.1)
 
 # Disable annoying warnings
-add_definitions(-DSPDLOG_FMT_EXTERNAL)
+#add_definitions(-DSPDLOG_FMT_EXTERNAL)
 add_definitions("-DBOOST_ALLOW_DEPRECATED_HEADERS")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
@@ -16,6 +16,7 @@ find_package(SimGrid   REQUIRED)
 find_package(SQLite3   REQUIRED)
 find_package(FSMod     REQUIRED)
 find_package(spdlog    REQUIRED)
+find_package(fmt REQUIRED)
 
 # Add json subdir
 add_subdirectory(json)
@@ -37,13 +38,18 @@ add_library(SimATLAS SHARED ${SOURCE_FILES})
 # Generating the executable
 add_executable(atlas-grid-simulator src/main.cpp)
 
-target_link_libraries(atlas-grid-simulator
-        SimATLAS
-        ${SimGrid_LIBRARY}
+target_link_libraries(
+	SimATLAS
+	${SimGrid_LIBRARY}
         ${Boost_LIBRARIES}
         ${FSMOD_LIBRARY}
         SQLite::SQLite3
         spdlog::spdlog
+	fmt::fmt
+)
+
+target_link_libraries(atlas-grid-simulator
+    SimATLAS
 )
 
 # ==============================
@@ -94,4 +100,3 @@ write_basic_package_version_file(
 
 install(FILES "${CMAKE_BINARY_DIR}/SimATLASConfigVersion.cmake"
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/SimATLAS)
-

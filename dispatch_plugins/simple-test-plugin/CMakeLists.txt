@@ -21,9 +21,11 @@ find_package(FSMod REQUIRED)
 find_package(Boost REQUIRED)
 find_package(SimATLAS REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(SQLite3   REQUIRED)
+
 
 #Link libraries and Include Directories
-target_link_libraries ( SimpleDispatcherPlugin PUBLIC ${SimGrid_LIBRARY} ${Boost_LIBRARIES} ${FSMOD_LIBRARY} spdlog::spdlog SimATLAS::SimATLAS)
+target_link_libraries ( SimpleDispatcherPlugin PUBLIC ${SimGrid_LIBRARY} ${Boost_LIBRARIES} ${FSMOD_LIBRARY} spdlog::spdlog SimATLAS::SimATLAS SQLite::SQLite3)
 target_include_directories( SimpleDispatcherPlugin PUBLIC ${SimGrid_INCLUDE_DIR} ${SimATLAS_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${FSMOD_INCLUDE_DIR})
 
 
