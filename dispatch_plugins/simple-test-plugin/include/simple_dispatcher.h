@@ -12,7 +12,7 @@
 // #include "H5Cpp.h"
 #include "job.h"
 #include "fsmod.hpp"
-#include "logger.h"
+//#include "logger.h"
 #include "host_extensions.h"
 
 namespace sg4 = simgrid::s4u;

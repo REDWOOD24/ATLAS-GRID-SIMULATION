@@ -4,9 +4,11 @@ message(STATUS "Cmake version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CM
 project(SimATLAS VERSION 1.1)
 
 # Disable annoying warnings
+add_definitions(-DSPDLOG_FMT_EXTERNAL)
 add_definitions("-DBOOST_ALLOW_DEPRECATED_HEADERS")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Find required packages
 find_package(Boost     REQUIRED)
@@ -25,7 +27,7 @@ include_directories(include/)
 
 # Source files
 file(GLOB_RECURSE SOURCE_FILES
-        "src/*.cpp"
+#        "src/*.cpp"
         "util/*.cpp"
 )
 
@@ -33,9 +35,10 @@ file(GLOB_RECURSE SOURCE_FILES
 add_library(SimATLAS ${SOURCE_FILES})
 
 # Generating the executable
-add_executable(atlas-grid-simulator ${SOURCE_FILES})
+add_executable(atlas-grid-simulator src/main.cpp)
 
 target_link_libraries(atlas-grid-simulator
+        SimATLAS
         ${SimGrid_LIBRARY}
         ${Boost_LIBRARIES}
         ${FSMOD_LIBRARY}

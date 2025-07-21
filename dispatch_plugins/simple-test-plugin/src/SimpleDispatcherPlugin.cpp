@@ -1,6 +1,5 @@
 #include "DispatcherPlugin.h"
 #include "simple_dispatcher.h"
-// #include "logger.h"  // <-- Include the logger header
 
 class SimpleDispatcherPlugin : public DispatcherPlugin {
 
@@ -23,11 +22,11 @@ SimpleDispatcherPlugin::SimpleDispatcherPlugin()
 
 void SimpleDispatcherPlugin::getResourceInformation(simgrid::s4u::NetZone* platform)
 {
-    LOG_INFO("Inside the Resource information");
+  //LOG_INFO("Inside the Resource information");
     
     sd->setPlatform(platform);
     
-    LOG_INFO("Finished getting the Resource information");
+    //LOG_INFO("Finished getting the Resource information");
 }
 
 sg4::NetZone* SimpleDispatcherPlugin::getPlatform()
@@ -37,7 +36,7 @@ sg4::NetZone* SimpleDispatcherPlugin::getPlatform()
 
 Job* SimpleDispatcherPlugin::assignJob(Job* job)
 {
-    LOG_DEBUG("Inside the assign job: {}", job->comp_site);
+  //LOG_DEBUG("Inside the assign job: {}", job->comp_site);
     return sd->assignJobToResource(job);
 }
 

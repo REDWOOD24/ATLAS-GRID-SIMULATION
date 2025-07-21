@@ -1,5 +1,4 @@
 #include "simple_dispatcher.h"
-// #include "logger.h"
 
 
 sg4::NetZone* SIMPLE_DISPATCHER::getPlatform()
@@ -97,7 +96,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
     for (auto* cpu : cpus)
     {
         if (!cpu) {
-            LOG_DEBUG("Warning: Encountered a null CPU pointer.");
+	  //LOG_DEBUG("Warning: Encountered a null CPU pointer.");
             continue;
         }
         cpu_queue.push(cpu);
@@ -113,9 +112,14 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         ++candidatesExamined;
         // LOG_DEBUG("Available Cores {}", sg4::Host::by_name(current->name)->extension<HostExtensions>()->get_cores_available());
         // LOG_DEBUG("JOB Cores needed {}", j->cores);
+	auto* ext = sg4::Host::by_name(current->name)->extension<HostExtensions>();
+	if (!ext) {
+	  std::cerr << "HostExtensions is NULL on host: " << current->name  << std::endl;
+	  std::abort();
+	}
         if (sg4::Host::by_name(current->name)->extension<HostExtensions>()->get_cores_available() < j->cores)
         {   
-            LOG_DEBUG("Cores not suffficient for job {} on CPU {}", j->jobid, current->name);
+	  //LOG_DEBUG("Cores not suffficient for job {} on CPU {}", j->jobid, current->name);
         
             continue;
         }
@@ -169,7 +173,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         j->comp_host = best_cpu->name;
     }
     else {
-        LOG_DEBUG("Could not find a suitable CPU for job {}", j->jobid );
+      //LOG_DEBUG("Could not find a suitable CPU for job {}", j->jobid );
     }
 
     return best_cpu;
@@ -202,24 +206,24 @@ Job* SIMPLE_DISPATCHER::assignJobToResource(Job* job)
   Host*  best_cpu    = nullptr;
   Site*  site        = nullptr;
   
-  LOG_DEBUG(" Waiting to assign job resources : {}", job->comp_site);
+  //LOG_DEBUG(" Waiting to assign job resources : {}", job->comp_site);
 //   std::string site_name = job->comp_site;
 //   auto site = findSiteByName(_sites, site_name);
 try {
   site = _sites_map.at(job->comp_site);
-  LOG_DEBUG(" Found the site {}", job->comp_site);
+  //LOG_DEBUG(" Found the site {}", job->comp_site);
 }
 catch (const std::out_of_range& e) {
-  LOG_DEBUG("Computing Site is not found: {}", job->comp_site);
+  //LOG_DEBUG("Computing Site is not found: {}", job->comp_site);
 }
 
   if (job == nullptr) {
-    LOG_DEBUG("JOB pointer null");
+    //LOG_DEBUG("JOB pointer null");
        
     }
     if (site == nullptr) {
         job->status = "failed";
-        LOG_DEBUG("Computing Site is not found: Site pointer NULL :{}", job->comp_site);
+        //LOG_DEBUG("Computing Site is not found: Site pointer NULL :{}", job->comp_site);
         return job;
     }
   job->flops = site->gflops*job->cpu_consumption_time*job->cores;
@@ -228,11 +232,11 @@ catch (const std::out_of_range& e) {
     site->cpus_in_use++; 
     job->comp_site = site->name; 
     job->status = "assigned"; 
-    LOG_DEBUG("Job Status changed to assigned");
+    //LOG_DEBUG("Job Status changed to assigned");
 }
   else{
   job->status = "pending";
-  LOG_DEBUG("Job Status changed to pending");
+  //LOG_DEBUG("Job Status changed to pending");
 
   }
   this->printJobInfo(job);
@@ -250,7 +254,7 @@ void SIMPLE_DISPATCHER::free(Job* job)
    cpu->cores_available   += job->cores;
    disk->storage          += (this->getTotalSize(job->input_files) + this->getTotalSize(job->output_files));
    cpu->jobs.erase(job->jobid);
-   LOG_DEBUG("Job {} freed from CPU {}", job->jobid, cpu->name);
+   //LOG_DEBUG("Job {} freed from CPU {}", job->jobid, cpu->name);
    
  }
 }
@@ -269,7 +273,7 @@ Site* SIMPLE_DISPATCHER::findSiteByName(std::vector<Site*>& sites, const std::st
 
 void SIMPLE_DISPATCHER::printJobInfo(Job* job)
 {
-    LOG_DEBUG("----------------------------------------------------------------------");
+  /*LOG_DEBUG("----------------------------------------------------------------------");
     LOG_INFO("Submitting .. {}", job->jobid);
     LOG_DEBUG("FLOPs to be executed: {}", job->flops);
     LOG_DEBUG("Files to be read:");
@@ -283,7 +287,7 @@ void SIMPLE_DISPATCHER::printJobInfo(Job* job)
     LOG_DEBUG("Cores Used: {}", job->cores);
     LOG_DEBUG("Disk Used: {}", job->disk);
     LOG_DEBUG("Host: {}", job->comp_host);
-    LOG_DEBUG("----------------------------------------------------------------------");
+    LOG_DEBUG("----------------------------------------------------------------------");*/
 }
 
 void SIMPLE_DISPATCHER::cleanup()

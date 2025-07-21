@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 
 # Find and set the source file.
 include_directories(include/)
-file(GLOB SOURCES src/*.cpp )
+file(GLOB SOURCES src/*.cpp)
 
 # Set up the library.
 add_library(SimpleDispatcherPlugin SHARED ${SOURCES})
@@ -25,4 +25,5 @@ find_package(spdlog REQUIRED)
 #Link libraries and Include Directories
 target_link_libraries ( SimpleDispatcherPlugin PUBLIC ${SimGrid_LIBRARY} ${Boost_LIBRARIES} ${FSMOD_LIBRARY} spdlog::spdlog SimATLAS::SimATLAS)
 target_include_directories( SimpleDispatcherPlugin PUBLIC ${SimGrid_INCLUDE_DIR} ${SimATLAS_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${FSMOD_INCLUDE_DIR})
+
 
