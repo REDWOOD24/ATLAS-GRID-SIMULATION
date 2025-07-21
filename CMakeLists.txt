@@ -32,7 +32,7 @@ file(GLOB_RECURSE SOURCE_FILES
 )
 
 # Build the library
-add_library(SimATLAS ${SOURCE_FILES})
+add_library(SimATLAS SHARED ${SOURCE_FILES})
 
 # Generating the executable
 add_executable(atlas-grid-simulator src/main.cpp)

@@ -71,28 +71,15 @@ int main(int argc, char** argv)
 
     // Create the platform
     std::unique_ptr<Platform> pf = std::make_unique<Platform>();
-    pf->initialize_simgrid_plugins();
     auto* platform = pf->create_platform(gridName);
-    //pf->initialize_simgrid_plugins();
+    pf->initialize_simgrid_plugins();
    
     // Create sites and connections
     auto sites = pf->create_sites(platform, filteredSiteList, siteNameCPUInfo, siteNameGLOPS);
     pf->initialize_site_connections(platform, siteConnInfo, sites);
     pf->initialize_job_server(platform, siteNameCPUInfo, sites);
 
-    for (auto const& host : simgrid::s4u::Engine::get_instance()->get_all_hosts()) {
-      std::cout << "Checking host: " << host->get_name() << std::endl;
-      
-      // If not set, force it and print a warning
-      if (host->extension<HostExtensions>() == nullptr) {
-      std::cerr << "⚠️ HostExtension missing on: " << host->get_name() << " → Setting it manually" << std::endl;
-      host->extension_set<HostExtensions>(new HostExtensions(host));
-    } else {
-        std::cout << "✅ HostExtension already set on: " << host->get_name() << std::endl;
-      }
-    }
-
-
+    std::cout << "EXTENSION_ID address (static): " << &HostExtensions::EXTENSION_ID << "\n";
     
     // Create and set up executor
     std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();

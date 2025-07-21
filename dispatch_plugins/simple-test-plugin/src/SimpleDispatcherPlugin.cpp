@@ -18,6 +18,7 @@ private:
 SimpleDispatcherPlugin::SimpleDispatcherPlugin()
 {
     // LOG_INFO("Loading the Job Dispatcher from Simple Dispatcher Plugin ....");
+  std::cout << "EXTENSION_ID address (static): " << &HostExtensions::EXTENSION_ID << "\n";
 }
 
 void SimpleDispatcherPlugin::getResourceInformation(simgrid::s4u::NetZone* platform)

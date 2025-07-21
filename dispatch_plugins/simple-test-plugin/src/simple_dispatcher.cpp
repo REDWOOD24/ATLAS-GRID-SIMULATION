@@ -112,11 +112,7 @@ Host* SIMPLE_DISPATCHER::findBestAvailableCPU(std::vector<Host*>& cpus, Job* j)
         ++candidatesExamined;
         // LOG_DEBUG("Available Cores {}", sg4::Host::by_name(current->name)->extension<HostExtensions>()->get_cores_available());
         // LOG_DEBUG("JOB Cores needed {}", j->cores);
-	auto* ext = sg4::Host::by_name(current->name)->extension<HostExtensions>();
-	if (!ext) {
-	  std::cerr << "HostExtensions is NULL on host: " << current->name  << std::endl;
-	  std::abort();
-	}
+	//std::cout << "EXTENSION_ID address (static): " << &HostExtensions::EXTENSION_ID << "\n";
         if (sg4::Host::by_name(current->name)->extension<HostExtensions>()->get_cores_available() < j->cores)
         {   
 	  //LOG_DEBUG("Cores not suffficient for job {} on CPU {}", j->jobid, current->name);
