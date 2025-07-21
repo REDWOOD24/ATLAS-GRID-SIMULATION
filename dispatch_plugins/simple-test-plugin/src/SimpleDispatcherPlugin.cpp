@@ -17,17 +17,14 @@ private:
 
 SimpleDispatcherPlugin::SimpleDispatcherPlugin()
 {
-    // LOG_INFO("Loading the Job Dispatcher from Simple Dispatcher Plugin ....");
-  std::cout << "EXTENSION_ID address (static): " << &HostExtensions::EXTENSION_ID << "\n";
+  LOG_INFO("Loading the Job Dispatcher from Simple Dispatcher Plugin ....");
 }
 
 void SimpleDispatcherPlugin::getResourceInformation(simgrid::s4u::NetZone* platform)
 {
-  //LOG_INFO("Inside the Resource information");
-    
-    sd->setPlatform(platform);
-    
-    //LOG_INFO("Finished getting the Resource information");
+  LOG_INFO("Inside the Resource information");
+  sd->setPlatform(platform);  
+  LOG_INFO("Finished getting the Resource information");
 }
 
 sg4::NetZone* SimpleDispatcherPlugin::getPlatform()
@@ -37,8 +34,8 @@ sg4::NetZone* SimpleDispatcherPlugin::getPlatform()
 
 Job* SimpleDispatcherPlugin::assignJob(Job* job)
 {
-  //LOG_DEBUG("Inside the assign job: {}", job->comp_site);
-    return sd->assignJobToResource(job);
+  LOG_DEBUG("Inside the assign job: {}", job->comp_site);
+  return sd->assignJobToResource(job);
 }
 
 void SimpleDispatcherPlugin::onJobEnd(Job* job)

@@ -67,7 +67,7 @@ install(TARGETS SimATLAS
 )
 
 # Install header files
-install(FILES include/job.h include/DispatcherPlugin.h include/host_extensions.h
+install(FILES include/job.h include/DispatcherPlugin.h include/host_extensions.h include/logger.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/SimATLAS)
 
 # Install the executable

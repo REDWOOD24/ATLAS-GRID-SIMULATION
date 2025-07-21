@@ -78,8 +78,6 @@ int main(int argc, char** argv)
     auto sites = pf->create_sites(platform, filteredSiteList, siteNameCPUInfo, siteNameGLOPS);
     pf->initialize_site_connections(platform, siteConnInfo, sites);
     pf->initialize_job_server(platform, siteNameCPUInfo, sites);
-
-    std::cout << "EXTENSION_ID address (static): " << &HostExtensions::EXTENSION_ID << "\n";
     
     // Create and set up executor
     std::unique_ptr<JOB_EXECUTOR> executor = std::make_unique<JOB_EXECUTOR>();
